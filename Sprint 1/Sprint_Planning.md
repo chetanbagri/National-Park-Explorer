@@ -3,7 +3,7 @@ The required contents of this file are described in the *Sprint Planning* sectio
 
 ## List of Meeting Participants
 1. Nicholas Schumacher (Present)
-2. Chetan Bagri (Present|Absent)
+2. Chetan Bagri (Present)
 3. Anika Patel (Present|Absent)
 4. Jainee Shah (Present|Absent)
 5. Mahum Syed (Present|Absent)
