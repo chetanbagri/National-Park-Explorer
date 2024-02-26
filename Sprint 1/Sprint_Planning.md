@@ -22,9 +22,11 @@ The required contents of this file are described in the *Sprint Planning* sectio
 11. Architecture: React client-side and SpringBoot server-side.
 
 ## List of Items on this Sprint's Backlog
-1. feature
-2. feature
-3. ...
+3. Create a user account
+8. Works on Chrome browser and mobile devices
+9. Is secure and protects users’ data.
+10. Attractive user interface
+11. Architecture: React client-side and SpringBoot server-side.
 
 ## Explanation for Sprint Backlog Selection
 Paragraph, no more than 300 words, explaining how and why the sprint backlog items were chosen by the team
