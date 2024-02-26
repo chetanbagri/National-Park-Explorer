@@ -32,7 +32,8 @@ The required contents of this file are described in the *Sprint Planning* sectio
 Paragraph, no more than 300 words, explaining how and why the sprint backlog items were chosen by the team
 
 ## Task Chart
-Embed screenshot of the initial task chart
+![image](https://github.com/CSCI310-20241/project-team-20/assets/89752707/e320a886-b45b-46ff-8954-d6f2ff35ec8c)
+
 
 
 
