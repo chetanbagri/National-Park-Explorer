@@ -2,11 +2,11 @@
 The required contents of this file are described in the *Sprint Planning* section of the Project Manual. In case of a discrepancy between this file and the manual, the requirements in the manual take priority.
 
 ## List of Meeting Participants
-1. Team Member (Present|Absent)
-2. Team Member (Present|Absent)
-3. Team Member (Present|Absent)
-4. Team Member (Present|Absent)
-5. Team Member (Present|Absent)
+1. Nicholas Schumacher (Present)
+2. Chetan Bagri (Present|Absent)
+3. Anika Patel (Present|Absent)
+4. Jainee Shah (Present|Absent)
+5. Mahum Syed (Present|Absent)
 
 ## List of Items on Product Backlog
 1. feature
