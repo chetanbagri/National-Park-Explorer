@@ -30,6 +30,8 @@ The required contents of this file are described in the *Sprint Planning* sectio
 
 ## Explanation for Sprint Backlog Selection
 Paragraph, no more than 300 words, explaining how and why the sprint backlog items were chosen by the team
+Our top priority based on the client needs is feature 3, creating a user account, since the user will need an account before they are able to fully access the rest of the features. Next we chose feature 8, to test if the application works on Chrome browser as well as mobile devices. This way we can check for any issues with deployment before implementing the rest of the features. We will also work on feature 10, attractive user interface, and feature 11 architecture: React client-side and SpringBoot server-side. Feature 11 will also serve as the foundation for the project and in this way we can make sure there are no foundational issues before moving on. For the user interface, we can get started on the initial design process.
+
 
 ## Task Chart
 ![image](https://github.com/CSCI310-20241/project-team-20/assets/89752707/e320a886-b45b-46ff-8954-d6f2ff35ec8c)
