@@ -32,7 +32,7 @@ The required contents of this file are described in the *Sprint Planning* sectio
 
 ## Explanation for Sprint Backlog Selection
 Paragraph, no more than 300 words, explaining how and why the sprint backlog items were chosen by the team
--
+
 We decided to tackle the login/create account feature first. We figured that we needed the login functionality before anything else so there was a way for us to store and authenticate different users and their account activity. We divided the task into 3 main sections: database creation, login and account creation page implementation, and testing. We then split the latter 2 further into two groups and assigned the tasks among all 5 members. This sprint backlog was chosen from part 3 of the product backlog. Since we had not yet met with our CP to conduct a RE, we decided to work on something that was less ambiguous. The UI elements were not finalized because we wanted to get the RE input for what constitutes as “Attractive user interface”.
 
 
