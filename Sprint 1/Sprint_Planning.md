@@ -4,8 +4,8 @@ The required contents of this file are described in the *Sprint Planning* sectio
 ## List of Meeting Participants
 1. Nicholas Schumacher (Present)
 2. Chetan Bagri (Present)
-3. Anika Patel (Absent)
-4. Jainee Shah (Absent)
+3. Anika Patel (Present)
+4. Jainee Shah (Present)
 5. Mahum Syed (Present)
 
 ## List of Items on Product Backlog
