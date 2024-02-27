@@ -36,7 +36,8 @@ Our top priority based on the client needs is feature 3, creating a user account
 
 
 ## Task Chart
-![image](https://github.com/CSCI310-20241/project-team-20/assets/89752707/e320a886-b45b-46ff-8954-d6f2ff35ec8c)
+![image](https://github.com/CSCI310-20241/project-team-20/assets/89752707/2222dea2-f666-4bfa-9b15-b45fb9057ae7)
+
 
 
 
