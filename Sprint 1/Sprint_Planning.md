@@ -32,7 +32,8 @@ The required contents of this file are described in the *Sprint Planning* sectio
 
 ## Explanation for Sprint Backlog Selection
 Paragraph, no more than 300 words, explaining how and why the sprint backlog items were chosen by the team
-Our top priority based on the client needs is feature 3, creating a user account, since the user will need an account before they are able to fully access the rest of the features. Next we chose feature 8, to test if the application works on Chrome browser as well as mobile devices. This way we can check for any issues with deployment before implementing the rest of the features. We will also work on feature 10, attractive user interface, and feature 11 architecture: React client-side and SpringBoot server-side. Feature 11 will also serve as the foundation for the project and in this way we can make sure there are no foundational issues before moving on. For the user interface, we can get started on the initial design process.
+-
+We decided to tackle the login/create account feature first. We figured that we needed the login functionality before anything else so there was a way for us to store and authenticate different users and their account activity. We divided the task into 3 main sections: database creation, login and account creation page implementation, and testing. We then split the latter 2 further into two groups and assigned the tasks among all 5 members. This sprint backlog was chosen from part 3 of the product backlog. Since we had not yet met with our CP to conduct a RE, we decided to work on something that was less ambiguous. The UI elements were not finalized because we wanted to get the RE input for what constitutes as “Attractive user interface”.
 
 
 ## Task Chart
