@@ -22,11 +22,13 @@ The required contents of this file are described in the *Sprint Planning* sectio
 11. Architecture: React client-side and SpringBoot server-side.
 
 ## List of Items on this Sprint's Backlog
-3. Create a user account
-8. Works on Chrome browser and mobile devices
-9. Is secure and protects users’ data.
-10. Attractive user interface
-11. Architecture: React client-side and SpringBoot server-side.
+1. Make table for users and parks (Jainee)
+2. Design UI for login page (Mahum)
+3. Implement UI for login page (Mahum)
+4. Design UI for create account page(Chetan)
+5. Implement UI for create account page(Chetan)
+6. Write test cases for login user functionality (Nick)
+7. Write test cases for create account user functionality (Anika)
 
 ## Explanation for Sprint Backlog Selection
 Paragraph, no more than 300 words, explaining how and why the sprint backlog items were chosen by the team
