@@ -14,3 +14,5 @@ The required contents of this file are described in the *Daily Scrums* section o
 
 ## Task Chart
 Embed screenshot of the task chart, reflecting all updates from the Scrum meeting.
+![image](https://github.com/CSCI310-20241/project-team-20/assets/89752707/f2217548-5549-4911-8067-69ee3f32af6e)
+
