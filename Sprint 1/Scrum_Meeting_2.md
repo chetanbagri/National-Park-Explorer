@@ -3,10 +3,10 @@ The required contents of this file are described in the *Daily Scrums* section o
 
 ## List of Meeting Participants
 1. Nicholas Schumacher (Present)
-2. Chetan Bagri (Present|Only 3Q|Absent)
-3. Anika Patel (Present|Only 3Q|Absent)
-4. Jainee Shah (Present|Only 3Q|Absent)
-5. Mahum Syed (Present|Only 3Q|Absent)
+2. Chetan Bagri (Present)
+3. Anika Patel (Present)
+4. Jainee Shah (Present)
+5. Mahum Syed (Present)
 
 ## Meeting Documentation
 1. Include selfie and written out text for the three questions, **OR**
