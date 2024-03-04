@@ -10,7 +10,15 @@ The required contents of this file are described in the *Daily Scrums* section o
 
 ## Meeting Documentation
 1. Include selfie and written out text for the three questions, **OR**
-2. Link to Zoom video
+
+
+3 Questions for Chetan Bagri:
+- I completed the code for communicating with the backend yesterday. 
+- Tomorrow I will work on password security. 
+- Confusion about the database requirements is blocking me.
+
+
+2. [Link to Zoom video](https://usc.zoom.us/rec/share/UlmHzOy85o1FcxqzhM0z8A6upVzZR5AFm2Bt24czQDLlE25j4MaTyjnjdIMbThIC.9SngL9w8k9UgDFuE)
 
 ## Task Chart
 Embed screenshot of the task chart, reflecting all updates from the Scrum meeting.
