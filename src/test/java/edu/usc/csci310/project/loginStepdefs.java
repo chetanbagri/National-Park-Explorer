@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class loginStepdefs {
 
-    private static final String ROOT_URL = "http://localhost:8080/LoginPage";
+    private static final String ROOT_URL = "http://localhost:8080/login";
 
     private final WebDriver driver = new ChromeDriver();
 
