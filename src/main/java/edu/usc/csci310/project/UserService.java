@@ -7,14 +7,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Service
 public class UserService {
     private UserRepository userRepository;
+    private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     public void setMyRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    @Autowired
+    public void setPasswordEncoder(BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public User registerUser(String username, String email, String password) {
+        System.out.println("username:" + username + " email:" + email + " pass:"+ password );
         if (userRepository.findByEmail(email) == null && userRepository.findByUsername(username) == null) {
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String hashedPassword = passwordEncoder.encode(password);
             User newUser = new User();
             newUser.setUsername(username);
