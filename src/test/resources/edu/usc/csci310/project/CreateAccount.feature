@@ -55,4 +55,4 @@ Feature: test the create account functionality of website
     And I enter the password "password"
     And I confirm the password "passworf"
     And I press the Create Account button
-    Then I should get a "Failed to create account: email required" message
+    Then I should get a "Passwords do not match." message
