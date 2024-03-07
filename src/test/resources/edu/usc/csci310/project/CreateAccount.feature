@@ -3,6 +3,7 @@ Feature: test the create account functionality of website
     Given I am on the create account page
     When I enter the username "Anika"
     And I enter the password "password"
+    And I enter the email "anika@example.com"
     And I press the Create Account button
     Then I should get a "Account Created" message
 
