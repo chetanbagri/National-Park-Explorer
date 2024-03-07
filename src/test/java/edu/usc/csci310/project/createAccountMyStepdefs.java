@@ -16,17 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class createAccountMyStepdefs {
 
-
     private static final String ROOT_URL = "http://localhost:8080";
     private final WebDriver driver = new ChromeDriver();
-    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
-
-    @After
-    public void After() {
-        driver.quit();
-    }
-
 
     @Given("I am on the create account page")
     public void iAmOnTheCreateAccountPage() {
@@ -58,8 +49,14 @@ public class createAccountMyStepdefs {
     }
 
     @Then("I should get a {string} message")
-    public void iShouldGetAMessage(String message) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[contains(text(), '" + message + "')]")));
+    public void iShouldGetAMessage(String message) throws InterruptedException {
+        Thread.sleep(10000);
         assertTrue(driver.getPageSource().contains(message));
+    }
+
+    @And("I confirm the password {string}")
+    public void iConfirmThePassword(String confirmPassword) {
+        WebElement confirmPasswordInput = driver.findElement(By.cssSelector("input[type='password']:nth-of-type(2)"));
+        confirmPasswordInput.sendKeys(confirmPassword);
     }
 }
