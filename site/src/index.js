@@ -3,13 +3,14 @@ import ReactDOM from "react-dom/client";
 import "./styles/index.css";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import CreateAccount from "./pages/CreateAccount";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
         <Routes>
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/" element={<CreateAccount />} />
         </Routes>
     </BrowserRouter>
   </React.StrictMode>
