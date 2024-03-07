@@ -4,6 +4,7 @@ import "./styles/index.css";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import CreateAccount from "./pages/CreateAccount";
+import LandingPage from "./pages/LandingPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -11,6 +12,7 @@ root.render(
     <BrowserRouter>
         <Routes>
             <Route path="/" element={<CreateAccount />} />
+            <Route path="/landing" element={<LandingPage />} />
         </Routes>
     </BrowserRouter>
   </React.StrictMode>
