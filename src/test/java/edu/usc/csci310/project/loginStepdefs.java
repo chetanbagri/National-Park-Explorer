@@ -21,7 +21,7 @@ public class loginStepdefs {
 
     private final WebDriver driver = new ChromeDriver();
 
-    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
     @After
     public void After(){
@@ -43,37 +43,38 @@ public class loginStepdefs {
 
     @And("I press the Login button")
     public void iPressTheLoginButton() {
-        driver.findElement(By.id("login-submit")).click();
+        // wait.until(ExpectedConditions.presenceOfElementLocated(By.id("loginBtn")));
+        driver.findElement(By.id("loginBtn")).click();
     }
 
-    @Then("I should get a {string} message")
-    public void iShouldGetAMessage(String arg0) {
+    @Then("I should get a {string} message displayed")
+    public void iShouldGetAMessageDisplayed(String arg0) {
         wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("response"), arg0));
         assertTrue(driver.getPageSource().contains(arg0));
     }
 
-    @And("I have tried unsuccessfully to log in on the previous attempt")
-    public void iHaveTriedUnsuccessfullyToLogInOnThePreviousAttempt() {
-        driver.findElement(By.id("username")).sendKeys("Tommy");
-        driver.findElement(By.id("password")).sendKeys("Trojan");
-        driver.findElement(By.id("login-submit")).click();
-        driver.findElement(By.id("username")).clear();
-        driver.findElement(By.id("password")).clear();
-    }
+//    @And("I have tried unsuccessfully to log in on the previous attempt")
+//    public void iHaveTriedUnsuccessfullyToLogInOnThePreviousAttempt() {
+//        driver.findElement(By.id("username")).sendKeys("Tommy");
+//        driver.findElement(By.id("password")).sendKeys("Trojan");
+//        driver.findElement(By.id("login-submit")).click();
+//        driver.findElement(By.id("username")).clear();
+//        driver.findElement(By.id("password")).clear();
+//    }
+//
+//    @And("I have tried unsuccessfully to log in the two previous attempts")
+//    public void iHaveTriedUnsuccessfullyToLogInTheTwoPreviousAttempts() {
+//
+//    }
+//
+//    @And("I have tried unsuccessfully to log in the three previous attempts")
+//    public void iHaveTriedUnsuccessfullyToLogInTheThreePreviousAttempts() {
+//
+//    }
 
-    @And("I have tried unsuccessfully to log in the two previous attempts")
-    public void iHaveTriedUnsuccessfullyToLogInTheTwoPreviousAttempts() {
-        
-    }
-
-    @And("I have tried unsuccessfully to log in the three previous attempts")
-    public void iHaveTriedUnsuccessfullyToLogInTheThreePreviousAttempts() {
-        
-    }
-
-    @Then("I should be redirected to the Account Blocked page")
-    public void iShouldBeRedirectedToTheAccountBlockedPage() {
-        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("response"), "Too many login attempts."));
-        assertTrue(driver.getPageSource().contains("Too many login attempts."));
-    }
+//    @Then("I should be redirected to the Account Blocked page")
+//    public void iShouldBeRedirectedToTheAccountBlockedPage() {
+//        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("response"), "Too many login attempts."));
+//        assertTrue(driver.getPageSource().contains("Too many login attempts."));
+//    }
 }

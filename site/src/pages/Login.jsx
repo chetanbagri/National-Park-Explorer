@@ -7,10 +7,31 @@ function Login() {
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
+    const [ fetchResponse, handleFetchResponse ] = useState();
+
     const handleLogin = () => {
         //add actual functionality
         setMessage('Logging in...');
 
+        fetch("/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                param0: document.getElementById("username").value,
+                param1: document.getElementById("password").value
+            })
+        })
+        .then((response) => response.json())
+        .then((response) => {
+            if(response?.data){
+                handleFetchResponse(response.data);
+                // if(fetchResponse != null && fetchResponse === "Login Unsuccessful, one more attempt to log in allowed"){
+                //     navigate("/AccountBlockedPage");
+                // }
+            }
+        });
     };
 
     return (
@@ -38,8 +59,9 @@ function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <button id="login-submit" onClick={handleLogin}>Login</button>
-                <div id="response">{message}</div>
+                <button id="loginBtn" onClick={handleLogin}>Login</button>
+                {fetchResponse ? <div id="response">{fetchResponse}</div> : null}
+                {/*<div id="response">{message}</div>*/}
             </div>
         </div>
     );
