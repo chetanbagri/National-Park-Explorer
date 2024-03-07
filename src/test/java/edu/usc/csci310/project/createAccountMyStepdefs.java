@@ -35,7 +35,7 @@ public class createAccountMyStepdefs {
 
     @And("I enter the password {string}")
     public void iEnterThePassword(String password) {
-        WebElement passwordInput = driver.findElement(By.cssSelector("input[type='password']:nth-of-type(1)"));
+        WebElement passwordInput = driver.findElement(By.cssSelector("input[type='password']"));
         passwordInput.sendKeys(password);
     }
 
@@ -53,7 +53,7 @@ public class createAccountMyStepdefs {
 
     @And("I confirm the password {string}")
     public void iConfirmThePassword(String confirmPassword) {
-        WebElement confirmPasswordInput = driver.findElement(By.cssSelector("input[type='password']:nth-of-type(2)"));
+        WebElement confirmPasswordInput = driver.findElement(By.id("confirmPassword"));
         confirmPasswordInput.sendKeys(confirmPassword);
     }
 }
