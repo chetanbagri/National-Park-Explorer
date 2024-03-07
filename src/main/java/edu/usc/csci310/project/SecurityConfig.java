@@ -17,6 +17,8 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeHttpRequests(authz -> authz.anyRequest().permitAll());
+        http.headers().frameOptions().disable();
+
         return http.build();
     }
     @Bean
