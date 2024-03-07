@@ -14,28 +14,33 @@ function Login() {
     };
 
     return (
-        <div className="login-form">
-            <h2>Login</h2>
-            <div>
-                <label htmlFor="username">Username:</label>
-                <input
-                    type="text"
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
+
+
+        <div className="login-page">
+
+            <div className="login-form">
+                <h2>Login</h2>
+                <div>
+                    <label htmlFor="username">Username:</label>
+                    <input
+                        type="text"
+                        id="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="password">Password:</label>
+                    <input
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+                <button id="login-submit" onClick={handleLogin}>Login</button>
+                <div id="response">{message}</div>
             </div>
-            <div>
-                <label htmlFor="password">Password:</label>
-                <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-            </div>
-            <button id="login-submit" onClick={handleLogin}>Login</button>
-            <div id="response">{message}</div>
         </div>
     );
 }

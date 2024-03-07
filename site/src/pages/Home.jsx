@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 
 function Home() {
@@ -12,11 +12,16 @@ function Home() {
 
 
     return (
-        <div className="body">
+        <div className="bodycss">
             <div className="btns">
-                <button className="login-button" onClick={handleLoginClick}>Login</button>
-
-                <button className="create-acct">Create Account</button>
+                <div>
+                    <button className="login-button" onClick={handleLoginClick}>
+                        Login
+                    </button>
+                    <Link to="/create-account" className="create-acct">
+                        Create Account
+                    </Link>
+                </div>
             </div>
             <div className="landscape-image">
                 <img src="https://cdn.glitch.me/b29dd3df-e938-4d03-84fc-259d988ad64d/landscape.png?v=1709606071707"
@@ -29,10 +34,9 @@ function Home() {
             </div>
 
 
-
-
             <div className="box">
                 <div className="list">
+
                     <ul>
 
 
@@ -42,9 +46,9 @@ function Home() {
                         {/*<li>Suggest Parks to Each Other </li>*/}
                     </ul>
 
+
                 </div>
             </div>
-
 
 
         </div>
