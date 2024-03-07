@@ -43,7 +43,7 @@ public class loginStepdefs {
 
     @And("I press the Login button")
     public void iPressTheLoginButton() {
-        driver.findElement(By.id("loginBtn")).click();
+        driver.findElement(By.id("login-submit")).click();
     }
 
     @Then("I should get a {string} message")
@@ -56,7 +56,7 @@ public class loginStepdefs {
     public void iHaveTriedUnsuccessfullyToLogInOnThePreviousAttempt() {
         driver.findElement(By.id("username")).sendKeys("Tommy");
         driver.findElement(By.id("password")).sendKeys("Trojan");
-        driver.findElement(By.id("loginBtn")).click();
+        driver.findElement(By.id("login-submit")).click();
         driver.findElement(By.id("username")).clear();
         driver.findElement(By.id("password")).clear();
     }
