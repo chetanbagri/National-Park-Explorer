@@ -7,44 +7,60 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 public class createAccountMyStepdefs {
 
-    private static final String ROOT_URL = "http://localhost:8080/CreatAccountPage";
+
+    private static final String ROOT_URL = "http://localhost:8080";
     private final WebDriver driver = new ChromeDriver();
     private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
+
     @After
-    public void After(){
+    public void After() {
         driver.quit();
     }
 
+
     @Given("I am on the create account page")
-    public void iAmOnTheCreateAccountPage() { driver.get(ROOT_URL); }
+    public void iAmOnTheCreateAccountPage() {
+        driver.get(ROOT_URL);
+    }
 
     @When("I enter the username {string}")
-    public void iEnterTheUsernameOnLoginPage(String arg0) {
-        driver.findElement(By.id("username")).sendKeys(arg0);
+    public void iEnterTheUsername(String username) {
+        WebElement usernameInput = driver.findElement(By.cssSelector("input[type='text']"));
+        usernameInput.sendKeys(username);
+    }
+
+    @And("I enter the email {string}")
+    public void iEnterTheEmail(String email) {
+        WebElement emailInput = driver.findElement(By.cssSelector("input[type='email']"));
+        emailInput.sendKeys(email);
     }
 
     @And("I enter the password {string}")
-    public void iEnterThePassword(String arg0) {
-        driver.findElement(By.id("password")).sendKeys(arg0);
+    public void iEnterThePassword(String password) {
+        WebElement passwordInput = driver.findElement(By.cssSelector("input[type='password']:nth-of-type(1)"));
+        passwordInput.sendKeys(password);
     }
 
     @And("I press the Create Account button")
     public void iPressTheCreateAccountButton() {
-        driver.findElement(By.id("createaccountBtn")).click();
+        WebElement createAccountButton = driver.findElement(By.xpath("//button[contains(text(), 'Create Account')]"));
+        createAccountButton.click();
     }
 
     @Then("I should get a {string} message")
-    public void iShouldGetAMessage(String arg0) {
-        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("response"), arg0));
-        assertTrue(driver.getPageSource().contains(arg0));
+    public void iShouldGetAMessage(String message) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[contains(text(), '" + message + "')]")));
+        assertTrue(driver.getPageSource().contains(message));
     }
 }
