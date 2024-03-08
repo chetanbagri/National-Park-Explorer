@@ -1,11 +1,223 @@
-button {
-  border-radius: 1rem;
+.landscape-imagee {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  max-height: 600px;
+  border: 5px solid #333;
+  padding: 7px;
 }
 
-button:hover {
-  background-color: lightgray;
+
+.landscape-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  min-height: 50vh;
 }
 
-button:active {
-  background-color: darkgray;
+
+.center {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 44px;
+  font-family: "Lilita One", sans-serif;
+  text-align: center;
+
+}
+
+.bodycss {
+  background: linear-gradient(to bottom, #1f332c, #3d6c7c);
+  /*margin: 0;*/
+  /*min-height: 100vh;*/
+
+}
+
+html, body {
+  /*background: linear-gradient(to bottom, #3d6c7c, white);*/
+
+  height: 100%;
+  margin: 0;
+}
+
+
+
+.list {
+  font-family: "Playfair Display", serif;
+  font-weight: 500;
+  font-size: 20px;
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0 auto;
+
+}
+
+.box {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  padding: 10px;
+  transform: translate(-50%, -50%);
+  font-family: "Playfair Display", serif;
+  font-weight: 400;
+  text-align: center;
+  border: 2px solid #333;
+}
+
+ul {
+  text-align:left;
+  list-style-position:inside;
+}
+
+.btns {
+  position: absolute;
+  top: 10%;
+  left: 95%;
+  transform: translate(-50%, -50%);
+
+  text-align: center;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 3px;
+
+
+}
+
+.btns > div {
+  white-space: nowrap;
+  margin-right: 107px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.login-button {
+  transition: all .5s ease;
+  color: #001F3F;
+  font-family:'Lilita One', sans-serif;
+  background-color : transparent;
+  padding: 10px 15px;
+  margin-right: 30px;
+
+  /*margin: 0 10px;*/
+
+
+  border: 2px solid #001F3F;
+  border-radius: 4px;
+  font-size: 18px;
+}
+
+.login-button:hover{
+  color: white;
+  background-color: #97becd;
+  border: 2px solid #97becd;
+}
+.create-acct {
+  transition: all .5s ease;
+  color: #001F3F;
+  font-family: 'Lilita One', sans-serif;
+  padding: 5px 0px;
+  margin: 0 10px;
+  font-size: 18px;
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+
+}
+.create-acct:hover{
+
+  color: #97becd;
+}
+
+.create-acct:hover::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 80%;
+  height: 2px;
+  background-color: #97becd;
+  animation: underline 0.5s ease-in-out;
+}
+
+@keyframes underline {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 80%;
+  }
+}
+
+
+
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 400px;
+  margin: 200px auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 2px solid #333;
+  border-radius: 8px;
+}
+
+
+.login-form h2 {
+  font-family: "Lilita One", sans-serif;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #333;
+  border-radius: 4px;
+  font-family: "Playfair Display", serif;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 10px 15px;
+  font-family: "Lilita One", sans-serif;
+  font-size: 14px;
+  background-color: black;
+  color: #fff;
+  border: 2px solid #333;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: all .5s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.login-form button:hover {
+
+  background-color: #1f332c;
+}
+
+.login-form .response {
+  text-align: center;
+  margin-top: 10px;
+  color: #f00;
+  font-family: "Playfair Display", serif;
 }
