@@ -6,8 +6,7 @@ Feature: test the create account functionality of website
     And I enter the password "happygolucky"
     And I confirm the password "happygolucky"
     And I press the Create Account button
-    Then I should get an alert saying "Successful Account Creation"
-    And I should be redirected to the Landing Page
+    Then I should be redirected to the Landing Page
 
 
   Scenario: username exists

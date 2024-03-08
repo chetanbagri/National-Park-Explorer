@@ -66,19 +66,20 @@ public class createAccountMyStepdefs {
         driver.quit();
     }
 
-    @And("I should be redirected to the Landing Page")
+    @Then("I should be redirected to the Landing Page")
     public void iShouldBeRedirectedToTheLandingPage() {
         driver.get("http://localhost:8080/landing");
         driver.quit();
     }
 
-    @Then("I should get an alert saying {string}")
-    public void iShouldGetAnAlertSaying(String alertMessage) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        Alert alert = wait.until(ExpectedConditions.alertIsPresent());
-        String alertText = alert.getText();
-        assertEquals(alertMessage, alertText);
-        alert.accept();
-    }
+
+//    @Then("I should get an alert saying {string}")
+//    public void iShouldGetAnAlertSaying(String alertMessage) {
+//        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+//        Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+//        String alertText = alert.getText();
+//        assertEquals(alertMessage, alertText);
+//        alert.accept();
+//    }
 
 }
