@@ -1,5 +1,7 @@
 package edu.usc.csci310.project;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -18,20 +20,19 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(String username, String email, String password) {
-        System.out.println("username:" + username + " email:" + email + " pass:"+ password );
+    public ResponseEntity<?> registerUser(String username, String email, String password) {
         if (userRepository.findByEmail(email) == null && userRepository.findByUsername(username) == null) {
             String hashedPassword = passwordEncoder.encode(password);
             User newUser = new User();
             newUser.setUsername(username);
             newUser.setEmail(email);
             newUser.setPassword(hashedPassword);
-            return userRepository.save(newUser);
-        } else if(userRepository.findByEmail(email) != null) {
-            throw new IllegalStateException("User already exists with this email");
+            return ResponseEntity.ok(userRepository.save(newUser));
+        } else if(userRepository.findByUsername(username) != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists with this username");
         }
         else{
-            throw new IllegalStateException("User already exists with this username");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists with this email");
         }
     }
 }

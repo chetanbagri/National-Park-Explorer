@@ -11,12 +11,16 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
 public class createAccountMyStepdefs {
     private final WebDriver driver = new ChromeDriver();
+
 
     @Given("I am on the create account page")
     public void iAmOnTheCreateAccountPage() {

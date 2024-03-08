@@ -3,17 +3,13 @@ import ReactDOM from "react-dom/client";
 import "./styles/index.css";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import CreateAccount from "./pages/CreateAccount";
-import LandingPage from "./pages/LandingPage";
+import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-        <Routes>
-            <Route path="/" element={<CreateAccount />} />
-            <Route path="/landing" element={<LandingPage />} />
-        </Routes>
+        <App />
     </BrowserRouter>
   </React.StrictMode>
 );

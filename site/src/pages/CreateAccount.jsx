@@ -61,8 +61,7 @@ const CreateAccount = () => {
             const createdUser = await response.json();
             sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
 
-            //alert("Successful Account Creation");
-            //setError("Successful Account Creation");
+            alert("Successful Account Creation");
             navigate('/landing');
         } catch (error) {
             setError(error.message);
