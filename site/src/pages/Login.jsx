@@ -46,6 +46,7 @@ function Login() {
                     <input
                         type="text"
                         id="username"
+                        data-testid="test-username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
@@ -55,12 +56,13 @@ function Login() {
                     <input
                         type="password"
                         id="password"
+                        data-testid="test-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <button id="loginBtn" onClick={handleLogin}>Login</button>
-                {fetchResponse ? <div id="response">{fetchResponse}</div> : null}
+                <button id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login</button>
+                <div id="response" title={"response"}>{fetchResponse}</div>
                 {/*<div id="response">{message}</div>*/}
             </div>
         </div>

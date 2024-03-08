@@ -15,11 +15,11 @@ function Home() {
         <div className="bodycss">
             <div className="btns">
                 <div>
-                    <button className="login-button" onClick={handleLoginClick}>
+                    <button  data-testid="test-loginBtn" className="login-button" onClick={handleLoginClick} title={"login-button"}>
                         Login
                     </button>
                     <Link to="/create-account" className="create-acct">
-                        Create Account
+                        Create Account Page
                     </Link>
                 </div>
             </div>
