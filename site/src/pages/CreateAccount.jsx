@@ -71,11 +71,11 @@ const CreateAccount = () => {
 
     return (
         <div>
-            <h2>Create Account</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            <h2>Create Account Page</h2>
+            {<p title="error" style={{ color: "red" }}>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Username:</label>
+                    <label htmlFor={"username"}>Username:</label>
                     <input
                         id="username"
                         type="text"
@@ -84,7 +84,7 @@ const CreateAccount = () => {
                     />
                 </div>
                 <div>
-                    <label>Email:</label>
+                    <label htmlFor={"email"}>Email:</label>
                     <input
                         id="email"
                         type="email"
@@ -93,16 +93,17 @@ const CreateAccount = () => {
                     />
                 </div>
                 <div>
-                    <label>Password:</label>
+                    <label htmlFor={"password"}>Password:</label>
                     <input
                         id="password"
                         type="password"
                         value={password}
+                        title={"password"}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
                 <div>
-                    <label>Confirm Password:</label>
+                    <label htmlFor={"confirmPassword"}>Confirm Password:</label>
                     <input
                         id="confirmPassword"
                         type="password"
@@ -110,10 +111,10 @@ const CreateAccount = () => {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                 </div>
-                <button id="submission" type="submit">Create Account</button>
+                <button id="submission" type="submit" name={"submit"} role={"button"} title={"submitcreateaccount"}>Create Account</button>
             </form>
         </div>
-    );
-};
+    )
+}
 
 export default CreateAccount;
