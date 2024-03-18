@@ -24,6 +24,6 @@
 | Final Project Score      |
 | ------------------------ | ----------------- |
 | Points Grained           | 76.9              |
-| Sustainable Pace Penalty | 28.0              |
-| Total Project Score      | 104.9/800         |
+| Sustainable Pace Penalty | -28.0             |
+| Total Project Score      | 48.9/800          |
 | ------------------------ | ----------------- |
