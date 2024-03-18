@@ -1,0 +1,22 @@
+Best Practice Coverage Report
+Sprint 1
+Team: team 20 (20)
+Repository: project-team-20
+Commit: 7df16614bf8139444764a8b3000c3c0611b6b6cc
+Grade: 6.9/12
+
+Details:
+    Java Code
+        Statement Coverage: 29.7%
+        Branch Coverage: 0.0%
+    JavaScript Code
+        Statement Coverage Normalized: 100.0%
+        Statement Coverage Raw: 100.0%
+        Branch Coverage Normalized: 100.0%
+        Branch Coverage Raw: 100.0%
+
+    Overall average: 57.4%
+
+
+    Notes:
+        -- Coverage reports from Jest and Jacoco have been uploaded to your repository.
