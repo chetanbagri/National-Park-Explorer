@@ -108,6 +108,7 @@ The create account functionality was incomplete from last sprint. I chose to com
 
 ## Task Chart
 Embed screenshot of the initial task chart
+![image](https://github.com/CSCI310-20241/project-team-20/assets/89752707/e7156662-f965-46ec-bb51-92d18c7ac9a1)
 
 
 
