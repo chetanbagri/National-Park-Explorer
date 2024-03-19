@@ -4,7 +4,7 @@ The required contents of this file are described in the *Sprint Retrospective* s
 ## List of Meeting Participants
 1. Nicholas Schumacher (Present)
 2. Chetan Bagri (Absent)
-3. Anika Patel (Absent)
+3. Anika Patel (Present)
 4. Jainee Shah (Present)
 5. Mahum Syed (Present)
 
