@@ -10,7 +10,7 @@ The required contents of this file are described in the *Daily Scrums* section o
 
 ## Meeting Documentation
 1. Include selfie and written out text for the three questions, **OR**
-2. Link to Zoom video
+2. [Link to Zoom video](https://usc.zoom.us/rec/share/lMwnZmPFNZ6WNFbl2wDt49yfy1TbM6iyoiRxAVQFsWk345IQPxMeytLxEhlVQ2Nm.r9gKTdSUp4xVWKki?startTime=1710958761000)
 
 ## Task Chart
 Embed screenshot of the task chart, reflecting all updates from the Scrum meeting.
