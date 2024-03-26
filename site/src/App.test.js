@@ -28,7 +28,6 @@ test("full login rendering", async () => {
 test("Submit invalid login form and get fecthed response", async () => {
     fetch.mockResponseOnce(JSON.stringify({ data: "Login Unsuccessful" }));
 
-    const user = userEvent.setup();
     render(<Login />, { wrapper: BrowserRouter });
 
     // verify page content for default route
