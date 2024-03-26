@@ -2,7 +2,6 @@ import React from "react";
 import {render, screen, fireEvent} from "@testing-library/react";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import userEvent from "@testing-library/user-event";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 
@@ -15,7 +14,6 @@ beforeEach(() => {
 });
 
 test("full login rendering", async () => {
-    const user = userEvent.setup();
     render(<Login />, { wrapper: BrowserRouter });
 
     // verify page content for default route
@@ -28,7 +26,6 @@ test("full login rendering", async () => {
 test("Submit invalid login form and get fecthed response", async () => {
     fetch.mockResponseOnce(JSON.stringify({ data: "Login Unsuccessful" }));
 
-    const user = userEvent.setup();
     render(<Login />, { wrapper: BrowserRouter });
 
     // verify page content for default route
@@ -67,7 +64,6 @@ test("Test default null fetched response (inputs don't matter)", async () => {
 });
 
 test("test App.js file + Home.jsx", async () => {
-    const user = userEvent.setup();
     render(<App />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
     // verify page content for default route
@@ -76,7 +72,6 @@ test("test App.js file + Home.jsx", async () => {
 });
 
 test("test Home.jsx render and navigation", async () => {
-    const user = userEvent.setup();
     render(<Home />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
     // verify page content for default route
