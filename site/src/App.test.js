@@ -49,7 +49,6 @@ test("Submit invalid login form and get fecthed response", async () => {
 test("Test default null fetched response (inputs don't matter)", async () => {
     fetch.mockResponseOnce(JSON.stringify({ }));
 
-    const user = userEvent.setup();
     render(<Login />, { wrapper: BrowserRouter });
 
     // verify page content for default route
