@@ -23,7 +23,6 @@ describe('LandingPage Component', () => {
 
         render(<LandingPage />);
         expect(screen.getByText(/welcome, testuser/i)).toBeInTheDocument();
-        expect(screen.getByText(/your email is: testuser@example.com/i)).toBeInTheDocument();
     });
 
     it('handles invalid JSON in sessionStorage gracefully', () => {

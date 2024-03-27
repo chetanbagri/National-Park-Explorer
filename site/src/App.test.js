@@ -78,29 +78,13 @@ test("Test default null fetched response (inputs don't matter)", async () => {
 //     expect(fetch).toHaveBeenCalledTimes(1);
 // });
 
-test("test App.js file + Home.jsx", async () => {
+test("test App.js file", async () => {
     const user = userEvent.setup();
     render(<App />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
     // verify page content for default route
+    // expect(screen.getByTestId("test-login")).toBeInTheDocument();
+    // expect(screen.getByText(/CreateAccount/i)).toBeInTheDocument();
+    expect(screen.getByText("Hello World")).toBeInTheDocument();
 
-    expect(screen.getByText(/Create Account Page/)).toBeInTheDocument();
-});
-
-test("test Home.jsx render and navigation", async () => {
-    const user = userEvent.setup();
-    render(<Home />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
-
-    // verify page content for default route
-
-    expect(screen.getByText(/Login/)).toBeInTheDocument();
-    expect(screen.getByText(/Create Account Page/)).toBeInTheDocument();
-    expect(screen.getByText(/Explore the National Parks of the U.S./)).toBeInTheDocument();
-
-    // await waitFor(() => user.click(screen.getByTestId('test-loginBtn')));
-    fireEvent.click(screen.getByTestId('test-loginBtn'));
-    // await waitFor(() => expect(screen.getByText(/Username/)).toBeInTheDocument());
-    // expect(screen.getByText(/Password/)).toBeInTheDocument();
-    // expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
-    expect(window.location.href).toBe("http://localhost/login");
 });

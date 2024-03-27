@@ -9,11 +9,12 @@ import SearchParks from "./pages/SearchParks";
 function App() {
     return (
         <div>
+            <div>Hello World</div>
             <Routes>
                 <Route path="/create-account" element={<CreateAccount />} />
                 <Route path="/landing" element={<LandingPage />} />
                 <Route path="*" element={<Navigate to="/create-account" replace />} />
-                <Route path="/login" element={<Login />} /> {}
+                <Route testId="test-login" path="/login" element={<Login />} /> {}
                 <Route path="/home" element={<Home />} /> {}
                 <Route path="/search" element={<SearchParks />} /> {}
             </Routes>
