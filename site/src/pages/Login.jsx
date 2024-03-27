@@ -4,34 +4,32 @@ import { useNavigate } from "react-router-dom";
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    const [ fetchResponse, handleFetchResponse ] = useState();
-
-    const handleLogin = () => {
+    const handleLogin = async (e) => {
         //add actual functionality
-        setMessage('Logging in...');
-
-        fetch("/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                param0: document.getElementById("username").value,
-                param1: document.getElementById("password").value
+        e.preventDefault();
+        try {
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({username, password})
             })
-        })
-        .then((response) => response.json())
-        .then((response) => {
-            if(response?.data){
-                handleFetchResponse(response.data);
-                // if(fetchResponse != null && fetchResponse === "Login Unsuccessful, one more attempt to log in allowed"){
-                //     navigate("/AccountBlockedPage");
-                // }
+            if(response.ok)
+                navigate('/landing');
+            else {
+                const errorText = await response.text();
+                setError(`Login failed: ${errorText}`)
             }
-        });
+        }
+        catch(error){
+            setError(error.message);
+        }
+
+
     };
 
     return (
@@ -41,6 +39,7 @@ function Login() {
 
             <div className="login-form">
                 <h2>Login</h2>
+                {<p title="error" id="error" style={{ color: "red" }}>{error}</p>}
                 <div>
                     <label htmlFor="username">Username:</label>
                     <input
@@ -61,9 +60,12 @@ function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <button id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login</button>
-                <div id="response" title={"response"}>{fetchResponse}</div>
-                {/*<div id="response">{message}</div>*/}
+                <div>
+                    <button id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login</button>
+                </div>
+                <div>
+                    <a href="/create-account">Create Account</a>
+                </div>
             </div>
         </div>
     );

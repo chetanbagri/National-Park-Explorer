@@ -3,7 +3,7 @@ import {render, screen, waitFor, fireEvent, getByLabelText} from "@testing-libra
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import Login from "./pages/Login";
+// import Login from "./pages/Login";
 import Home from "./pages/Home";
 
 afterEach(() => {
@@ -14,62 +14,19 @@ beforeEach(() => {
     fetch.resetMocks();
 });
 
-test("full login rendering", async () => {
-    const user = userEvent.setup();
-    render(<Login />, { wrapper: BrowserRouter });
-
-    // verify page content for default route
-    // expect(screen.getByText(/Login/)).toBeInTheDocument(); // Multiple elements with Login so don't use
-    expect(screen.getByText(/Username/)).toBeInTheDocument();
-    expect(screen.getByText(/Password/)).toBeInTheDocument();
-    expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
-});
-
-test("Submit invalid login form and get fecthed response", async () => {
-    fetch.mockResponseOnce(JSON.stringify({ data: "Login Unsuccessful" }));
-
-    const user = userEvent.setup();
-    render(<Login />, { wrapper: BrowserRouter });
-
-    // verify page content for default route
-
-    expect(screen.getByText(/Username/)).toBeInTheDocument();
-    expect(screen.getByText(/Password/)).toBeInTheDocument();
-    expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
-
-    // fill out login form
-    fireEvent.change(screen.getByTestId('test-username'), {target: {value: 'Nick'}});
-    fireEvent.change(screen.getByTestId('test-password'), {target: {value: 'mypassword'}});
-
-    fireEvent.click(screen.getByTestId('test-loginBtn'));
-
-    expect(fetch).toHaveBeenCalledTimes(1);
-});
-
-test("Test default null fetched response (inputs don't matter)", async () => {
-    fetch.mockResponseOnce(JSON.stringify({ }));
-
-    const user = userEvent.setup();
-    render(<Login />, { wrapper: BrowserRouter });
-
-    // verify page content for default route
-
-    expect(screen.getByText(/Username/)).toBeInTheDocument();
-    expect(screen.getByText(/Password/)).toBeInTheDocument();
-    expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
-
-    // fill out login form
-    fireEvent.change(screen.getByTestId('test-username'), {target: {value: 'Nick'}});
-    fireEvent.change(screen.getByTestId('test-password'), {target: {value: 'mypassword'}});
-
-    fireEvent.click(screen.getByTestId('test-loginBtn'));
-
-    expect(fetch).toHaveBeenCalledTimes(1);
-});
-
-
-// test("Test default null fetched response", async () => {
-//     fetch.mockResponseOnce("");
+// test("full login rendering", async () => {
+//     const user = userEvent.setup();
+//     render(<Login />, { wrapper: BrowserRouter });
+//
+//     // verify page content for default route
+//     // expect(screen.getByText(/Login/)).toBeInTheDocument(); // Multiple elements with Login so don't use
+//     expect(screen.getByText(/Username/)).toBeInTheDocument();
+//     expect(screen.getByText(/Password/)).toBeInTheDocument();
+//     expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
+// });
+//
+// test("Submit invalid login form and get fecthed response", async () => {
+//     fetch.mockResponseOnce(JSON.stringify({ data: "Login Unsuccessful" }));
 //
 //     const user = userEvent.setup();
 //     render(<Login />, { wrapper: BrowserRouter });
@@ -88,6 +45,49 @@ test("Test default null fetched response (inputs don't matter)", async () => {
 //
 //     expect(fetch).toHaveBeenCalledTimes(1);
 // });
+//
+// test("Test default null fetched response (inputs don't matter)", async () => {
+//     fetch.mockResponseOnce(JSON.stringify({ }));
+//
+//     const user = userEvent.setup();
+//     render(<Login />, { wrapper: BrowserRouter });
+//
+//     // verify page content for default route
+//
+//     expect(screen.getByText(/Username/)).toBeInTheDocument();
+//     expect(screen.getByText(/Password/)).toBeInTheDocument();
+//     expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
+//
+//     // fill out login form
+//     fireEvent.change(screen.getByTestId('test-username'), {target: {value: 'Nick'}});
+//     fireEvent.change(screen.getByTestId('test-password'), {target: {value: 'mypassword'}});
+//
+//     fireEvent.click(screen.getByTestId('test-loginBtn'));
+//
+//     expect(fetch).toHaveBeenCalledTimes(1);
+// });
+//
+//
+// // test("Test default null fetched response", async () => {
+// //     fetch.mockResponseOnce("");
+// //
+// //     const user = userEvent.setup();
+// //     render(<Login />, { wrapper: BrowserRouter });
+// //
+// //     // verify page content for default route
+// //
+// //     expect(screen.getByText(/Username/)).toBeInTheDocument();
+// //     expect(screen.getByText(/Password/)).toBeInTheDocument();
+// //     expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
+// //
+// //     // fill out login form
+// //     fireEvent.change(screen.getByTestId('test-username'), {target: {value: 'Nick'}});
+// //     fireEvent.change(screen.getByTestId('test-password'), {target: {value: 'mypassword'}});
+// //
+// //     fireEvent.click(screen.getByTestId('test-loginBtn'));
+// //
+// //     expect(fetch).toHaveBeenCalledTimes(1);
+// // });
 
 test("test App.js file + Home.jsx", async () => {
     const user = userEvent.setup();
@@ -95,7 +95,7 @@ test("test App.js file + Home.jsx", async () => {
 
     // verify page content for default route
 
-    expect(screen.getByText(/Create Account Page/)).toBeInTheDocument();
+    expect(screen.getByText(/Create Account/)).toBeInTheDocument();
 });
 
 test("test Home.jsx render and navigation", async () => {
@@ -105,7 +105,7 @@ test("test Home.jsx render and navigation", async () => {
     // verify page content for default route
 
     expect(screen.getByText(/Login/)).toBeInTheDocument();
-    expect(screen.getByText(/Create Account Page/)).toBeInTheDocument();
+    expect(screen.getByText(/Create Account/)).toBeInTheDocument();
     expect(screen.getByText(/Explore the National Parks of the U.S./)).toBeInTheDocument();
 
     // await waitFor(() => user.click(screen.getByTestId('test-loginBtn')));

@@ -3,44 +3,43 @@ import { useNavigate } from "react-router-dom";
 
 const CreateAccount = () => {
     const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
+    const [showCancelDiv, setCancelDiv] = useState(false);
     const navigate = useNavigate();
+
+    const handleCancel = () => {
+        setCancelDiv(true);
+    };
+
+    const handleNo = () => {
+        setCancelDiv(false); // Hide the modal
+    };
+
+    const handleYes = () => {
+        navigate('/login'); // Redirect to login page
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!username){
-            setError("Username cannot be empty");
-            return;
-        }
-        if (!email){
-            setError("Email cannot be empty");
-            return;
-        }
-        if (!password){
-            setError("Password cannot be empty");
-            return;
-        }
-        if (!confirmPassword){
-            setError("Confirm Password cannot be empty");
-            return;
-        }
-        if (password.length<12){
-            setError("Password must be at least 12 characters long");
-            return;
-        }
-        if (password !== confirmPassword) {
-            setError("Passwords do not match");
-            return;
-        }
+        // if (!username){
+        //     setError("Username cannot be empty");
+        //     return;
+        // }
+        // if (!password){
+        //     setError("Password cannot be empty");
+        //     return;
+        // }
+        // if (!confirmPassword){
+        //     setError("Confirm Password cannot be empty");
+        //     return;
+        // }
+        // if (password !== confirmPassword) {
+        //     setError("Passwords do not match");
+        //     return;
+        // }
         setError("");
 
-        const userData = {
-            username: username,
-            email: email,
-            password: password
-        };
 
         try {
             const response = await fetch('/register', {
@@ -48,8 +47,8 @@ const CreateAccount = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
-            });
+                body: JSON.stringify({username, password})
+            })
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -61,8 +60,7 @@ const CreateAccount = () => {
             const createdUser = await response.json();
             sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
 
-            alert("Successful Account Creation");
-            navigate('/landing');
+            navigate('/login');
         } catch (error) {
             setError(error.message);
         }
@@ -70,48 +68,53 @@ const CreateAccount = () => {
 
     return (
         <div>
-            <h2>Create Account Page</h2>
-            {<p title="error" style={{ color: "red" }}>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor={"username"}>Username:</label>
-                    <input
-                        id="username"
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
+            <div className="createAccount-form">
+                <h2>Create Account</h2>
+                {<p title="error" id="error" style={{ color: "red" }}>{error}</p>}
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <label htmlFor={"username"}>Username:</label>
+                        <input
+                            id="username"
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor={"password"}>Password:</label>
+                        <input
+                            id="password"
+                            type="password"
+                            value={password}
+                            title={"password"}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor={"confirmPassword"}>Confirm Password:</label>
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                    </div>
+                    <button id="submission" type="submit" name={"submit"} role={"button"} title={"submitcreateaccount"}>Create Account</button>
+                    <button id= "cancel" type="button" onClick={handleCancel}>Cancel</button>
+                </form>
+            </div>
+            {showCancelDiv && (
+                <div className="modal-backdrop">
+                    <div className="modal-content">
+                        <p>Are you sure you want to cancel your account creation?</p>
+                        <div>
+                            <button id="yes" onClick={handleYes}>Yes</button>
+                            <button id="no" onClick={handleNo}>No</button>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label htmlFor={"email"}>Email:</label>
-                    <input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label htmlFor={"password"}>Password:</label>
-                    <input
-                        id="password"
-                        type="password"
-                        value={password}
-                        title={"password"}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label htmlFor={"confirmPassword"}>Confirm Password:</label>
-                    <input
-                        id="confirmPassword"
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
-                </div>
-                <button id="submission" type="submit" name={"submit"} role={"button"} title={"submitcreateaccount"}>Create Account</button>
-            </form>
+            )}
         </div>
     )
 }
