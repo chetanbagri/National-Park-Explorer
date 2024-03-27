@@ -13,10 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
-
 import java.time.Duration;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -26,7 +23,6 @@ public class createAccountMyStepdefs {
     @Autowired
     private UserService userService;
 
-    private static boolean finalized = false;
 
     @Given("I am on the create account page")
     public void iAmOnTheCreateAccountPage() {
@@ -79,7 +75,6 @@ public class createAccountMyStepdefs {
 
     @And("I press the Yes button")
     public void iPressTheYesButton() {
-        finalized = true;
         WebElement createAccountButton = driver.findElement(By.id("yes"));
         createAccountButton.click();
     }
@@ -94,6 +89,7 @@ public class createAccountMyStepdefs {
     public void iShouldBeBackOnTheCreateAccountPage() {
         String currentUrl = driver.getCurrentUrl();
         assertEquals("http://localhost:8080/create-account", currentUrl);
+        userService.removeUser("Alice");
     }
 
     @And("I should see the username field filled with the name {string}")
@@ -106,9 +102,6 @@ public class createAccountMyStepdefs {
 
     @After
     public void tearDown() {
-        if(finalized) {
-            ResponseEntity<?> response = userService.removeUser("Alice");
-        }
         driver.quit();
     }
 }

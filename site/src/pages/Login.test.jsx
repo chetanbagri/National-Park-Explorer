@@ -2,7 +2,6 @@ import React from 'react';
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Login from './Login';
-import CreateAccount from "./CreateAccount";
 
 // Mock navigate from react-router-dom
 jest.mock('react-router-dom', () => ({
@@ -63,7 +62,7 @@ describe('Login Component', () => {
         fireEvent.click(screen.getByRole('button', { name: /login/i }));
 
         // Wait for the error message to appear
-        const errorMessage = await screen.findByText(/Login failed: Invalid credentials/i);
+        const errorMessage = await screen.findByText(/Error: Invalid credentials/i);
         expect(errorMessage).toBeInTheDocument();
     });
 

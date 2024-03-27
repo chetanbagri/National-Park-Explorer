@@ -52,11 +52,9 @@ const CreateAccount = () => {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                setError(`Failed to create account: ${errorText}`);
+                setError(`Error: ${errorText}`);
                 return;
             }
-
-            // Assuming the backend responds with the created user data
 
             navigate('/login');
         } catch (error) {

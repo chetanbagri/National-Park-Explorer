@@ -100,7 +100,7 @@ describe('CreateAccount Component', () => {
 
         // Wait for the error message to be displayed
         await waitFor(() => {
-            expect(screen.getByText(/Failed to create account: Error creating account/i)).toBeInTheDocument();
+            expect(screen.getByText(/Error: Error creating account/i)).toBeInTheDocument();
         });
     });
 

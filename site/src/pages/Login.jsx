@@ -25,7 +25,7 @@ function Login() {
             }
             else {
                 const errorText = await response.text();
-                setError(`Login failed: ${errorText}`)
+                setError(`Error: ${errorText}`)
             }
         }
         catch(error){

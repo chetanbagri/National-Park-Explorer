@@ -13,7 +13,6 @@ public class UserService {
 
     @Autowired
     public void setMyRepository(UserRepository userRepository) {
-        System.out.println("UserRepository set in UserService");
         this.userRepository = userRepository;
     }
 
@@ -24,16 +23,13 @@ public class UserService {
 
     public ResponseEntity<?> registerUser(String username, String password, String confirmPassword) {
         if (userRepository.findByUsername(username) == null) {
-            System.out.println("Entered the if block");
             int checker= isValidPassword(password);
             if (checker!=4) {
-                System.out.println("Inside checker");
                 if(checker == 1) return ResponseEntity.badRequest().body("Password must have one uppercase character");
                 if(checker == 2) return ResponseEntity.badRequest().body("Password must have one lowercase character");
                 if(checker == 3) return ResponseEntity.badRequest().body("Password must have one numerical character");
             }
             if(!confirmPassword.equals(password)) return ResponseEntity.badRequest().body("Password and confirm password must match");
-            System.out.println("Reached after same passwords");
             String hashedPassword = passwordEncoder.encode(password);
             User newUser = new User();
             newUser.setTime1(0L);
@@ -41,11 +37,9 @@ public class UserService {
             newUser.setLockoutTime(0L);
             newUser.setUsername(username);
             newUser.setPassword(hashedPassword);
-            System.out.println("Reached before database entry");
             return ResponseEntity.ok(userRepository.save(newUser));
         } else {
-            System.out.println("Reached else");
-            return ResponseEntity.badRequest().body("User already exists with this username");
+            return ResponseEntity.badRequest().body("Username exists");
         }
     }
 
@@ -58,8 +52,7 @@ public class UserService {
                 user.setTime2(0L);
                 user.setLockoutTime(System.currentTimeMillis());
                 userRepository.save(user);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have to wait 30 seconds before trying" +
-                        " to log in again. Lockout timer has been reset");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wait 30 seconds!");
 
             }
             else {
@@ -77,10 +70,9 @@ public class UserService {
                     } else if (user.getTime2() == 0L) {
                         user.setTime2(System.currentTimeMillis());
                         userRepository.save(user);
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect password. One more and " +
-                                "you may get locked out");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("One more fail may lockout");
                     } else {
-                        if (System.currentTimeMillis() - user.getTime1() < 60000) {
+                        if ((System.currentTimeMillis() - user.getTime1()) < 60000) {
                             user.setLockoutTime(System.currentTimeMillis());
                             user.setTime1(0L);
                             user.setTime2(0L);
@@ -90,8 +82,7 @@ public class UserService {
                             user.setTime1(user.getTime2());
                             user.setTime2(System.currentTimeMillis());
                             userRepository.save(user);
-                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect password. One more and " +
-                                    "you may get locked out");
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("One more fail may lockout");
                         }
                     }
                 }
