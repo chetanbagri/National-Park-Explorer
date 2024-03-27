@@ -47,7 +47,7 @@ public class loginStepdefs {
         driver.findElement(By.id("loginBtn")).click();
     }
 
-    @Then("I should get a {string} message displayed")
+    @Then("I should see {string}")
     public void iShouldGetAMessageDisplayed(String arg0) {
         wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("response"), arg0));
         assertTrue(driver.getPageSource().contains(arg0));

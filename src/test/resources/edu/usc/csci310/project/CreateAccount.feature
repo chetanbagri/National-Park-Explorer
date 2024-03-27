@@ -15,7 +15,7 @@ Feature: test the create account functionality of website
     And I enter the password "happygolucky"
     And I confirm the password "happygolucky"
     And I press the Create Account button
-    Then I should get a "Failed to create account: Username exists" message
+    Then I should get a "Failed to create account: User already exists with this username" message
 
   Scenario: email exists
     Given I am on the create account page
@@ -24,4 +24,4 @@ Feature: test the create account functionality of website
     And I enter the password "happygolucky"
     And I confirm the password "happygolucky"
     And I press the Create Account button
-    Then I should get a "Failed to create account: Email exists" message
+    Then I should get a "Failed to create account: User already exists with this email" message
