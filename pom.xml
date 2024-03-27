@@ -25,6 +25,8 @@
         <httpclient5.version>5.2.1</httpclient5.version>
         <mockito.version>5.8.0</mockito.version>
         <jacoco.version>0.8.11</jacoco.version>
+        <argLine>-Dnet.bytebuddy.experimental=true</argLine>
+
     </properties>
 
     <dependencies>
