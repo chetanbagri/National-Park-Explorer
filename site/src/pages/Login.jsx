@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import logo from '../images/login_camping_logo.png';
+import Footer from '../components/Footer.jsx'
+import '../styles/login.css'
+
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -35,10 +39,15 @@ function Login() {
     };
 
     return (
-
-
         <div className="login-page">
-
+            <div className="login-header">
+                <p className="login-header-p">Team 20</p>
+            </div>
+            <div className="logo-image-div">
+                <img className="logo-image"
+                     src={logo}
+                     alt="Campfire logo and Let's Go Camping! message in bright green"/>
+            </div>
             <div className="login-form">
                 <h2>Login</h2>
                 <div>
@@ -65,6 +74,7 @@ function Login() {
                 <div id="response" title={"response"}>{fetchResponse}</div>
                 {/*<div id="response">{message}</div>*/}
             </div>
+            <Footer />
         </div>
     );
 }

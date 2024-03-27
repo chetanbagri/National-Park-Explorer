@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -28,5 +30,14 @@ class SpringBootAPITest {
             SpringBootAPI.main(args);
             mockSpringApplication.verify(() -> SpringApplication.run(SpringBootAPI.class, args));
         }
+    }
+
+    @Test
+    void testRedirect() {
+        SpringBootAPI springBootAPI = new SpringBootAPI();
+
+        String result = springBootAPI.redirect();
+
+        assertEquals("forward:/", result);
     }
 }

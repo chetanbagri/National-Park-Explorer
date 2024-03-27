@@ -1,5 +1,6 @@
 package edu.usc.csci310.project;
 
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -8,10 +9,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 import java.time.Duration;
 
@@ -21,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class createAccountMyStepdefs {
     private final WebDriver driver = new ChromeDriver();
 
+    @Autowired
+    private UserService userService;
+
+    private static boolean finalized = false;
 
     @Given("I am on the create account page")
     public void iAmOnTheCreateAccountPage() {
@@ -31,12 +37,6 @@ public class createAccountMyStepdefs {
     public void iEnterTheUsername(String username) {
         WebElement usernameInput = driver.findElement(By.id("username"));
         usernameInput.sendKeys(username);
-    }
-
-    @And("I enter the email {string}")
-    public void iEnterTheEmail(String email) {
-        WebElement emailInput = driver.findElement(By.id("email"));
-        emailInput.sendKeys(email);
     }
 
     @And("I enter the password {string}")
@@ -51,8 +51,8 @@ public class createAccountMyStepdefs {
         confirmPasswordInput.sendKeys(confirmPassword);
     }
 
-    @And("I press the Create Account button")
-    public void iPressTheCreateAccountButton() {
+    @And("I press the Create User button")
+    public void iPressTheCreateUserButton() {
         WebElement createAccountButton = driver.findElement(By.id("submission"));
         createAccountButton.click();
     }
@@ -60,26 +60,55 @@ public class createAccountMyStepdefs {
     @Then("I should get a {string} message")
     public void iShouldGetAMessage(String message) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"root\"]/div/div/p")));
-        WebElement messageElement = driver.findElement(By.xpath("//*[@id=\"root\"]/div/div/p"));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("error")));
+        WebElement messageElement = driver.findElement(By.id("error"));
         assertEquals(message, messageElement.getText());
-        driver.quit();
     }
 
-    @Then("I should be redirected to the Landing Page")
-    public void iShouldBeRedirectedToTheLandingPage() {
-        driver.get("http://localhost:8080/landing");
-        driver.quit();
+    @Then("I should be redirected to the Login Page")
+    public void iShouldBeRedirectedToTheLoginPage() {
+        driver.get("http://localhost:8080/login");
     }
 
 
-//    @Then("I should get an alert saying {string}")
-//    public void iShouldGetAnAlertSaying(String alertMessage) {
-//        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-//        Alert alert = wait.until(ExpectedConditions.alertIsPresent());
-//        String alertText = alert.getText();
-//        assertEquals(alertMessage, alertText);
-//        alert.accept();
-//    }
+    @And("I press the Cancel button")
+    public void iPressTheCancelButton() {
+        WebElement createAccountButton = driver.findElement(By.id("cancel"));
+        createAccountButton.click();
+    }
 
+    @And("I press the Yes button")
+    public void iPressTheYesButton() {
+        finalized = true;
+        WebElement createAccountButton = driver.findElement(By.id("yes"));
+        createAccountButton.click();
+    }
+
+    @And("I press the No button")
+    public void iPressTheNoButton() {
+        WebElement createAccountButton = driver.findElement(By.id("no"));
+        createAccountButton.click();
+    }
+
+    @Then("I should be back on the create account page")
+    public void iShouldBeBackOnTheCreateAccountPage() {
+        String currentUrl = driver.getCurrentUrl();
+        assertEquals("http://localhost:8080/create-account", currentUrl);
+    }
+
+    @And("I should see the username field filled with the name {string}")
+    public void iShouldSeeTheUsernameFieldFilledWithTheName(String arg0) {
+        WebElement usernameInput = driver.findElement(By.id("username"));
+        String actualUsername = usernameInput.getAttribute("value");
+
+        assertEquals(arg0, actualUsername);
+    }
+
+    @After
+    public void tearDown() {
+        if(finalized) {
+            ResponseEntity<?> response = userService.removeUser("Alice");
+        }
+        driver.quit();
+    }
 }

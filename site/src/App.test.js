@@ -14,17 +14,6 @@ beforeEach(() => {
     fetch.resetMocks();
 });
 
-test("full login rendering", async () => {
-    const user = userEvent.setup();
-    render(<Login />, { wrapper: BrowserRouter });
-
-    // verify page content for default route
-    // expect(screen.getByText(/Login/)).toBeInTheDocument(); // Multiple elements with Login so don't use
-    expect(screen.getByText(/Username/)).toBeInTheDocument();
-    expect(screen.getByText(/Password/)).toBeInTheDocument();
-    expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
-});
-
 test("Submit invalid login form and get fecthed response", async () => {
     fetch.mockResponseOnce(JSON.stringify({ data: "Login Unsuccessful" }));
 

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
+import Header from '../components/Header.jsx';
+import Footer from "../components/Footer.jsx";
+
 const CreateAccount = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -70,6 +73,7 @@ const CreateAccount = () => {
 
     return (
         <div>
+            <Header />
             <h2>Create Account Page</h2>
             {<p title="error" style={{ color: "red" }}>{error}</p>}
             <form onSubmit={handleSubmit}>
@@ -112,6 +116,7 @@ const CreateAccount = () => {
                 </div>
                 <button id="submission" type="submit" name={"submit"} role={"button"} title={"submitcreateaccount"}>Create Account</button>
             </form>
+            <Footer />
         </div>
     )
 }
