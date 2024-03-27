@@ -21,18 +21,17 @@ public class loginStepdefs {
     private UserService userService;
 
     private static boolean initialized = false;
-    private static boolean finalized = false;
+    private static boolean end = false;
 
 
     @Before
     public void setup(){
         if(!initialized) {
-            ResponseEntity<?> response = userService.registerUser("Alice", "Happy1", "Happy1");
+            ResponseEntity<?> response = userService.registerUser("Bob", "Happy1", "Happy1");
             initialized  = true;
         }
 
     }
-
 
     @Given("I am on the login page")
     public void iAmOnTheLoginPage() {
@@ -65,12 +64,14 @@ public class loginStepdefs {
     @Given("I have failed twice to log within the last 60 seconds")
     public void iHaveFailedTwiceToLogWithinTheLast60Seconds() {
         WebElement usernameInput = driver.findElement(By.id("username"));
-        usernameInput.sendKeys("Alice");
+        usernameInput.sendKeys("Bob");
         WebElement passwordInput = driver.findElement(By.id("password"));
         passwordInput.sendKeys("wrongPassword");
         WebElement loginButton = driver.findElement(By.id("loginBtn"));
         loginButton.click();
         loginButton.click();
+        usernameInput.sendKeys("");
+        passwordInput.sendKeys("");
     }
 
     @Then("I should get a login {string} message")
@@ -78,13 +79,13 @@ public class loginStepdefs {
         WebElement messageElement = driver.findElement(By.id("error"));
         assertEquals(expectedMessage, messageElement.getText());
         if(expectedMessage.equals("Incorrect password. One more and you may get locked out"))
-            finalized = true;
+            end = true;
     }
 
     @Given("I have gotten locked out")
     public void iHaveGottenLockedOut() {
         WebElement usernameInput = driver.findElement(By.id("username"));
-        usernameInput.sendKeys("Alice");
+        usernameInput.sendKeys("Bob");
         WebElement passwordInput = driver.findElement(By.id("password"));
         passwordInput.sendKeys("wrongPassword");
         WebElement loginButton = driver.findElement(By.id("loginBtn"));
@@ -98,23 +99,24 @@ public class loginStepdefs {
         Thread.sleep(30000);
     }
 
-    @Given("I have failed my second login in the last 61 seconds")
+    @And("I have failed my second login in the last 61 seconds")
     public void iHaveFailedMySecondLoginInTheLast70Seconds() throws InterruptedException {
         WebElement usernameInput = driver.findElement(By.id("username"));
-        usernameInput.sendKeys("Alice");
+        usernameInput.sendKeys("Bob");
         WebElement passwordInput = driver.findElement(By.id("password"));
         passwordInput.sendKeys("wrongPassword");
         WebElement loginButton = driver.findElement(By.id("loginBtn"));
         loginButton.click();
         loginButton.click();
         Thread.sleep(61000);
+        usernameInput.sendKeys("");
+        passwordInput.sendKeys("");
     }
 
-//    @After
-//    public void tearDown() {
-//        if(finalized) {
-//            ResponseEntity<?> response = userService.removeUser("Alice");
-//        }
-//        driver.quit();
-//    }
+    @After
+    public void tearDown() {
+        if(end) {
+            ResponseEntity<?> response = userService.removeUser("Bob");
+        }
+    }
 }

@@ -13,6 +13,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RUser user) {
+        System.out.println(user.getConfirmPassword());
         return userService.registerUser(user.getUsername(), user.getPassword(), user.getConfirmPassword());
     }
 

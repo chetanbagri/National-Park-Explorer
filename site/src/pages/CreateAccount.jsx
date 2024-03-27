@@ -47,7 +47,7 @@ const CreateAccount = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({username, password})
+                body: JSON.stringify({username, password, confirmPassword})
             })
 
             if (!response.ok) {
@@ -57,8 +57,6 @@ const CreateAccount = () => {
             }
 
             // Assuming the backend responds with the created user data
-            const createdUser = await response.json();
-            sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
 
             navigate('/login');
         } catch (error) {

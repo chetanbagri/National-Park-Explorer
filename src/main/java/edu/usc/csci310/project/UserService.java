@@ -24,13 +24,16 @@ public class UserService {
 
     public ResponseEntity<?> registerUser(String username, String password, String confirmPassword) {
         if (userRepository.findByUsername(username) == null) {
+            System.out.println("Entered the if block");
             int checker= isValidPassword(password);
             if (checker!=4) {
+                System.out.println("Inside checker");
                 if(checker == 1) return ResponseEntity.badRequest().body("Password must have one uppercase character");
                 if(checker == 2) return ResponseEntity.badRequest().body("Password must have one lowercase character");
                 if(checker == 3) return ResponseEntity.badRequest().body("Password must have one numerical character");
             }
             if(!confirmPassword.equals(password)) return ResponseEntity.badRequest().body("Password and confirm password must match");
+            System.out.println("Reached after same passwords");
             String hashedPassword = passwordEncoder.encode(password);
             User newUser = new User();
             newUser.setTime1(0L);
@@ -38,8 +41,10 @@ public class UserService {
             newUser.setLockoutTime(0L);
             newUser.setUsername(username);
             newUser.setPassword(hashedPassword);
+            System.out.println("Reached before database entry");
             return ResponseEntity.ok(userRepository.save(newUser));
         } else {
+            System.out.println("Reached else");
             return ResponseEntity.badRequest().body("User already exists with this username");
         }
     }

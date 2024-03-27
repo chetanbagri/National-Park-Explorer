@@ -18,8 +18,11 @@ function Login() {
                 },
                 body: JSON.stringify({username, password})
             })
-            if(response.ok)
+            if(response.ok) {
+                const createdUser = await response.json();
+                sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
                 navigate('/landing');
+            }
             else {
                 const errorText = await response.text();
                 setError(`Login failed: ${errorText}`)

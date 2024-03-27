@@ -46,7 +46,7 @@ describe('CreateAccount Component', () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username: 'testUser', password: 'Password123' }),
+                body: JSON.stringify({ username: 'testUser', password: 'Password123', confirmPassword: "Password123" }),
             }));
         });
     });
