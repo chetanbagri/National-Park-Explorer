@@ -11,28 +11,28 @@ Feature: test the login functionality of website
     When I enter the username "Nick" on login page
     And I enter the password "wrongPassword" on login page
     And I press the Login button
-    Then I should get a "Login Unsuccessful" message displayed
+    Then I should see "Login Unsuccessful"
 
   Scenario: blank login attempt
     Given I am on the login page
     When I enter the username "" on login page
     And I enter the password "" on login page
     And I press the Login button
-    Then I should get a "Login Unsuccessful, username and password required" message displayed
+    Then I should see "Login Unsuccessful, username and password required"
 
   Scenario: empty password
     Given I am on the login page
     When I enter the username "Nick" on login page
     And I enter the password "" on login page
     And I press the Login button
-    Then I should get a "Login Unsuccessful, password required" message displayed
+    Then I should see "Login Unsuccessful, password required"
 
   Scenario: empty username
     Given I am on the login page
     When I enter the username "" on login page
     And I enter the password "myPassword" on login page
     And I press the Login button
-    Then I should get a "Login Unsuccessful, username required" message displayed
+    Then I should see "Login Unsuccessful, username required"
 
 #  Scenario: two incorrect logins in a row
 #    Given I am on the login page
@@ -74,7 +74,7 @@ Feature: test the login functionality of website
     When I enter the username "Nick" on login page
     And I enter the password "mypassword" on login page
     And I press the Login button
-    Then I should get a "Login Unsuccessful" message displayed
+    Then I should see "Login Unsuccessful"
 
 #  Scenario: successful login with complex password
 #    Given I am on the login page
