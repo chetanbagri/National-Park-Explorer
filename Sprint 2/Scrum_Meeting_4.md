@@ -9,7 +9,7 @@ The required contents of this file are described in the *Daily Scrums* section o
 5. Anika (Present)
 ## Meeting Documentation
 1. Include selfie and written out text for the three questions, **OR**
-2. Link to Zoom video
+2. [Link to Zoom video](https://usc.zoom.us/rec/share/nXAU5t95olfS2uS86hUkKOWcQrkOSX-nRrPXQgdQU8h09G5uv8BNsz1JOy_uMb4H.Rc2Xv7BW-rZejkRr)
 
 ## Task Chart
 Embed screenshot of the task chart, reflecting all updates from the Scrum meeting.
