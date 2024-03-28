@@ -21,7 +21,11 @@ const SearchParks = () => {
     let start_idx = 0;
 
     const fetchParks = async (parameters) => {
+        if (parameters === "?limit=10&q=") {
+            parameters = "?limit=10";
+        }
         const url = `${BASE_URL}${parameters}`;
+
         console.log("fetchParks: " + url);
         try {
             const response = await fetch(url, {
@@ -64,31 +68,6 @@ const SearchParks = () => {
             }
         } catch (error) {
             console.error("Error fetching amenities data.");
-            return [];
-        }
-    };
-
-    const fetchAmenities = async (parkCode) => {
-        const url = `https://developer.nps.gov/api/v1/amenities${parkCode}`;
-        console.log("fetchAmenities: " + url);
-        try {
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: { 'X-Api-Key': API_KEY }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data)
-                console.log(data.data[0][0].parks);
-                return data.data[0][0].parks; // Adjust if the data structure requires
-            } else {
-                console.error("Failed to fetch amenities.");
-                setError("Failed to fetch amenities.");
-                return [];
-            }
-        } catch (error) {
-            console.error("Error fetching amenities data.");
-            setError("Error fetching amenities data.");
             return [];
         }
     };
@@ -137,7 +116,7 @@ const SearchParks = () => {
         console.log(searchType);
 
         if (searchType !== "state") {
-            if(searchType === "amenities"){
+            /*if(searchType === "amenities"){
                 parameters = `/parksplaces${parameters}&q=${encodeURIComponent(searchQuery)}`;
                 const fetchedParks = await fetchAmenities(parameters);
                 setFetchedParks(fetchedParks);
@@ -145,7 +124,8 @@ const SearchParks = () => {
                 start_idx = 0;
                 setSelectedPark(null); // Reset selected park details
                 return;
-            }
+            }*/
+            parameters += `&q=${encodeURIComponent(searchQuery)}`;
         } else if (searchType === "state") {
             parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
         }
@@ -157,15 +137,6 @@ const SearchParks = () => {
     };
 
     const loadMoreResults = async () => {
-        if(searchType === "amenities"){
-            start_idx += 10;
-            // console.log(allFetchedParks);
-            // console.log(start_idx);
-            // console.log(allFetchedParks.slice(start_idx, 10));
-            setParks(prevParks => [...prevParks, ...allFetchedParks.splice(start_idx, 10)]);
-            return;
-        }
-
         setPageNumber(prevPage => prevPage + 1);
 
         let parameters = `?limit=${limit}&start=${pageNumber * limit}`;
@@ -251,7 +222,7 @@ const SearchParks = () => {
                            checked={searchType === "amenities"} onChange={() => setSearchType("amenities")}/>
                     <label htmlFor="amenities">Amenities</label><br/>
 
-                    <input type="radio" id="state" name="searchTerm" value="state" checked={searchType === "state"}
+                    <input type="radio" title={"stateRadio"} id="state" name="searchTerm" value="state" checked={searchType === "state"}
                            onChange={() => setSearchType("state")}/>
                     <label htmlFor="state">State</label><br/>
 
@@ -259,16 +230,16 @@ const SearchParks = () => {
                            onChange={() => setSearchType("activity")}/>
                     <label htmlFor="activity">Activity</label><br/>
 
-                    <input type="submit" value="Search" title={"search"}/>
+                    <input type="submit" value="Search" title={"search"} id={"search"}/>
                 </form>
                 {parks.length > 0 && (
-                    <button onClick={loadMoreResults} title={"loadMoreResults"}>Load More Results</button>
+                    <button onClick={loadMoreResults} title={"loadMoreResults"} id={"loadMoreResults"}>Load More Results</button>
                 )}
                 {error && <p>{error}</p>}
                 <ul>
                     {parks.map(park => (
                         <li key={park.id}>
-                            <button onClick={() => handleParkSelection(park.parkCode)}>{park.fullName}</button>
+                            <button title={"detailsButton_" + park.parkCode} onClick={() => handleParkSelection(park.parkCode)}>{park.fullName}</button>
                             {selectedPark && selectedPark.parkCode === park.parkCode && (
                                 <div className="detailsBox">
                                     <h3>{selectedPark.fullName}</h3>

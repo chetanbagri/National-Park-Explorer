@@ -9,7 +9,6 @@ import SearchParks from "./pages/SearchParks";
 function App() {
     return (
         <div>
-            <div>Hello World</div>
             <Routes>
                 <Route path="/create-account" element={<CreateAccount />} />
                 <Route path="/landing" element={<LandingPage />} />
