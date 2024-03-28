@@ -67,7 +67,7 @@ beforeEach(() => {
 //     expect(fetch).toHaveBeenCalledTimes(1);
 // });
 
-test("test App.js file", async () => {
+test("App.js file coverage", async () => {
     const user = userEvent.setup();
     render(<App />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
@@ -78,7 +78,7 @@ test("test App.js file", async () => {
 
 });
 
-test("Test Home.jsx render and navigation", async () => {
+test("Home.jsx render and navigation", async () => {
     render(<Home />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
     // verify page content for default route
