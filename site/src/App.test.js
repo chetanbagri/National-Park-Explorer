@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, waitFor, fireEvent, getByLabelText} from "@testing-library/react";
+import {render, screen, fireEvent} from "@testing-library/react";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
@@ -90,7 +90,6 @@ beforeEach(() => {
 // // });
 
 test("test App.js file + Home.jsx", async () => {
-    const user = userEvent.setup();
     render(<App />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
     // verify page content for default route
@@ -99,7 +98,6 @@ test("test App.js file + Home.jsx", async () => {
 });
 
 test("test Home.jsx render and navigation", async () => {
-    const user = userEvent.setup();
     render(<Home />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
     // verify page content for default route
@@ -108,10 +106,8 @@ test("test Home.jsx render and navigation", async () => {
     expect(screen.getByText(/Create Account/)).toBeInTheDocument();
     expect(screen.getByText(/Explore the National Parks of the U.S./)).toBeInTheDocument();
 
-    // await waitFor(() => user.click(screen.getByTestId('test-loginBtn')));
+
     fireEvent.click(screen.getByTestId('test-loginBtn'));
-    // await waitFor(() => expect(screen.getByText(/Username/)).toBeInTheDocument());
-    // expect(screen.getByText(/Password/)).toBeInTheDocument();
-    // expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
+
     expect(window.location.href).toBe("http://localhost/login");
 });
