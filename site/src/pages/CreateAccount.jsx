@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
-import Footer from "../components/Footer.jsx";
-import Header from "../components/Header";
-
 const CreateAccount = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -55,11 +52,9 @@ const CreateAccount = () => {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                setError(`Failed to create account: ${errorText}`);
+                setError(`Error: ${errorText}`);
                 return;
             }
-
-            // Assuming the backend responds with the created user data
 
             navigate('/login');
         } catch (error) {
@@ -69,7 +64,6 @@ const CreateAccount = () => {
 
     return (
         <div>
-            <Header />
             <div className="createAccount-form">
                 <h2>Create Account</h2>
                 {<p title="error" id="error" style={{ color: "red" }}>{error}</p>}
@@ -117,7 +111,6 @@ const CreateAccount = () => {
                     </div>
                 </div>
             )}
-            <Footer />
         </div>
     )
 }

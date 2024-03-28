@@ -1,97 +1,120 @@
 package edu.usc.csci310.project;
 
 import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.boot.test.context.SpringBootTest;
+import java.time.Duration;
 
 @SpringBootTest
 public class loginStepdefs {
-    static WebDriver driver = new ChromeDriver();
+    private final WebDriver driver = new ChromeDriver();
 
    @Autowired
     private UserService userService;
 
-    private static boolean initialized = false;
-    private static boolean end = false;
-
-
-    @Before
-    public void setup(){
-        if(!initialized) {
-            ResponseEntity<?> response = userService.registerUser("Bob", "Happy1", "Happy1");
-            initialized  = true;
-        }
-
-    }
-
     @Given("I am on the login page")
     public void iAmOnTheLoginPage() {
+        userService.registerUser("Bob", "Happy1", "Happy1");
         driver.get("http://localhost:8080/login");
     }
 
     @When("I enter the username {string} on login page")
     public void iEnterTheUsernameOnLoginPage(String username) {
         WebElement usernameInput = driver.findElement(By.id("username"));
+        WebElement passwordInput = driver.findElement(By.id("password"));
+        usernameInput.click();
         usernameInput.sendKeys(username);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        passwordInput.click();
+        passwordInput.clear();
+        wait.until((WebDriver d) -> passwordInput.getAttribute("value").isEmpty());
+//        System.out.println("Password field value afterhand: " + passwordInput.getAttribute("value")); // Debugging output
     }
 
     @And("I enter the password {string} on login page")
-    public void iEnterThePasswordOnLoginPage(String password) {
+    public void iEnterThePasswordOnLoginPage(String password){
         WebElement passwordInput = driver.findElement(By.id("password"));
         passwordInput.sendKeys(password);
     }
 
     @And("I press the Login button")
     public void iPressTheLoginButton() {
+//        WebElement passwordInput = driver.findElement(By.id("password"));
+//        System.out.println("Password field value in LoginBtn: " + passwordInput.getAttribute("value")); // Debugging output
         WebElement loginButton = driver.findElement(By.id("loginBtn"));
         loginButton.click();
     }
 
     @Then("I should be redirected to the landing page")
     public void iShouldBeRedirectedToTheLandingPage() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.urlToBe("http://localhost:8080/landing"));
         assertEquals("http://localhost:8080/landing", driver.getCurrentUrl());
+        userService.removeUser("Bob");
     }
 
-    @Given("I have failed twice to log within the last 60 seconds")
-    public void iHaveFailedTwiceToLogWithinTheLast60Seconds() {
+    @And("I have failed twice to log within the last 60 seconds")
+    public void iHaveFailedTwiceToLogWithinTheLast60Seconds()  throws InterruptedException {
         WebElement usernameInput = driver.findElement(By.id("username"));
         usernameInput.sendKeys("Bob");
         WebElement passwordInput = driver.findElement(By.id("password"));
         passwordInput.sendKeys("wrongPassword");
         WebElement loginButton = driver.findElement(By.id("loginBtn"));
+        Thread.sleep(100);
         loginButton.click();
+        Thread.sleep(100);
         loginButton.click();
-        usernameInput.sendKeys("");
-        passwordInput.sendKeys("");
+        Thread.sleep(100);
+        usernameInput.click();
+        usernameInput.clear();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until((WebDriver d) -> usernameInput.getAttribute("value").isEmpty());
+//        System.out.println("Username field value after wait: " + usernameInput.getAttribute("value")); // Debugging output
+        passwordInput.click();
+        passwordInput.clear();
+        wait.until((WebDriver d) -> passwordInput.getAttribute("value").isEmpty());
+//        System.out.println("Password field value after wait: " + passwordInput.getAttribute("value")); // Debugging output
     }
 
     @Then("I should get a login {string} message")
-    public void iShouldGetAMessage(String expectedMessage) {
+    public void iShouldGetAMessage(String expectedMessage) throws InterruptedException{
+        Thread.sleep(100);
         WebElement messageElement = driver.findElement(By.id("error"));
         assertEquals(expectedMessage, messageElement.getText());
-        if(expectedMessage.equals("Incorrect password. One more and you may get locked out"))
-            end = true;
+        userService.removeUser("Bob");
     }
 
-    @Given("I have gotten locked out")
-    public void iHaveGottenLockedOut() {
+    @And("I have gotten locked out")
+    public void iHaveGottenLockedOut() throws InterruptedException {
         WebElement usernameInput = driver.findElement(By.id("username"));
         usernameInput.sendKeys("Bob");
         WebElement passwordInput = driver.findElement(By.id("password"));
         passwordInput.sendKeys("wrongPassword");
         WebElement loginButton = driver.findElement(By.id("loginBtn"));
         loginButton.click();
+        Thread.sleep(100);
         loginButton.click();
+        Thread.sleep(100);
         loginButton.click();
+        Thread.sleep(100);
+        usernameInput.click();
+        usernameInput.clear();
+//        System.out.println("Username field value after clear: " + usernameInput.getAttribute("value")); // Debugging output
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until((WebDriver d) -> usernameInput.getAttribute("value").isEmpty());
+//        System.out.println("Username field value after wait: " + usernameInput.getAttribute("value")); // Debugging output
+        passwordInput.click();
+        passwordInput.clear();
+        wait.until((WebDriver d) -> passwordInput.getAttribute("value").isEmpty());
+//        System.out.println("Password field value after wait: " + passwordInput.getAttribute("value")); // Debugging output
     }
 
     @And("I wait 30 seconds")
@@ -107,16 +130,24 @@ public class loginStepdefs {
         passwordInput.sendKeys("wrongPassword");
         WebElement loginButton = driver.findElement(By.id("loginBtn"));
         loginButton.click();
+        Thread.sleep(100);
         loginButton.click();
         Thread.sleep(61000);
-        usernameInput.sendKeys("");
-        passwordInput.sendKeys("");
+
+        usernameInput.click();
+        usernameInput.clear();
+//        System.out.println("Username field value after clear: " + usernameInput.getAttribute("value")); // Debugging output
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until((WebDriver d) -> usernameInput.getAttribute("value").isEmpty());
+//        System.out.println("Username field value after wait: " + usernameInput.getAttribute("value")); // Debugging output
+        passwordInput.click();
+        passwordInput.clear();
+        wait.until((WebDriver d) -> passwordInput.getAttribute("value").isEmpty());
+//        System.out.println("Password field value after wait: " + passwordInput.getAttribute("value")); // Debugging output
     }
 
     @After
     public void tearDown() {
-        if(end) {
-            ResponseEntity<?> response = userService.removeUser("Bob");
-        }
+        driver.quit();
     }
 }

@@ -5,7 +5,7 @@ Feature: test the create account functionality of website
     And I enter the password "happy1"
     And I confirm the password "happy1"
     And I press the Create User button
-    Then I should get a "Failed to create account: Password must have one uppercase character" message
+    Then I should get a "Error: Password must have one uppercase character" message
 
   Scenario: Password doesn't contain lowercase
     Given I am on the create account page
@@ -13,7 +13,7 @@ Feature: test the create account functionality of website
     And I enter the password "HAPPY1"
     And I confirm the password "HAPPY1"
     And I press the Create User button
-    Then I should get a "Failed to create account: Password must have one lowercase character" message
+    Then I should get a "Error: Password must have one lowercase character" message
 
   Scenario: Password doesn't contain number character
     Given I am on the create account page
@@ -21,7 +21,7 @@ Feature: test the create account functionality of website
     And I enter the password "Happy"
     And I confirm the password "Happy"
     And I press the Create User button
-    Then I should get a "Failed to create account: Password must have one numerical character" message
+    Then I should get a "Error: Password must have one numerical character" message
 
   Scenario: successful creation of account
     Given I am on the create account page
@@ -37,7 +37,7 @@ Feature: test the create account functionality of website
     And I enter the password "Happy1"
     And I confirm the password "Happy1"
     And I press the Create User button
-    Then I should get a "Failed to create account: User already exists with this username" message
+    Then I should get a "Error: Username exists" message
 
   Scenario: Cancel button and Don't Cancel
     Given I am on the create account page

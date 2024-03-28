@@ -1,12 +1,10 @@
 package edu.usc.csci310.project;
 
-import org.jacoco.agent.rt.internal_4742761.IExceptionLogger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -57,7 +55,7 @@ class UserServiceTest {
         ResponseEntity<?> response = userService.registerUser("existingUser", "ValidPassword1!", "ValidPassword1!");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("User already exists with this username", response.getBody());
+        assertEquals("Username exists", response.getBody());
     }
 
     @Test
@@ -159,7 +157,7 @@ class UserServiceTest {
         ResponseEntity<?> response = userService.loginUser("user", "InvalidPassword");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Incorrect password. One more and you may get locked out", response.getBody());
+        assertEquals("One more fail may lockout", response.getBody());
         // Verify that user.getTime2() is set to the current time
     }
 
@@ -178,7 +176,7 @@ class UserServiceTest {
         ResponseEntity<?> response = userService.loginUser("user", "InvalidPassword");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Incorrect password. One more and you may get locked out", response.getBody());
+        assertEquals("One more fail may lockout", response.getBody());
     }
 
 
@@ -212,7 +210,7 @@ class UserServiceTest {
         ResponseEntity<?> response = userService.loginUser("lockedUser", "anyPassword");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("You have to wait 30 seconds before trying to log in again. Lockout timer has been reset", response.getBody());
+        assertEquals("Wait 30 seconds!", response.getBody());
     }
 
 

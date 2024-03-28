@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import logo from '../images/login_camping_logo.png';
-import Footer from '../components/Footer.jsx'
-import '../styles/login.css'
-
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -29,7 +25,7 @@ function Login() {
             }
             else {
                 const errorText = await response.text();
-                setError(`Login failed: ${errorText}`)
+                setError(`Error: ${errorText}`)
             }
         }
         catch(error){
@@ -41,18 +37,12 @@ function Login() {
 
     return (
 
+
         <div className="login-page">
-            <div className="login-header">
-                <p className="login-header-p">Team 20</p>
-            </div>
-            <div className="logo-image-div">
-                <img className="logo-image"
-                     src={logo}
-                     alt="Campfire logo and Let's Go Camping! message in bright green"/>
-            </div>
+
             <div className="login-form">
                 <h2>Login</h2>
-                {<p title="error" id="error" style={{color: "red"}}>{error}</p>}
+                {<p title="error" id="error" style={{ color: "red" }}>{error}</p>}
                 <div>
                     <label htmlFor="username">Username:</label>
                     <input
@@ -74,14 +64,12 @@ function Login() {
                     />
                 </div>
                 <div>
-                    <button id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login
-                    </button>
+                    <button id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login</button>
                 </div>
                 <div>
                     <a href="/create-account">Create Account</a>
                 </div>
             </div>
-            <Footer/>
         </div>
     );
 }
