@@ -1,94 +1,50 @@
 Feature: test the login functionality of website
-#  Scenario: successful login
-#    Given I am on the login page
-#    When I enter the username "Nick" on login page
-#    And I enter the password "myPassword" on login page
-#    And I press the Login button
-#    Then I should get a "Login Successful" message displayed
-
-  Scenario: an incorrect login
+  Scenario: successful login
     Given I am on the login page
-    When I enter the username "Nick" on login page
+    When I enter the username "Bob" on login page
+    And I enter the password "Happy1" on login page
+    And I press the Login button
+    Then I should be redirected to the landing page
+
+  Scenario: three incorrect logins within 60 seconds
+    Given I am on the login page
+    And I have failed twice to log within the last 60 seconds
+    When I enter the username "Bob" on login page
     And I enter the password "wrongPassword" on login page
     And I press the Login button
-    Then I should get a "Login Unsuccessful" message displayed
+    Then I should get a login "Error: You are locked out for 30 seconds!" message
 
-  Scenario: blank login attempt
+  Scenario: login attempt with correct password while still on lockout
     Given I am on the login page
-    When I enter the username "" on login page
-    And I enter the password "" on login page
+    And I have gotten locked out
+    When I enter the username "Bob" on login page
+    And I enter the password "Happy1" on login page
     And I press the Login button
-    Then I should get a "Login Unsuccessful, username and password required" message displayed
+    Then I should get a login "Error: Wait 30 seconds!" message
 
-  Scenario: empty password
+  Scenario: login attempt with correct password after lockout expires
     Given I am on the login page
-    When I enter the username "Nick" on login page
-    And I enter the password "" on login page
+    And I have gotten locked out
+    And I wait 30 seconds
+    When I enter the username "Bob" on login page
+    And I enter the password "Happy1" on login page
     And I press the Login button
-    Then I should get a "Login Unsuccessful, password required" message displayed
+    Then I should be redirected to the landing page
 
-  Scenario: empty username
+  Scenario: three incorrect logins outside 60 seconds
     Given I am on the login page
-    When I enter the username "" on login page
-    And I enter the password "myPassword" on login page
+    And I have failed my second login in the last 61 seconds
+    When I enter the username "Bob" on login page
+    And I enter the password "wrongPassword" on login page
     And I press the Login button
-    Then I should get a "Login Unsuccessful, username required" message displayed
+    Then I should get a login "Error: One more fail may lockout" message
 
-#  Scenario: two incorrect logins in a row
+#    Scenario: login attempt with incorrect password while still on lockout
 #    Given I am on the login page
-#    And I have tried unsuccessfully to log in on the previous attempt
-#    When I enter the username "Nick" on login page
+#    And I have gotten locked out
+#    When I enter the username "Bob" on login page
 #    And I enter the password "wrongPassword" on login page
 #    And I press the Login button
-#    Then I should get a "Login Unsuccessful, one more attempt to log in allowed" message
+#    Then I should get a "Login failed: You have to wait 30 seconds before trying to log in again. Lockout timer has been reset" message
 
-#  Scenario: three incorrect logins in a row
-#    Given I am on the login page
-#    And I have tried unsuccessfully to log in the two previous attempts
-#    When I enter the username "Nick" on login page
-#    And I enter the password "wrongPassword" on login page
-#    And I press the Login button
-#    Then I should be redirected to the Account Blocked page
-#    And I should get a "Account Blocked" message displayed
-
-#  Scenario: four incorrect logins in a row (login with account blocked)
-#    Given I am on the login page
-#    And I have tried unsuccessfully to log in the three previous attempts
-#    When I enter the username "Nick" on login page
-#    And I enter the password "wrongPassword" on login page
-#    And I press the Login button
-#    Then I should be redirected to the Account Blocked page
-#    And I should get a "Account Blocked" message displayed
-
-#  Scenario: three incorrect logins in a row plus 1 correct (login with account blocked)
-#    Given I am on the login page
-#    And I have tried unsuccessfully to log in the three previous attempts
-#    When I enter the username "Nick" on login page
-#    And I enter the password "myPassword" on login page
-#    And I press the Login button
-#    Then I should be redirected to the Account Blocked page
-#    And I should get a "Account Blocked" message displayed
-
-  Scenario: password is case-sensitive
-    Given I am on the login page
-    When I enter the username "Nick" on login page
-    And I enter the password "mypassword" on login page
-    And I press the Login button
-    Then I should get a "Login Unsuccessful" message displayed
-
-#  Scenario: successful login with complex password
-#    Given I am on the login page
-#    When I enter the username "NickAlt" on login page
-#    And I enter the password "1234567890!@#$%^&*()qwErtyUIop-=_+[}]{;:\|/?'" on login page
-#    And I press the Login button
-#    Then I should get a "Login Successful" message displayed
-
-#  Scenario: unsuccessful login with complex password and SQL Injection
-#    Given I am on the login page
-#    When I enter the username "NickAlt" on login page
-#    And I enter the password "1234567890!@#$%^&*()qwErtyUIop-=_+[}]{;:\|/?' OR 1=1" on login page
-#    And I press the Login button
-#    Then I should get a "Login Successful" message displayed
-
-  # May need more potential scenarios depending on stakeholder need
-  # Potential feature: Do we want an eye icon to display password?
+#  Do I have to simulate 3 unsuccessful logins outside 60 seconds YES

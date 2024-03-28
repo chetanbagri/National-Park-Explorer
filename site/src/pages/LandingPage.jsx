@@ -9,7 +9,6 @@ const LandingPage = () => {
             {userInfo && (
                 <>
                     <h1 id="greeting">Welcome, {userInfo.username}!</h1>
-                    <p id="credential">Your email is: {userInfo.email}</p>
                 </>
             )}
         </div>
