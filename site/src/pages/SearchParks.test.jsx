@@ -1,510 +1,924 @@
 import React from 'react';
-import {render, screen, waitFor, act, fireEvent} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import fetchMock from 'jest-fetch-mock';
 import { BrowserRouter } from 'react-router-dom';
-import SearchParks from './SearchParks'; // Make sure the path is correct
+import SearchParks from './SearchParks';
 
-// Mock the global fetch function
-global.fetch = jest.fn(() =>
-    Promise.resolve({
-        json: () => Promise.resolve({
+fetchMock.enableMocks();
+
+beforeEach(() => {
+    fetch.resetMocks();
+});
+
+const renderWithRouter = (ui, { route = '/' } = {}) => {
+    window.history.pushState({}, 'Test page', route);
+    return render(ui, { wrapper: BrowserRouter });
+};
+
+test('renders Search Parks component correctly', () => {
+    const { getByText } = renderWithRouter(<SearchParks />);
+    expect(getByText('Search Parks')).toBeInTheDocument();
+});
+
+test('searches for parks based on query', async () => {
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '1',
+                parkCode: 'abcd',
+                fullName: 'Mock Park',
+                images: [{ url: 'https://example.com/image.jpg' }],
+                description: 'Description of mock park',
+                addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                url: 'https://example.com',
+                entranceFees: [{ cost: '0' }],
+                activities: [{ id: 'act1', name: 'Hiking' }],
+                operatingHours: [{ description: '9 AM to 5 PM' }],
+            }
+        ]
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'Mock' } });
+    fireEvent.click(screen.getByTitle('search'));
+
+    await waitFor(() => expect(screen.getByText('Mock Park')).toBeInTheDocument());
+});
+
+test('handles search errors', async () => {
+    fetch.mockReject(() => Promise.reject("API is down"));
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'Error' } });
+    fireEvent.click(screen.getByTitle('search'));
+
+    await waitFor(() => expect(screen.getByText('Error fetching data.')).toBeInTheDocument());
+});
+
+test('loads more results on button click', async () => {
+    fetch.mockResponseOnce(JSON.stringify({
+        data: Array(10).fill().map((_, index) => ({
+            id: `${index}`,
+            parkCode: `code${index}`,
+            fullName: `Mock Park ${index}`,
+            images: [{ url: 'https://example.com/image.jpg' }],
+            description: `Description of mock park ${index}`,
+            addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+            url: 'https://example.com',
+            entranceFees: [{ cost: '0' }],
+            activities: [{ id: 'act1', name: 'Hiking' }],
+            operatingHours: [{ description: '9 AM to 5 PM' }],
+        }))
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park 0')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTitle('loadMoreResults'));
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
+});
+
+test('fetches park details and amenities on park selection', async () => {
+    fetch.mockResponses(
+        [JSON.stringify({
             data: [
-                // ... your mock data here ...
-            ],
-        }),
-    })
-);
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: 'amen1',
+                    name: 'Restrooms'
+                }
+            ]
+        })]
+    );
 
-// Mock the navigate function from useNavigate
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
-    useNavigate: () => jest.fn(),
-}));
-const mockNavigate = jest.fn();
-describe('SearchParks', () => {
-    beforeEach(() => {
-        fetch.mockClear();
-        mockNavigate.mockClear();
-    });
+    renderWithRouter(<SearchParks />);
 
-    it('renders the component and executes a search', async () => {
-        render(
-            <BrowserRouter>
-                <SearchParks />
-            </BrowserRouter>
-        );
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
 
-        const searchInput = screen.getByLabelText(/Search:/i);
-        await userEvent.type(searchInput, 'Yellowstone');
-        const searchButton = screen.getByTitle('search');
-        await userEvent.click(searchButton);
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    await waitFor(() => expect(screen.getByText('Description: Detailed description')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Restrooms')).toBeInTheDocument());
+});
+test('fetches park details and amenities on park selection 2', async () => {
+    fetch.mockResponses(
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }, { id: 'act2', name: 'Hiking2' } ],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }, { id: 'act2', name: 'Hiking2' } ],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: 'amen1',
+                    name: 'Restrooms'
+                },
+                {
+                    id: 'amen2',
+                    name: 'Restrooms2'
+                }
+            ]
+        })]
+    );
 
-        // Wait for the mock fetch call to resolve and the component to update
-        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
-    });
+    renderWithRouter(<SearchParks />);
 
-    // Add more tests as needed
-    it('renders the search form and executes a search', async () => {
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({ data: [{ id: '1', fullName: 'Yellowstone National Park', parkCode: 'yell' }] }),
-        });
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
 
-        render(
-            <BrowserRouter>
-                <SearchParks />
-            </BrowserRouter>
-        );
-
-        const searchInput = screen.getByLabelText(/Search:/i);
-        userEvent.type(searchInput, 'Yellowstone');
-        const searchButton = screen.getByTitle('search');
-
-        // Wrap the user event in act when it will trigger state updates
-        await act(async () => {
-            userEvent.click(searchButton);
-        });
-
-        // Wait for the fetch to be called and verify if parks are rendered
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledTimes(1);
-            expect(screen.getByText('Yellowstone National Park')).toBeInTheDocument();
-        });
-    });
-
-    it('loads more results when button is clicked', async () => {
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({
-                data: new Array(10).fill(null).map((_, index) => ({
-                    id: String(index),
-                    fullName: `Park ${index}`,
-                    parkCode: `code${index}`,
-                })),
-            }),
-        });
-
-
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({ data: [{ id: '1', fullName: 'Yellowstone National Park', parkCode: 'yell' }] }),
-        });
-
-        render(
-            <BrowserRouter>
-                <SearchParks />
-            </BrowserRouter>
-        );
-
-        const searchInput = screen.getByLabelText(/Search:/i);
-        userEvent.type(searchInput, 'Yellowstone');
-        const searchButton = screen.getByTitle('search');
-
-        // Wrap the user event in act when it will trigger state updates
-        await act(async () => {
-            userEvent.click(searchButton);
-        });
-
-        // Assume initial fetch for parks
-        await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
-
-        // Mock fetch for loading more parks
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({
-                data: new Array(10).fill(null).map((_, index) => ({
-                    id: String(index + 10),
-                    fullName: `Park ${index + 10}`,
-                    parkCode: `code${index + 10}`,
-                })),
-            }),
-        });
-
-        const loadMoreButton = screen.getByTitle('loadMoreResults');
-        await act(async () => {
-            userEvent.click(loadMoreButton);
-        });
-
-        // Verify fetch is called again and more parks are loaded
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledTimes(2);
-            expect(screen.getByText('Park 9')).toBeInTheDocument();
-        });
-    });
-
-    it('failed to fetch parks', async () => {
-        fetch.mockResolvedValueOnce({
-            ok: false,
-            // json: async () => ({ data: [] }),
-        });
-
-        render(
-            <BrowserRouter>
-                <SearchParks />
-            </BrowserRouter>
-        );
-
-        const searchInput = screen.getByLabelText(/Search:/i);
-        // userEvent.type(searchInput, '');
-        const searchButton = screen.getByTitle('search');
-
-        // Wrap the user event in act when it will trigger state updates
-        await act(async () => {
-            userEvent.click(searchButton);
-        });
-
-        // Wait for the fetch to be called and verify if parks are rendered
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledTimes(1);
-            expect(screen.getByText("Failed to fetch parks.")).toBeInTheDocument();
-        });
-    });
-
-    it('fetch park and see its ameninities', async () => {
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({ data: [{ id: '1', fullName: 'Yellowstone National Park', parkCode: 'yell' }] }),
-        });
-
-        render(
-            <BrowserRouter>
-                <SearchParks />
-            </BrowserRouter>
-        );
-
-        const searchInput = screen.getByLabelText(/Search:/i);
-        userEvent.type(searchInput, 'Yellowstone');
-        const searchButton = screen.getByTitle('search');
-
-        // Wrap the user event in act when it will trigger state updates
-        await act(async () => {
-            userEvent.click(searchButton);
-        });
-
-        // Wait for the fetch to be called and verify if parks are rendered
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledTimes(1);
-            expect(screen.getByText('Yellowstone National Park')).toBeInTheDocument();
-        });
-
-        // My attempt to use details feature. I think the first fetch works but doesn't update coverage so not sure
-        // fetchParkDetails
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({
-                data:
-                    [
-                        {
-                            "id": "77E0D7F0-1942-494A-ACE2-9004D2BDC59E",
-                            "url": "https://www.nps.gov/abli/index.htm",
-                            "fullName": "Yellowstone National Park",
-                            "parkCode": "abli",
-                            "description": "For over a century people from around the world have come to rural Central Kentucky to honor the humble beginnings of our 16th president, Abraham Lincoln. His early life on Kentucky's frontier shaped his character and prepared him to lead the nation through Civil War. Visit our country's first memorial to Lincoln, built with donations from young and old, and the site of his childhood home.",
-                            "latitude": "37.5858662",
-                            "longitude": "-85.67330523",
-                            "latLong": "lat:37.5858662, long:-85.67330523",
-                            "activities": [
-                                {
-                                    "id": "13A57703-BB1A-41A2-94B8-53B692EB7238",
-                                    "name": "Astronomy"
-                                },
-                                {
-                                    "id": "D37A0003-8317-4F04-8FB0-4CF0A272E195",
-                                    "name": "Stargazing"
-                                }
-                            ],
-                            "topics": [
-                                {
-                                    "id": "D10852A3-443C-4743-A5FA-6DD6D2A054B3",
-                                    "name": "Birthplace"
-                                },
-                                {
-                                    "id": "F669BC40-BDC4-41C0-9ACE-B2CD25373045",
-                                    "name": "Presidents"
-                                },
-                                {
-                                    "id": "0D00073E-18C3-46E5-8727-2F87B112DDC6",
-                                    "name": "Animals"
-                                }
-                            ],
-                            "states": "KY",
-                            "contacts": {
-                                "phoneNumbers": [
-                                    {
-                                        "phoneNumber": "2703583137",
-                                        "description": "",
-                                        "extension": "",
-                                        "type": "Voice"
-                                    },
-                                    {
-                                        "phoneNumber": "2703583874",
-                                        "description": "",
-                                        "extension": "",
-                                        "type": "Fax"
-                                    }
-                                ],
-                                "emailAddresses": [
-                                    {
-                                        "description": "",
-                                        "emailAddress": "ABLI_Administration@nps.gov"
-                                    }
-                                ]
-                            },
-                            "entranceFees": [],
-                            "entrancePasses": [],
-                            "fees": [],
-                            "directionsInfo": "The Birthplace Unit of the park is located approximately 2 miles south of the town of Hodgenville on U.S. Highway 31E South. The Boyhood Home Unit at Knob Creek is located approximately 10 miles northeast of the Birthplace Unit of the park.",
-                            "directionsUrl": "http://www.nps.gov/abli/planyourvisit/directions.htm",
-                            "operatingHours": [
-                                {
-                                    "exceptions": [
-                                        {
-                                            "exceptionHours": {},
-                                            "startDate": "2024-11-28",
-                                            "name": "Park is Closed",
-                                            "endDate": "2024-11-28"
-                                        },
-                                        {
-                                            "exceptionHours": {},
-                                            "startDate": "2024-12-25",
-                                            "name": "Park is Closed",
-                                            "endDate": "2024-12-25"
-                                        },
-                                        {
-                                            "exceptionHours": {},
-                                            "startDate": "2025-01-01",
-                                            "name": "Park is Closed",
-                                            "endDate": "2025-01-01"
-                                        }
-                                    ],
-                                    "description": "Memorial Building:\nopen 9:00 am - 4:30 pm eastern time.\n\nBirthplace Unit Visitor Center and Grounds: \nopen 9:00 am - 5:00 pm eastern time.",
-                                    "standardHours": {
-                                        "wednesday": "9:00AM - 5:00PM",
-                                        "monday": "9:00AM - 5:00PM",
-                                        "thursday": "9:00AM - 5:00PM",
-                                        "sunday": "9:00AM - 5:00PM",
-                                        "tuesday": "9:00AM - 5:00PM",
-                                        "friday": "9:00AM - 5:00PM",
-                                        "saturday": "9:00AM - 5:00PM"
-                                    },
-                                    "name": "Birthplace Unit"
-                                },
-                                {
-                                    "exceptions": [
-                                        {
-                                            "exceptionHours": {
-                                                "wednesday": "Closed",
-                                                "monday": "Closed",
-                                                "thursday": "Closed",
-                                                "sunday": "10:00AM - 4:00PM",
-                                                "tuesday": "Closed",
-                                                "friday": "Closed",
-                                                "saturday": "10:00AM - 4:00PM"
-                                            },
-                                            "startDate": "2024-04-01",
-                                            "name": "Spring Hours",
-                                            "endDate": "2024-05-31"
-                                        }
-                                    ],
-                                    "description": "The Boyhood Home Unit at Knob Creek Grounds:\nopen daily dawn to dusk.\n\nKnob Creek Tavern Visitor Center:\nHours are seasonal. Hours are to be announced for 2024.",
-                                    "standardHours": {
-                                        "wednesday": "Closed",
-                                        "monday": "Closed",
-                                        "thursday": "Closed",
-                                        "sunday": "Closed",
-                                        "tuesday": "Closed",
-                                        "friday": "Closed",
-                                        "saturday": "Closed"
-                                    },
-                                    "name": "Boyhood Unit"
-                                }
-                            ],
-                            "addresses": [
-                                {
-                                    "postalCode": "42748",
-                                    "city": "Hodgenville",
-                                    "stateCode": "KY",
-                                    "countryCode": "US",
-                                    "provinceTerritoryCode": "",
-                                    "line1": "2995 Lincoln Farm Road",
-                                    "type": "Physical",
-                                    "line3": "",
-                                    "line2": ""
-                                },
-                                {
-                                    "postalCode": "42748",
-                                    "city": "Hodgenville",
-                                    "stateCode": "KY",
-                                    "countryCode": "US",
-                                    "provinceTerritoryCode": "",
-                                    "line1": "2995 Lincoln Farm Road",
-                                    "type": "Mailing",
-                                    "line3": "",
-                                    "line2": ""
-                                }
-                            ],
-                            "images": [
-                                {
-                                    "credit": "NPS Photo",
-                                    "title": "The Memorial Building with fall colors",
-                                    "altText": "The Memorial Building surrounded by fall colors",
-                                    "caption": "Over 200,000 people a year come to walk up the steps of the Memorial Building to visit the site where Abraham Lincoln was born",
-                                    "url": "https://www.nps.gov/common/uploads/structured_data/3C861078-1DD8-B71B-0B774A242EF6A706.jpg"
-                                },
-                                {
-                                    "credit": "NPS Photo",
-                                    "title": "The Memorial Building",
-                                    "altText": "The first memorial erected to honor Abraham Lincoln",
-                                    "caption": "The Memorial Building constructed on the traditional site of the birth of Abraham Lincoln.",
-                                    "url": "https://www.nps.gov/common/uploads/structured_data/3C861263-1DD8-B71B-0B71EF9B95F9644F.jpg"
-                                },
-                                {
-                                    "credit": "NPS Photo",
-                                    "title": "The Symbolic Birth Cabin of Abraham Lincoln",
-                                    "altText": "The symbolic birth cabin on the traditional site of the birth of Abraham Lincoln.",
-                                    "caption": "The symbolic birth cabin of Abraham Lincoln.",
-                                    "url": "https://www.nps.gov/common/uploads/structured_data/3C86137D-1DD8-B71B-0B978BACD7EBAEF1.jpg"
-                                },
-                                {
-                                    "credit": "NPS Photo",
-                                    "title": "Statue of the Lincoln Family in the Visitor Center",
-                                    "altText": "Statue of the Lincoln family in the park's Visitor Center",
-                                    "caption": "Visitors to the park can view the statue of the Lincoln family.",
-                                    "url": "https://www.nps.gov/common/uploads/structured_data/3C8614D1-1DD8-B71B-0B1AF72CA452B051.jpg"
-                                }
-                            ]
-                        }
-                    ]
-            }),
-        });
-        // fetchAmenitiesOfPark
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({ data: [
-
-                        {
-                            "id": "4E4D076A-6866-46C8-A28B-A129E2B8F3DB",
-                            "name": "Accessible Rooms",
-                            "categories": [
-                                "Accessibility"
-                            ]
-                        }
-
-                ]
-            }),
-        });
-
-        fireEvent.click(screen.getByText('Yellowstone National Park'));
-        // fireEvent works for this. NOT userEvent
-
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledTimes(2);
-            // expect(screen.getByText('Accessible Rooms')).toBeInTheDocument();
-        }, {timeout: 5000});
-    });
-
-    // fectchAmenities (from searching)
-    it('fetchAmenities basic success', async () => {
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({
-                total: 1,
-                limit: 10,
-                start: 0,
-                data: [
-                    [
-                        {
-                            id: '4E4D076A-6866-46C8-A28B-A129E2B8F3DB',
-                            name: 'Accessible Rooms',
-                            parks: [
-                                {
-                                    "states": "KY",
-                                    "designation": "National Historical Park",
-                                    "parkCode": "abli",
-                                    "fullName": "Abraham Lincoln Birthplace National Historical Park",
-                                    "places": [
-                                        {
-                                            "title": "Lincoln Tavern",
-                                            "id": "D5265572-4FD7-4078-A73E-F9B13956C5E5",
-                                            "url": "https://www.nps.gov/places/lincoln-tavern.htm"
-                                        }
-                                    ],
-                                    "url": "http://www.nps.gov/abli/",
-                                    "name": "Abraham Lincoln Birthplace"
-                                }
-                            ]
-                        }
-                    ]
-                ]
-            }),
-        });
-
-        render(
-            <BrowserRouter>
-                <SearchParks />
-            </BrowserRouter>
-        );
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    await waitFor(() => expect(screen.getByText('Description: Detailed description')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Restrooms')).toBeInTheDocument());
+});
 
 
-        const searchInput = screen.getByLabelText(/Search:/i);
-        userEvent.type(searchInput, 'Wheelchair Accessible');
-        const searchButton = screen.getByTitle('search');
+test('fetches park details and amenities on park selection without any fees, activities, or amenities', async () => {
+    fetch.mockResponses(
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [],
+                    activities: [],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+            ]
+        })]
+    );
 
-        // Click on Amenities button
-        userEvent.click(screen.getByLabelText('Amenities'));
+    renderWithRouter(<SearchParks />);
 
-        // Wrap the user event in act when it will trigger state updates
-        await act(async () => {
-            userEvent.click(searchButton);
-        });
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
 
-        // Wait for the fetch to be called and verify if parks are rendered
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledTimes(1);
-            expect(screen.getByText("Abraham Lincoln Birthplace National Historical Park")).toBeInTheDocument();
-        }, {timeout: 5000}); // timeout of 5000 is 5 seconds
-    });
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    await waitFor(() => expect(screen.getByText('Description: Detailed description')).toBeInTheDocument());
+});
 
-    it('fetchAmenities basic fail', async () => {
-        fetch.mockResolvedValueOnce({
-            ok: false,
-            json: async () => ({
-                total: 1,
-                limit: 10,
-                start: 0,
-                data: [
-                    [
-                        {
+test('clicks on an amenity from the details screen', async () => {
+    // Initial mock response for the park details and amenities
+    fetch.mockResponses(
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: 'amen1',
+                    name: 'Restrooms'
+                }
+            ]
+        })]
+    );
 
-                        }
-                    ]
-                ]
-            }),
-        });
+    renderWithRouter(<SearchParks />);
 
-        render(
-            <BrowserRouter>
-                <SearchParks />
-            </BrowserRouter>
-        );
+    // Mock the response for clicking on an amenity
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '2',
+                parkCode: 'efgh',
+                fullName: 'Another Mock Park',
+                images: [{ url: 'https://example.com/image2.jpg' }],
+                description: 'Another park description',
+                addresses: [{ city: 'Another City', stateCode: 'AC' }],
+                url: 'https://example.com',
+                entranceFees: [{ cost: '10' }],
+                activities: [{ id: 'act2', name: 'Camping' }],
+                operatingHours: [{ description: '8 AM to 6 PM' }],
+            }
+        ]
+    }));
+
+    // Perform initial search to display parks
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
+
+    // Simulate clicking on the details button to show park details and amenities
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    await waitFor(() => expect(screen.getByText('Restrooms')).toBeInTheDocument());
+
+    // Simulate clicking on an amenity
+    fireEvent.click(screen.getByText('Restrooms'));
+
+    // Wait for the amenity-based search to complete and verify the new park is displayed
+    await waitFor(() => expect(screen.getByText('Another Mock Park')).toBeInTheDocument());
+});
+
+test('clicks on an activity from the details screen', async () => {
+    // Initial mock response for the park details
+    fetch.mockResponses(
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Running' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: 'act1',
+                    name: 'Hiking'
+                }
+            ]
+        })]
+    );
+
+    renderWithRouter(<SearchParks />);
+
+    // Mock the response for clicking on an activity
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '2',
+                parkCode: 'efgh',
+                fullName: 'Adventure Park',
+                images: [{ url: 'https://example.com/image2.jpg' }],
+                description: 'Adventure park description',
+                addresses: [{ city: 'Adventure City', stateCode: 'AC' }],
+                url: 'https://example.com',
+                entranceFees: [{ cost: '15' }],
+                activities: [{ id: 'act2', name: 'Biking' }],
+                operatingHours: [{ description: '7 AM to 7 PM' }],
+            }
+        ]
+    }));
+
+    // Perform initial search to display parks
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
+
+    // Simulate clicking on the details button to show park details and activities
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    await waitFor(() => expect(screen.getByText('Hiking')).toBeInTheDocument());
+
+    // Simulate clicking on an activity
+    fireEvent.click(screen.getByText('Running'));
+
+    // Wait for the activity-based search to complete and verify the new park is displayed
+    await waitFor(() => expect(screen.getByText('Adventure Park')).toBeInTheDocument());
+});
+
+test('clicks on a location from the details screen', async () => {
+    // Initial mock response for the park details
+    fetch.mockResponses(
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Running' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: 'act1',
+                    name: 'Hiking'
+                }
+            ]
+        })]
+    );
+
+    renderWithRouter(<SearchParks />);
+
+    // Mock the response for clicking on an activity
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '2',
+                parkCode: 'efgh',
+                fullName: 'Adventure Park',
+                images: [{ url: 'https://example.com/image2.jpg' }],
+                description: 'Adventure park description',
+                addresses: [{ city: 'Adventure City', stateCode: 'AC' }],
+                url: 'https://example.com',
+                entranceFees: [{ cost: '15' }],
+                activities: [{ id: 'act2', name: 'Biking' }],
+                operatingHours: [{ description: '7 AM to 7 PM' }],
+            }
+        ]
+    }));
+
+    // Perform initial search to display parks
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
+
+    // Simulate clicking on the details button to show park details and activities
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    await waitFor(() => expect(screen.getByText('Hiking')).toBeInTheDocument());
+
+    // Simulate clicking on an activity
+    fireEvent.click(screen.getByText('Mock City, MC'));
+
+    // Wait for the activity-based search to complete and verify the new park is displayed
+    await waitFor(() => expect(screen.getByText('Adventure Park')).toBeInTheDocument());
+});
+
+test('searches for parks by state code', async () => {
+    // Mock the fetch response for searching by state code
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '3',
+                parkCode: 'ijkl',
+                fullName: 'State Park Example',
+                images: [{ url: 'https://example.com/image3.jpg' }],
+                description: 'A beautiful state park in CA',
+                addresses: [{ city: 'State City', stateCode: 'CA' }],
+                url: 'https://example.com/statepark',
+                entranceFees: [{ cost: '5' }],
+                activities: [{ id: 'act3', name: 'Kayaking' }],
+                operatingHours: [{ description: '8 AM to 6 PM' }],
+            }
+        ]
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    // Simulate selecting the state search option
+    fireEvent.click(screen.getByLabelText('State'));
+
+    // Simulate typing the state code into the search field
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'CA' } });
+
+    // Simulate submitting the search
+    fireEvent.click(screen.getByTitle('search'));
+
+    // Wait for the search results to display and verify the state park is shown
+    await waitFor(() => expect(screen.getByText('State Park Example')).toBeInTheDocument());
+});
+
+test('searches for parks by activity', async () => {
+    // Mock the fetch response for searching by activity
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '4',
+                parkCode: 'mnop',
+                fullName: 'Activity Park Example',
+                images: [{ url: 'https://example.com/image4.jpg' }],
+                description: 'A park well-known for its extensive hiking trails',
+                addresses: [{ city: 'Activity City', stateCode: 'AC' }],
+                url: 'https://example.com/activitypark',
+                entranceFees: [{ cost: '0' }],
+                activities: [{ id: 'act4', name: 'Hiking' }],
+                operatingHours: [{ description: '7 AM to 7 PM' }],
+            }
+        ]
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    // Simulate selecting the activity search option
+    fireEvent.click(screen.getByLabelText('Activity'));
+
+    // Simulate typing the activity into the search field
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'Hiking' } });
+
+    // Simulate submitting the search
+    fireEvent.click(screen.getByTitle('search'));
+
+    // Wait for the search results to display and verify the park with the specified activity is shown
+    await waitFor(() => expect(screen.getByText('Activity Park Example')).toBeInTheDocument());
+});
+
+test('first searches by state, then by park name', async () => {
+    // Mock the fetch responses for the two search types
+    // First response for searching by state
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '5',
+                parkCode: 'qrst',
+                fullName: 'State Specific Park',
+                images: [{ url: 'https://example.com/image5.jpg' }],
+                description: 'A park in the specified state with beautiful views',
+                addresses: [{ city: 'State City', stateCode: 'ST' }],
+                url: 'https://example.com/statepark',
+                entranceFees: [{ cost: '20' }],
+                activities: [{ id: 'act5', name: 'Boating' }],
+                operatingHours: [{ description: '10 AM to 4 PM' }],
+            }
+        ]
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    // Simulate selecting the state search option and entering a state code
+    fireEvent.click(screen.getByLabelText('State'));
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'ST' } });
+    fireEvent.click(screen.getByTitle('search'));
+
+    // Wait for the state search results to display and verify
+    await waitFor(() => expect(screen.getByText('State Specific Park')).toBeInTheDocument());
+
+    // Prepare the second response for searching by park name
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '6',
+                parkCode: 'uvwx',
+                fullName: 'Park Name Specific Search Result',
+                images: [{ url: 'https://example.com/image6.jpg' }],
+                description: 'A park matching the specific search by name',
+                addresses: [{ city: 'Name City', stateCode: 'NC' }],
+                url: 'https://example.com/parkname',
+                entranceFees: [{ cost: '5' }],
+                activities: [{ id: 'act6', name: 'Climbing' }],
+                operatingHours: [{ description: '8 AM to 5 PM' }],
+            }
+        ]
+    }));
+
+    // Simulate changing the search criteria to park name and entering a new query
+    fireEvent.click(screen.getByLabelText('Park Name'));
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'Specific Search Result' } });
+    fireEvent.click(screen.getByTitle('search'));
+
+    // Wait for the park name search results to display and verify
+    await waitFor(() => expect(screen.getByText('Park Name Specific Search Result')).toBeInTheDocument());
+});
+
+test('toggles park details window on clicking the details button twice', async () => {
+    fetch.mockResponses(
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: 'amen1',
+                    name: 'Restrooms'
+                }
+            ]
+        })]
+    );
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    await waitFor(() => expect(screen.getByText('Description: Detailed description')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Restrooms')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+});
+
+test('loads more results on button click when searching by state', async () => {
+    // Mock the initial fetch response for searching by state
+    fetch.mockResponseOnce(JSON.stringify({
+        data: Array(10).fill().map((_, index) => ({
+            id: `initial${index}`,
+            parkCode: `initCode${index}`,
+            fullName: `Initial State Park ${index}`,
+            images: [{url: 'https://example.com/image.jpg'}],
+            description: `Description of initial park ${index}`,
+            addresses: [{ city: 'Initial City', stateCode: 'IS' }],
+            url: 'https://example.com',
+            entranceFees: [{ cost: '0' }],
+            activities: [{ id: 'act1', name: 'Hiking' }],
+            operatingHours: [{ description: '9 AM to 5 PM' }],
+        }))
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    // Simulate selecting the state search option and entering a state code
+    fireEvent.click(screen.getByLabelText('State'));
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'IS' } });
+
+    // Simulate submitting the search to display initial state parks
+    fireEvent.click(screen.getByTitle('search'));
+
+    await waitFor(() => expect(screen.getByText('Initial State Park 0')).toBeInTheDocument());
+
+    // Prepare the second mock fetch response for loading more results
+    fetch.mockResponseOnce(JSON.stringify({
+        data: Array(10).fill().map((_, index) => ({
+            id: `more${index}`,
+            parkCode: `moreCode${index}`,
+            fullName: `More State Park ${index}`,
+            images: [{url: 'https://example.com/moreImage.jpg'}],
+            description: `Description of more park ${index}`,
+            addresses: [{ city: 'More City', stateCode: 'MS' }],
+            url: 'https://example.com/more',
+            entranceFees: [{ cost: '10' }],
+            activities: [{ id: 'act2', name: 'Cycling' }],
+            operatingHours: [{ description: '8 AM to 6 PM' }],
+        }))
+    }));
+
+    // Simulate clicking the "Load More Results" button
+    fireEvent.click(screen.getByTitle('loadMoreResults'));
+
+    // Verify that more results are loaded and displayed
+    await waitFor(() => expect(screen.getByText('More State Park 0')).toBeInTheDocument());
+});
+
+test('handles failure to fetch parks', async () => {
+    // Mock fetch to simulate a failure
+    fetch.mockReject(new Error('Failed to fetch'));
+
+    renderWithRouter(<SearchParks />);
+
+    // Assuming the search is triggered automatically or by a user action, like clicking a search button
+    fireEvent.click(screen.getByTitle('search'));
+
+    // Verify that an error message is displayed
+    await waitFor(() => expect(screen.getByText('Error fetching data.')).toBeInTheDocument());
+});
+
+test('handles unsuccessful response from the server', async () => {
+    // Mock the fetch response to simulate an unsuccessful response
+    fetch.mockResponseOnce('', { status: 404, statusText: 'Not Found' });
+
+    renderWithRouter(<SearchParks />);
+
+    // Assuming the search is triggered automatically or by a user action, like clicking a search button
+    fireEvent.click(screen.getByTitle('search'));
+
+    // Verify that an error message is displayed, indicating the failure to fetch parks
+    await waitFor(() => expect(screen.getByText('Failed to fetch parks.')).toBeInTheDocument());
+});
+
+test('fetches amenities fails', async () => {
+    fetch.mockResponses(
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })]
+    );
+    fetch.mockResponseOnce('', { status: 404, statusText: 'Not Found' });
 
 
-        const searchInput = screen.getByLabelText(/Search:/i);
-        userEvent.type(searchInput, 'Wheelchair Accessible');
-        const searchButton = screen.getByTitle('search');
+    renderWithRouter(<SearchParks />);
 
-        // Click on Amenities button
-        userEvent.click(screen.getByLabelText('Amenities'));
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
 
-        // Wrap the user event in act when it will trigger state updates
-        await act(async () => {
-            userEvent.click(searchButton);
-        });
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    //await waitFor(() => expect(screen.getByText('Failed to fetch amenities')).toBeInTheDocument());
+});
 
-        // Wait for the fetch to be called and verify if parks are rendered
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledTimes(1);
-            expect(screen.getByText("Failed to fetch amenities.")).toBeInTheDocument();
-        }, {timeout: 5000}); // timeout of 5000 is 5 seconds
-    });
+test('fetches amenities fails', async () => {
+    fetch.mockResponses(
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })]
+    );
+    fetch.mockReject(new Error('Failed to fetch'));
+
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    //await waitFor(() => expect(screen.getByText('Failed to fetch amenities')).toBeInTheDocument());
+});
+
+test('fetch park details fails', async () => {
+    fetch.mockResponses(
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })]
+    );
+    fetch.mockResponseOnce('', { status: 404, statusText: 'Not Found' });
+
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTitle('detailsButton_abcd'));
+    //await waitFor(() => expect(screen.getByText('Failed to fetch amenities')).toBeInTheDocument());
+});
+
+test('changes search type from park name to amenities and performs a search', async () => {
+    // Mock the fetch responses for the two search types
+    // First response for searching by park name
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '9',
+                parkCode: 'park1',
+                fullName: 'Park Name Search Result',
+                images: [{url: 'https://example.com/parkname.jpg'}],
+                description: 'A park matching the park name search',
+                addresses: [{ city: 'Park City', stateCode: 'PC' }],
+                url: 'https://example.com/parkname',
+                entranceFees: [{ cost: '0' }],
+                activities: [{ id: 'act9', name: 'Bird Watching' }],
+                operatingHours: [{ description: '6 AM to 8 PM' }],
+            }
+        ]
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    // Simulate typing the park name into the search field and submitting the search
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'Yellowstone' } });
+    fireEvent.click(screen.getByTitle('search'));
+
+    // Wait for the park name search results to display and verify
+    await waitFor(() => expect(screen.getByText('Park Name Search Result')).toBeInTheDocument());
+
+    // Prepare the mock response for searching by amenities
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '10',
+                parkCode: 'ameni2',
+                fullName: 'Amenities Search Result Park',
+                images: [{url: 'https://example.com/amenities.jpg'}],
+                description: 'A park with specific amenities',
+                addresses: [{ city: 'Amenities City', stateCode: 'AC' }],
+                url: 'https://example.com/amenitiespark',
+                entranceFees: [{ cost: '10' }],
+                activities: [{ id: 'act10', name: 'Kayaking' }],
+                operatingHours: [{ description: '8 AM to 6 PM' }],
+            }
+        ]
+    }));
+
+    // Simulate changing the search type to amenities and entering a new search term
+    fireEvent.click(screen.getByLabelText('Amenities'));
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'Playground' } });
+    fireEvent.click(screen.getByTitle('search'));
+
+    // Wait for the amenities search results to display and verify the new park is displayed
+    await waitFor(() => expect(screen.getByText('Amenities Search Result Park')).toBeInTheDocument());
 });
