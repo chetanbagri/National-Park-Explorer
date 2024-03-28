@@ -67,7 +67,7 @@ function Login() {
                     <button id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login</button>
                 </div>
                 <div>
-                    <a href="/create-account">Create Account</a>
+                    <a  id="create-account" href="/create-account">Create Account</a>
                 </div>
             </div>
         </div>

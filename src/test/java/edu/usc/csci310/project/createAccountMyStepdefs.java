@@ -23,10 +23,14 @@ public class createAccountMyStepdefs {
     @Autowired
     private UserService userService;
 
-
     @Given("I am on the create account page")
     public void iAmOnTheCreateAccountPage() {
         driver.get("http://localhost:8080/create-account");
+    }
+
+    @Given("I start at the login page")
+    public void iStartAtTheLoginPage() {
+        driver.get("http://localhost:8080/login");
     }
 
     @When("I enter the username {string}")
@@ -85,7 +89,7 @@ public class createAccountMyStepdefs {
         createAccountButton.click();
     }
 
-    @Then("I should be back on the create account page")
+    @Then("I should be on the create account page")
     public void iShouldBeBackOnTheCreateAccountPage() {
         String currentUrl = driver.getCurrentUrl();
         assertEquals("http://localhost:8080/create-account", currentUrl);
@@ -103,5 +107,11 @@ public class createAccountMyStepdefs {
     @After
     public void tearDown() {
         driver.quit();
+    }
+
+    @And("I click the create account link")
+    public void iClickTheCreateAccountLink() {
+        WebElement createAccountLink = driver.findElement(By.id("create-account"));
+        createAccountLink.click();
     }
 }
