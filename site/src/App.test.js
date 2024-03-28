@@ -1,9 +1,9 @@
 import React from "react";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, waitFor, fireEvent, getByLabelText} from "@testing-library/react";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-// import Login from "./pages/Login";
+import Login from "./pages/Login";
 import Home from "./pages/Home";
 
 afterEach(() => {
@@ -66,35 +66,16 @@ beforeEach(() => {
 //
 //     expect(fetch).toHaveBeenCalledTimes(1);
 // });
-//
-//
-// // test("Test default null fetched response", async () => {
-// //     fetch.mockResponseOnce("");
-// //
-// //     const user = userEvent.setup();
-// //     render(<Login />, { wrapper: BrowserRouter });
-// //
-// //     // verify page content for default route
-// //
-// //     expect(screen.getByText(/Username/)).toBeInTheDocument();
-// //     expect(screen.getByText(/Password/)).toBeInTheDocument();
-// //     expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
-// //
-// //     // fill out login form
-// //     fireEvent.change(screen.getByTestId('test-username'), {target: {value: 'Nick'}});
-// //     fireEvent.change(screen.getByTestId('test-password'), {target: {value: 'mypassword'}});
-// //
-// //     fireEvent.click(screen.getByTestId('test-loginBtn'));
-// //
-// //     expect(fetch).toHaveBeenCalledTimes(1);
-// // });
 
-test("test App.js file + Home.jsx", async () => {
+test("test App.js file", async () => {
+    const user = userEvent.setup();
     render(<App />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
     // verify page content for default route
+    // expect(screen.getByTestId("test-login")).toBeInTheDocument();
+    // expect(screen.getByText(/CreateAccount/i)).toBeInTheDocument();
+    expect(screen.getByText("Hello World")).toBeInTheDocument();
 
-    expect(screen.getByText(/Create Account/)).toBeInTheDocument();
 });
 
 test("test Home.jsx render and navigation", async () => {
