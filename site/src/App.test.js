@@ -46,7 +46,7 @@ beforeEach(() => {
 //     expect(fetch).toHaveBeenCalledTimes(1);
 // });
 //
-// test("Test default null fetched response (inputs don't matter)", async () => {
+// test("Default null fetched response (inputs don't matter)", async () => {
 //     fetch.mockResponseOnce(JSON.stringify({ }));
 //
 //     const user = userEvent.setup();
@@ -78,7 +78,7 @@ test("test App.js file", async () => {
 
 });
 
-test("test Home.jsx render and navigation", async () => {
+test("Test Home.jsx render and navigation", async () => {
     render(<Home />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
     // verify page content for default route
