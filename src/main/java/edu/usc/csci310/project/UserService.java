@@ -27,7 +27,7 @@ public class UserService {
             if (checker!=4) {
                 if(checker == 1) return ResponseEntity.badRequest().body("Password must have one uppercase character");
                 if(checker == 2) return ResponseEntity.badRequest().body("Password must have one lowercase character");
-                if(checker == 3) return ResponseEntity.badRequest().body("Password must have one numerical character");
+                return ResponseEntity.badRequest().body("Password must have one numerical character");
             }
             if(!confirmPassword.equals(password)) return ResponseEntity.badRequest().body("Password and confirm password must match");
             String hashedPassword = passwordEncoder.encode(password);
