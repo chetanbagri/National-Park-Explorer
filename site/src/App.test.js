@@ -74,7 +74,7 @@ test("test App.js file", async () => {
     // verify page content for default route
     // expect(screen.getByTestId("test-login")).toBeInTheDocument();
     // expect(screen.getByText(/CreateAccount/i)).toBeInTheDocument();
-    expect(screen.getByText("Hello World")).toBeInTheDocument();
+    expect(screen.getByText("Username:")).toBeInTheDocument();
 
 });
 

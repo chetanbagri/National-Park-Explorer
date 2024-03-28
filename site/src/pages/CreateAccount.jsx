@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const CreateAccount = () => {
     const [username, setUsername] = useState("");
@@ -64,6 +66,7 @@ const CreateAccount = () => {
 
     return (
         <div>
+            <Header />
             <div className="createAccount-form">
                 <h2>Create Account</h2>
                 {<p title="error" id="error" style={{ color: "red" }}>{error}</p>}
@@ -111,6 +114,7 @@ const CreateAccount = () => {
                     </div>
                 </div>
             )}
+            <Footer />
         </div>
     )
 }
