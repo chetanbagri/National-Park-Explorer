@@ -23,6 +23,7 @@ public class UserService {
 
     public ResponseEntity<?> registerUser(String username, String password, String confirmPassword) {
         if (userRepository.findByUsername(username) == null) {
+            if(password.isEmpty()) return ResponseEntity.badRequest().body("Password field cannot be empty");
             int checker= isValidPassword(password);
             if (checker!=4) {
                 if(checker == 1) return ResponseEntity.badRequest().body("Password must have one uppercase character");

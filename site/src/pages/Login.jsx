@@ -60,6 +60,7 @@ function Login() {
                         id="username"
                         data-testid="test-username"
                         value={username}
+                        title={"Username Field"}
                         onChange={(e) => setUsername(e.target.value)}
                     />
                 </div>
@@ -70,6 +71,7 @@ function Login() {
                         id="password"
                         data-testid="test-password"
                         value={password}
+                        title={"Password Field"}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
@@ -78,7 +80,7 @@ function Login() {
                     </button>
                 </div>
                 <div>
-                    <a href="/create-account">Create Account</a>
+                    <a  id="create-account" href="/create-account" title={"Go to Create Account"}>Create Account</a>
                 </div>
             </div>
             <Footer/>

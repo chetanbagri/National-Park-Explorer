@@ -77,6 +77,7 @@ const CreateAccount = () => {
                             id="username"
                             type="text"
                             value={username}
+                            title={"Username Field"}
                             onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
@@ -86,7 +87,7 @@ const CreateAccount = () => {
                             id="password"
                             type="password"
                             value={password}
-                            title={"password"}
+                            title={"Password Field"}
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
@@ -96,6 +97,7 @@ const CreateAccount = () => {
                             id="confirmPassword"
                             type="password"
                             value={confirmPassword}
+                            title={"Confirm Password Field"}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     </div>
