@@ -1,5 +1,26 @@
 Feature: test the create account functionality of website
   Scenario: Password doesn't contain uppercase
+    Given I start at the login page
+    And I click the create account link
+    Then I should be on the create account page
+
+  Scenario: Passwords field is empty
+    Given I am on the create account page
+    When I enter the username "Alice"
+    And I enter the password ""
+    And I confirm the password "Happy1"
+    And I press the Create User button
+    Then I should get a "Error: Password field cannot be empty" message
+
+  Scenario: Passwords doesn't match
+    Given I am on the create account page
+    When I enter the username "Alice"
+    And I enter the password "Happy1"
+    And I confirm the password "Sad1"
+    And I press the Create User button
+    Then I should get a "Error: Password and confirm password must match" message
+
+  Scenario: Password doesn't contain uppercase
     Given I am on the create account page
     When I enter the username "Alice"
     And I enter the password "happy1"
@@ -45,7 +66,7 @@ Feature: test the create account functionality of website
     And I enter the password "Happy1"
     And I press the Cancel button
     And I press the No button
-    Then I should be back on the create account page
+    Then I should be on the create account page
     And I should see the username field filled with the name "Alice"
 
   Scenario: Cancel button and Cancel

@@ -78,7 +78,7 @@ function Login() {
                     </button>
                 </div>
                 <div>
-                    <a href="/create-account">Create Account</a>
+                    <a  id="create-account" href="/create-account">Create Account</a>
                 </div>
             </div>
             <Footer/>

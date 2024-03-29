@@ -89,6 +89,16 @@ class UserServiceTest {
     }
 
     @Test
+    void testRegisterUserWithMissingPassword() {
+        when(mockRepository.findByUsername(anyString())).thenReturn(null);
+
+        ResponseEntity<?> response = userService.registerUser("newUser", "", "InvalidPassword2");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Password field cannot be empty", response.getBody());
+    }
+
+    @Test
     void testRegisterUserWithMismatchPasswords() {
         when(mockRepository.findByUsername(anyString())).thenReturn(null);
 
