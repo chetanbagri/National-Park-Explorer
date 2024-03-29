@@ -211,29 +211,29 @@ const SearchParks = () => {
                 <h2>Search Parks</h2>
                 <form onSubmit={handleSearch}>
                     <label htmlFor={"searchQuery"}>Search: </label>
-                    <input id="searchQuery" type="text" value={searchQuery}
-                           onChange={(e) => setSearchQuery(e.target.value)}/>
+                    <input id="searchQuery" type="text" value={searchQuery} title={"Search Box"}
+                           onChange={(e) => setSearchQuery(e.target.value)} tabIndex={0} autoFocus/>
 
-                    <input type="radio" id="parkName" name="searchTerm" value="parkName" checked={searchType === "parkName"}
-                           onChange={() => setSearchType("parkName")}/>
+                    <input type="radio" id="parkName" name="searchTerm" value="parkName" checked={searchType === "parkName"} title={"Park Radio Button"}
+                           onChange={() => setSearchType("parkName")} tabIndex={1}/>
                     <label htmlFor="parkName">Park Name</label><br/>
 
-                    <input type="radio" id="amenities" name="searchTerm" value="amenities"
-                           checked={searchType === "amenities"} onChange={() => setSearchType("amenities")}/>
+                    <input type="radio" id="amenities" name="searchTerm" value="amenities" title={"Amenities Radio Button"}
+                           checked={searchType === "amenities"} onChange={() => setSearchType("amenities")} />
                     <label htmlFor="amenities">Amenities</label><br/>
 
                     <input type="radio" title={"stateRadio"} id="state" name="searchTerm" value="state" checked={searchType === "state"}
-                           onChange={() => setSearchType("state")}/>
+                           onChange={() => setSearchType("state")} />
                     <label htmlFor="state">State</label><br/>
 
-                    <input type="radio" id="activity" name="searchTerm" value="activity" checked={searchType === "activity"}
-                           onChange={() => setSearchType("activity")}/>
+                    <input type="radio" id="activity" name="searchTerm" value="activity" title={"Activity Radio Button"} checked={searchType === "activity"}
+                           onChange={() => setSearchType("activity")} />
                     <label htmlFor="activity">Activity</label><br/>
 
-                    <input type="submit" value="Search" title={"search"} id={"search"}/>
+                    <input type="submit" value="Search" title={"search"} id={"search"} tabIndex={2}/>
                 </form>
                 {parks.length > 0 && (
-                    <button onClick={loadMoreResults} title={"loadMoreResults"} id={"loadMoreResults"}>Load More Results</button>
+                    <button onClick={loadMoreResults} title={"loadMoreResults"} id={"loadMoreResults"} tabIndex={3}>Load More Results</button>
                 )}
                 {error && <p>{error}</p>}
                 <ul>
