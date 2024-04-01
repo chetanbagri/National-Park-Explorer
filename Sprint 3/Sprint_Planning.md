@@ -37,7 +37,7 @@ The required contents of this file are described in the *Sprint Planning* sectio
     - Activities provided at the park
     - Whether or not the park is already on the user’s park favorite list
     - Are there any requirements for how we should display them? Like a format?
-    No; as long as all are contained within the park details window
+        - No; as long as all are contained within the park details window
     - Should there be a popup box or should the details be appended to the screen? Or should we redirect to a separate page?
     - Should cause an inline window to appear that will contain all the information
     - Should the details show up on search or should they only show up when you click it for more details?
@@ -50,7 +50,6 @@ The required contents of this file are described in the *Sprint Planning* sectio
     - Ex clicking on location -> new search with that state as the search term -> should replace the current search term and should be set to the correct type of search
     - Are there any interactive elements, such as photo galleries or maps, that should be included on the page?
     - Only interactive part is if i click on the name of the park, in the list, that will minimize the park detail window to the prior parent’s and allow user to resume interacting with search page
-
 
 4.  Update and review a favorite park list
 
