@@ -32,11 +32,9 @@ Feature: test the search page
     And I press the Search button
     Then the search results for "elevator" should be displayed
 
-
   Scenario: View more results
     Given I am on the search page
     When the user enters "Park" into the search box
     And I press the Search button
     Then clicks the "load more results" button
-    Then 10 more results should be appended to the list
-
+    And 10 more results should be appended to the list
