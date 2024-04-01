@@ -127,8 +127,7 @@ Additionally, we chose to implement sub-requirements of feature 10 because it’
 
 ## Task Chart
 Embed screenshot of the initial task chart
-
-
+![image](https://github.com/CSCI310-20241/project-team-20/assets/89752707/f47d9171-2cc5-4ed7-bc53-8b668b14f6e9)
 
 
 
