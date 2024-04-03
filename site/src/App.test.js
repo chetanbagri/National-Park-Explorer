@@ -24,48 +24,6 @@ beforeEach(() => {
 //     expect(screen.getByText(/Password/)).toBeInTheDocument();
 //     expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
 // });
-//
-// test("Submit invalid login form and get fecthed response", async () => {
-//     fetch.mockResponseOnce(JSON.stringify({ data: "Login Unsuccessful" }));
-//
-//     const user = userEvent.setup();
-//     render(<Login />, { wrapper: BrowserRouter });
-//
-//     // verify page content for default route
-//
-//     expect(screen.getByText(/Username/)).toBeInTheDocument();
-//     expect(screen.getByText(/Password/)).toBeInTheDocument();
-//     expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
-//
-//     // fill out login form
-//     fireEvent.change(screen.getByTestId('test-username'), {target: {value: 'Nick'}});
-//     fireEvent.change(screen.getByTestId('test-password'), {target: {value: 'mypassword'}});
-//
-//     fireEvent.click(screen.getByTestId('test-loginBtn'));
-//
-//     expect(fetch).toHaveBeenCalledTimes(1);
-// });
-//
-// test("Default null fetched response (inputs don't matter)", async () => {
-//     fetch.mockResponseOnce(JSON.stringify({ }));
-//
-//     const user = userEvent.setup();
-//     render(<Login />, { wrapper: BrowserRouter });
-//
-//     // verify page content for default route
-//
-//     expect(screen.getByText(/Username/)).toBeInTheDocument();
-//     expect(screen.getByText(/Password/)).toBeInTheDocument();
-//     expect(screen.getByTestId('test-loginBtn')).toBeInTheDocument();
-//
-//     // fill out login form
-//     fireEvent.change(screen.getByTestId('test-username'), {target: {value: 'Nick'}});
-//     fireEvent.change(screen.getByTestId('test-password'), {target: {value: 'mypassword'}});
-//
-//     fireEvent.click(screen.getByTestId('test-loginBtn'));
-//
-//     expect(fetch).toHaveBeenCalledTimes(1);
-// });
 
 test("App.js file coverage", async () => {
     const user = userEvent.setup();
