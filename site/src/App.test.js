@@ -12,6 +12,7 @@ beforeEach(() => {
     fetch.resetMocks();
 });
 
+
 test("App.js file coverage", async () => {
     render(<App />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
