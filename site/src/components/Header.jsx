@@ -10,6 +10,8 @@ function Header() {
                 <img className="logo-general-image"
                      src={logo}
                      alt="Campfire logo and Let's Go Camping! message in bright green"/>
+                <a href={"search"} className={"nav-link"}>Search</a>
+                <a href={"compare"} className={"nav-link"}>Compare</a>
             </div>
             <div className="header-text-div">
                 <p className="header-text-p">Team 20</p>

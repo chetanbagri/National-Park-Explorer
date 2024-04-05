@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Objects;
+
 
 @Service
 public class UserService {
@@ -112,5 +114,25 @@ public class UserService {
         else if(!hasLowercase) return 2;
         else if(!hasNumber) return 3;
         else return 4;
+    }
+
+    public ResponseEntity<?> addUserToGroup(String username, String usernameQuery) {
+        User user = userRepository.findByUsername(username);
+        User userB = userRepository.findByUsername(usernameQuery);
+        if(Objects.equals(username, usernameQuery)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot add yourself to your own friend group");
+        }
+        else if(user != null && userB != null) { // Both usernames exists within database
+            if(user.getGroupOfFriends().contains(usernameQuery)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is already in your friend group");
+            }
+            user.addToGroupOfFriends(usernameQuery);
+            userRepository.save(user); // Update the database
+
+            return ResponseEntity.ok(user);
+        }
+        else { // Username does not exists within database
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");
+        }
     }
 }
