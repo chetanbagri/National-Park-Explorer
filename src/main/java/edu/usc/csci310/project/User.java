@@ -23,9 +23,9 @@ public class User {
     private String password;
 
     // WARNING: Do not use a User object or you may have a infinite cycle of referencing if two users have each other in a group.
-    // @OneToMany (cascade = CascadeType.ALL) // CascadeType.ALL ensures cascading operations (use if making List<User>)
-    @ElementCollection
-    private List<String> groupOfFriends = new ArrayList<>();
+    // // @OneToMany (cascade = CascadeType.ALL) // CascadeType.ALL ensures cascading operations (use if making List<User>)
+    // @ElementCollection
+    // private List<String> groupOfFriends = new ArrayList<>();
 
     // Constructors, Getters, and Setters
     protected User() {}
@@ -61,10 +61,10 @@ public class User {
         return lockoutTime;
     }
 
-    public List<String> getGroupOfFriends() {
-        return groupOfFriends;
-    }
-    public void addToGroupOfFriends(String u) {
-        groupOfFriends.add(u);
-    }
+//    public List<String> getGroupOfFriends() {
+//        return groupOfFriends;
+//    }
+//    public void addToGroupOfFriends(String u) {
+//        groupOfFriends.add(u);
+//    }
 }

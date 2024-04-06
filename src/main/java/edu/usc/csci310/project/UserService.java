@@ -119,14 +119,14 @@ public class UserService {
     public ResponseEntity<?> addUserToGroup(String username, String usernameQuery) {
         User user = userRepository.findByUsername(username);
         User userB = userRepository.findByUsername(usernameQuery);
-        if(Objects.equals(username, usernameQuery)){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot add yourself to your own friend group");
-        }
-        else if(user != null && userB != null) { // Both usernames exists within database
-            if(user.getGroupOfFriends().contains(usernameQuery)){
+        if(user != null && userB != null) { // Both usernames exists within database
+            if(Objects.equals(username, usernameQuery)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot add yourself to your own friend group");
+            }
+            if(Groups.getGroupOfFriends(username).contains(usernameQuery)){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is already in your friend group");
             }
-            user.addToGroupOfFriends(usernameQuery);
+            Groups.addToGroupOfFriends(username, usernameQuery);
             userRepository.save(user); // Update the database
 
             return ResponseEntity.ok(user);
