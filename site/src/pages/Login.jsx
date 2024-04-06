@@ -24,7 +24,7 @@ function Login() {
             if(response.ok) {
                 const createdUser = await response.json();
                 sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
-                navigate('/landing');
+                navigate('/search');
             }
             else {
                 const errorText = await response.text();

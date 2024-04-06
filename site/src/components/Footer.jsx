@@ -5,8 +5,11 @@ import '../styles/footer.css'
 
 function Footer() {
     return (
-        <div className="footer"> {/* footer */}
-            <p className="footer-p">Team 20</p>
+        <div>
+            <div className="footer-space"></div>
+            <div className="footer"> {/* footer */}
+                <p className="footer-p">Team 20</p>
+            </div>
         </div>
     );
 }

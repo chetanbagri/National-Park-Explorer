@@ -1,3 +1,7 @@
+.footer-space {
+    height: 50px;
+}
+
 .footer {
     display: block;
     /*justify-content: space-between;*/

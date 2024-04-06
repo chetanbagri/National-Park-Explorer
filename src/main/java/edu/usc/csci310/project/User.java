@@ -61,10 +61,4 @@ public class User {
         return lockoutTime;
     }
 
-//    public List<String> getGroupOfFriends() {
-//        return groupOfFriends;
-//    }
-//    public void addToGroupOfFriends(String u) {
-//        groupOfFriends.add(u);
-//    }
 }
