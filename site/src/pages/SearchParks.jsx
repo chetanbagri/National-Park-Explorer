@@ -14,7 +14,8 @@ const SearchParks = () => {
     const limit = 10;
     const [parkAmenities, setParkAmenities] = useState([]); // State to store amenities
 
-    const API_KEY = "uWVzTURerzitH3nepQc1tvbSW1Ia5cnt7g8Pp0yA";
+    // const API_KEY = "uWVzTURerzitH3nepQc1tvbSW1Ia5cnt7g8Pp0yA";
+    const API_KEY = process.env.REACT_APP_API_KEY;
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
 
     const [allFetchedParks, setFetchedParks] = useState([]); // Store ALL parks from previous search

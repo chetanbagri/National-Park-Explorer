@@ -57,7 +57,7 @@ public class createAccountMyStepdefs {
         createAccountButton.click();
     }
 
-    @Then("I should get a {string} message")
+    @Then("I should get {string} message")
     public void iShouldGetAMessage(String message) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("error")));
