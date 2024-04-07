@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, fireEvent, getByLabelText} from "@testing-library/react";
+import {render, screen, fireEvent, getByLabelText} from "@testing-library/react"; //removed waitfor
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
@@ -71,7 +71,7 @@ test("App.js file coverage", async () => {
     const user = userEvent.setup();
     render(<App />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
-    // verify page content for the default route
+    // verify page content for default route
     // expect(screen.getByTestId("test-login")).toBeInTheDocument();
     // expect(screen.getByText(/CreateAccount/i)).toBeInTheDocument();
     expect(screen.getByText("Username:")).toBeInTheDocument();
