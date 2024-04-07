@@ -71,7 +71,7 @@ test("App.js file coverage", async () => {
     const user = userEvent.setup();
     render(<App />, { wrapper: BrowserRouter }); // Triggers App.js coverage but defaults to Home.jsx
 
-    // verify page content for default route
+    // verify page content for the default route
     // expect(screen.getByTestId("test-login")).toBeInTheDocument();
     // expect(screen.getByText(/CreateAccount/i)).toBeInTheDocument();
     expect(screen.getByText("Username:")).toBeInTheDocument();
