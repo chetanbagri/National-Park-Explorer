@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, fireEvent, getByLabelText} from "@testing-library/react"; //removed waitfor
+import {render, screen, fireEvent, getByLabelText} from "@testing-library/react"; //removed
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
