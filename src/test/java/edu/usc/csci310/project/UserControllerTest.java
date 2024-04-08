@@ -68,4 +68,21 @@ class UserControllerTest {
 
         verify(userService).loginUser("Alice", "Password123");
     }
+
+    @Test
+    void testGroup() {
+        UserComparing UC = new UserComparing();
+        UC.setUsername("NickoOG");
+        UC.setUsernameQuery("NickoOG1");
+
+        ResponseEntity mockResponse = ResponseEntity.ok("User added to group");
+        when(userService.addUserToGroup(anyString(), anyString())).thenReturn(mockResponse);
+
+        ResponseEntity<?> response = userController.addUserToGroup(UC);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("User added to group", response.getBody());
+
+        verify(userService).addUserToGroup("NickoOG", "NickoOG1");
+    }
 }
