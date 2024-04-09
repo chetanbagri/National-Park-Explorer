@@ -27,8 +27,20 @@
 }
 
 .header-text-p {
-    color: #000088;
+    color: #ad8405;
     font-size: 25px;
     width: auto;
     display: inline;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #000088;
+    margin-left: 2em;
+    font-weight: bold;
+    padding: 1rem;
+}
+
+.nav-link:hover {
+    color: #007bff;
 }

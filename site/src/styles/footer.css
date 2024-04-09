@@ -1,3 +1,7 @@
+.footer-space {
+    height: 50px;
+}
+
 .footer {
     display: block;
     /*justify-content: space-between;*/
@@ -15,7 +19,7 @@
 
 .footer-p {
     text-align: center;
-    color: #000088;
+    color: #ad8405;
     font-size: 25px;
     margin: auto;
 }

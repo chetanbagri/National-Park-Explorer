@@ -20,4 +20,14 @@ public class UserController {
     public ResponseEntity<?> loginUser(@RequestBody User user) {
         return userService.loginUser(user.getUsername(), user.getPassword());
     }
+
+    @PostMapping("/adduser")
+    public ResponseEntity<?> addUserToGroup(@RequestBody UserComparing req) {
+        return userService.addUserToGroup(req.getUsername(), req.getUsernameQuery());
+    }
+
+    @PostMapping("/compareparks")
+    public ResponseEntity<?> compareParks(@RequestBody UserComparing req) {
+        return userService.compareParks(req.getUsername());
+    }
 }

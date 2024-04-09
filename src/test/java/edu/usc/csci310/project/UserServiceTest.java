@@ -257,5 +257,78 @@ class UserServiceTest {
         assertEquals("TestUser", result);
     }
 
+    @Test
+    void testAddUserToGroup() {
+        User user = new User();
+        User userB = new User();
+        user.setUsername("NickoOG");
+        userB.setUsername("NickoOG1");
+        when(mockRepository.findByUsername("NickoOG")).thenReturn(user);
+        when(mockRepository.findByUsername("NickoOG1")).thenReturn(userB);
+
+        ResponseEntity<?> response = userService.addUserToGroup("NickoOG", "NickoOG1");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+    @Test
+    void testTwoNullUser() {
+        when(mockRepository.findByUsername("NickoOG")).thenReturn(null);
+        when(mockRepository.findByUsername("NickoOG1")).thenReturn(null);
+
+        ResponseEntity<?> response = userService.addUserToGroup("NickoOG", "NickoOG1");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username does not exist", response.getBody());
+    }
+
+    @Test
+    void testNullUserA() {
+        User userB = new User();
+        userB.setUsername("NickoOG1");
+        when(mockRepository.findByUsername("NickoOG")).thenReturn(null);
+        when(mockRepository.findByUsername("NickoOG1")).thenReturn(userB);
+
+        ResponseEntity<?> response = userService.addUserToGroup("NickoOG", "NickoOG1");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username does not exist", response.getBody());
+    }
+
+    @Test
+    void testNullUserB() {
+        User user = new User();
+        user.setUsername("NickoOG");
+        when(mockRepository.findByUsername("NickoOG")).thenReturn(user);
+        when(mockRepository.findByUsername("NickoOG1")).thenReturn(null);
+
+        ResponseEntity<?> response = userService.addUserToGroup("NickoOG", "NickoOG1");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username does not exist", response.getBody());
+    }
+
+    @Test
+    void testAddItSelfToGroup() {
+        User user = new User();
+        user.setUsername("NickoOG");
+        when(mockRepository.findByUsername("NickoOG")).thenReturn(user);
+
+        ResponseEntity<?> response = userService.addUserToGroup("NickoOG", "NickoOG");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Cannot add yourself to your own friend group", response.getBody());
+    }
+
+    @Test
+    void testAddDuplicateToGroup() {
+        User user = new User();
+        User userB = new User();
+        user.setUsername("NickoOG");
+        userB.setUsername("NickoOG2");
+        when(mockRepository.findByUsername("NickoOG")).thenReturn(user);
+        when(mockRepository.findByUsername("NickoOG2")).thenReturn(userB);
+
+        ResponseEntity<?> response = userService.addUserToGroup("NickoOG", "NickoOG2");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        response = userService.addUserToGroup("NickoOG", "NickoOG2");
+        assertEquals("Username is already in your friend group", response.getBody());
+    }
+
 
 }
