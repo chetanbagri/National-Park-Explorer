@@ -5,6 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -130,6 +133,54 @@ public class UserService {
             // userRepository.save(user); // Update the database
 
             return ResponseEntity.ok(Groups.getGroupOfFriends(username));
+        }
+        else { // Username does not exists within database
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");
+        }
+    }
+
+    public ResponseEntity<?> compareParks(String username) {
+        User user = userRepository.findByUsername(username);
+        if(user != null){
+            // Get usernames of friends in group
+            List<String> userGroup = Groups.getGroupOfFriends(username);
+            if(userGroup.isEmpty()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have no friends in your group to compare parks with");
+            }
+
+            // Retrieve ALL parks of each username, including myself
+            userGroup.add(username);
+            /*
+            List<String> tmp1 = Arrays.asList("1", "2");
+            List<String> tmp2 = Arrays.asList("1", "3");
+            List<String> tmp3 = Arrays.asList("4", "5");
+            HashMap<String, Integer> parkCounts = new HashMap<>();
+            for(String userI : userGroup){
+                // do something with userI
+                for(each parkID in userI favorites list) {
+                    int count = parkCounts.getOrDefault("1", 0);
+                    parkCounts.put(key, count + 1);
+                }
+            }
+
+            // Sort the HashMap based on their count values
+            List<Map.Entry<String, Integer>> sortedIDs = new ArrayList<>(parkCounts.entrySet());
+            Collections.sort(sortedIDs, new Comparator<Map.Entry<String, Integer>>() {
+                @Override
+                public int compare(Map.Entry<String, Integer> entry1, Map.Entry<String, Integer> entry2) {
+                    return entry2.getValue().compareTo(entry1.getValue()); // Sort in descending order of count values
+                }
+            });
+            */
+
+            // Sort parks based on amount of times I see a park ID
+            // IDEA: Use Map to store ID as key, count as value.
+            // Then sort based on the count (value)
+            // Can also use Max-Heap but seems like too much work.
+
+            // Return ID data (with counts) to frontend sorted with
+
+
         }
         else { // Username does not exists within database
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");

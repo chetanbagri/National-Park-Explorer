@@ -25,4 +25,9 @@ public class UserController {
     public ResponseEntity<?> addUserToGroup(@RequestBody UserComparing req) {
         return userService.addUserToGroup(req.getUsername(), req.getUsernameQuery());
     }
+
+    @PostMapping("/compareparks")
+    public ResponseEntity<?> compareParks(@RequestBody UserComparing req) {
+        return userService.compareParks(req.getUsername());
+    }
 }

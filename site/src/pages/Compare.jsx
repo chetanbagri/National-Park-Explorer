@@ -8,6 +8,8 @@ function Compare(){
     const [success, setSuccess] = useState("");
     const [usernameQuery, setUsernameQuery] = useState("");
     const [parks, setParks] = useState([]);
+    const [selectedPark, setSelectedPark] = useState(null); // State to track selected park for details
+
 
     const handleAddToGroup = async (e) => {
         e.preventDefault();
@@ -40,7 +42,39 @@ function Compare(){
     };
 
     const handleCompare = async (e) => {
+        try {
+            let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+            const username = userInfo.username; // Username of currently logged in user
 
+            const response = await fetch("/compareparks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({username})
+            })
+            if(response.ok) {
+                const data = await response.json();
+                console.log(data);
+                setError("");
+                // setSuccess(`Successfully added ${usernameQuery} to your group of friends`);
+
+                // Will probably receive park IDs and their counts within the data
+                // then need to fetch for each ID to get the other info
+            }
+            else {
+                const errorText = await response.text();
+                setSuccess("");
+                setError(`Error: ${errorText}`);
+            }
+        }
+        catch(error){
+            setError(error.message);
+        }
+
+        // const fetchedParks = await fetchParks(parameters);
+        // setParks(fetchedParks);
+        // setSelectedPark(null); // Reset selected park details
     };
 
     const handleSuggest = async (e) => {
