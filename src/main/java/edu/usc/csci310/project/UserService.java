@@ -180,7 +180,7 @@ public class UserService {
 
             // Return ID data (with counts) to frontend sorted with
 
-
+            return ResponseEntity.ok(Groups.getGroupOfFriends(username));
         }
         else { // Username does not exists within database
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");

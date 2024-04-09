@@ -10,6 +10,8 @@ function Compare(){
     const [parks, setParks] = useState([]);
     const [selectedPark, setSelectedPark] = useState(null); // State to track selected park for details
 
+    const API_KEY = process.env.REACT_APP_API_KEY;
+    const BASE_URL = "https://developer.nps.gov/api/v1/parks";
 
     const handleAddToGroup = async (e) => {
         e.preventDefault();
@@ -42,6 +44,8 @@ function Compare(){
     };
 
     const handleCompare = async (e) => {
+        /*
+        let fetchedParks = [];
         try {
             let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
             const username = userInfo.username; // Username of currently logged in user
@@ -54,13 +58,48 @@ function Compare(){
                 body: JSON.stringify({username})
             })
             if(response.ok) {
-                const data = await response.json();
-                console.log(data);
+                const parkIDs = await response.json();
+                console.log("Park IDs: " + parkIDs);
                 setError("");
                 // setSuccess(`Successfully added ${usernameQuery} to your group of friends`);
 
                 // Will probably receive park IDs and their counts within the data
                 // then need to fetch for each ID to get the other info
+
+
+                // Plan: Get list of park IDs and their counts from the backend
+                for(ID : parkIDs){ // Iterate over the list, query NPS with each ID.
+                    Do a fetch on park
+                    parameters = "?q=" + ID;
+                    const url = `${BASE_URL}${parameters}`;
+
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: { 'X-Api-Key': API_KEY, }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log(data);
+                        data = data.data; // Get just the array of parks
+                        for(park : data){
+                            if(ID == park.id){
+                                // Add park to array that will be sent to setParks()
+                                fetchedParks.push(park);
+                                break;
+                            }
+                        }
+                    } else {
+                        setError("Failed to fetch park ID: " + ID);
+                        return []; // Return empty array on failure
+                    }
+                }
+                // Check through results and get the matching park (NPS
+                // may return multiple parks)
+                // Ex: https://developer.nps.gov/api/v1/parks?limit=10&q=FF73E2AA-E274-44E1-A8F5-9DD998B0F579
+                    // Returned 3 parks, 1 matched the ID.
+                // Store each result that is a match into new array
+                // setParks(new array)
+
             }
             else {
                 const errorText = await response.text();
@@ -72,9 +111,9 @@ function Compare(){
             setError(error.message);
         }
 
-        // const fetchedParks = await fetchParks(parameters);
         // setParks(fetchedParks);
         // setSelectedPark(null); // Reset selected park details
+        */
     };
 
     const handleSuggest = async (e) => {
