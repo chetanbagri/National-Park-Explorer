@@ -11,36 +11,9 @@ function Compare(){
 
     const handleAddToGroup = async (e) => {
         e.preventDefault();
-        // setPageNumber(1); // Reset to the first page
-
-        // let parameters = `?limit=${limit}`;
-
-        // console.log(searchType);
-
-        // if (searchType !== "state") {
-        //     /*if(searchType === "amenities"){
-        //         parameters = `/parksplaces${parameters}&q=${encodeURIComponent(searchQuery)}`;
-        //         const fetchedParks = await fetchAmenities(parameters);
-        //         setFetchedParks(fetchedParks);
-        //         setParks(fetchedParks.slice(0, 10));
-        //         start_idx = 0;
-        //         setSelectedPark(null); // Reset selected park details
-        //         return;
-        //     }*/
-        //     parameters += `&q=${encodeURIComponent(searchQuery)}`;
-        // } else if (searchType === "state") {
-        //     parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
-        // }
-        // // Add more parameters based on searchType as necessary
-        //
-        // const fetchedParks = await fetchParks(parameters);
-        // setParks(fetchedParks);
-        // setSelectedPark(null); // Reset selected park details
         try {
             let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
             const username = userInfo.username; // Username of currently logged in user
-            // console.log(username);
-            // console.log(usernameQuery);
 
             const response = await fetch("/adduser", {
                 method: "POST",
@@ -50,15 +23,10 @@ function Compare(){
                 body: JSON.stringify({username, usernameQuery})
             })
             if(response.ok) {
-                const updatedUser = await response.json();
-                sessionStorage.setItem('userInfo', JSON.stringify(updatedUser));
-                console.log(updatedUser);
+                const groupMembers = await response.json();
+                console.log(groupMembers);
                 setError("");
                 setSuccess(`Successfully added ${usernameQuery} to your group of friends`);
-
-                // const createdUser = await response.json();
-                // sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
-                // navigate('/landing');
             }
             else {
                 const errorText = await response.text();

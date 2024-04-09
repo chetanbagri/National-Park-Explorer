@@ -127,9 +127,9 @@ public class UserService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is already in your friend group");
             }
             Groups.addToGroupOfFriends(username, usernameQuery);
-            userRepository.save(user); // Update the database
+            // userRepository.save(user); // Update the database
 
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(Groups.getGroupOfFriends(username));
         }
         else { // Username does not exists within database
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");
