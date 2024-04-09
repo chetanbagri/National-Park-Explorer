@@ -78,7 +78,7 @@ public class UserService {
                             user.setTime1(0L);
                             user.setTime2(0L);
                             userRepository.save(user);
-                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are locked out for 30 seconds!");
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are locked out for 30 seconds");
                         } else {
                             user.setTime1(user.getTime2());
                             user.setTime2(System.currentTimeMillis());

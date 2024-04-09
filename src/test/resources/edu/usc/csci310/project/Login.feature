@@ -12,7 +12,7 @@ Feature: test the login functionality of website
     When I enter the username "Bob" on login page
     And I enter the password "wrongPassword" on login page
     And I press the Login button
-    Then I should get a login "Error: You are locked out for 30 seconds!" message
+    Then I should get a login "Error:You are locked out for 30 seconds" message
 
   Scenario: login attempt with correct password while still on lockout
     Given I am on the login page

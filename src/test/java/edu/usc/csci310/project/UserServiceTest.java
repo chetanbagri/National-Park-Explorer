@@ -204,7 +204,7 @@ class UserServiceTest {
         ResponseEntity<?> response = userService.loginUser("user", "InvalidPassword");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("You are locked out for 30 seconds!", response.getBody());
+        assertEquals("You are locked out for 30 seconds", response.getBody());
         // Verify that user.getLockoutTime() is set to the current time
     }
 
