@@ -29,7 +29,7 @@ function Header() {
                      src={logo}
                      alt="Campfire logo and Let's Go Camping! message in bright green"/>
                 <a href={"search"} className={"nav-link"}>Search</a>
-                <a href={"#"} className={"nav-link"}>Favorites</a>
+                <a href={"Favorites"} className={"nav-link"}>Favorites</a>
                 <a href={"compare"} className={"nav-link"}>Compare</a>
                 <a href={""} onClick={handleLogOut} className={"nav-link"}>Logout</a>
             </div>

@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 public class UserService {
@@ -186,4 +189,71 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");
         }
     }
+
+
+    public ResponseEntity<?> getFavorites(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        List<String> favorites = user.getFavorites();
+        return ResponseEntity.ok(new FavoritesResponse(favorites));
+    }
+
+    public ResponseEntity<?> addFavorite(String username, String parkId) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        List<String> favorites = user.getFavorites();
+        if (favorites == null) {
+            favorites = new ArrayList<>();
+            user.setFavorites(favorites);
+        }
+
+        if (!favorites.contains(parkId)) {
+            favorites.add(parkId);
+            userRepository.save(user);
+            return ResponseEntity.ok(new FavoritesResponse(favorites));
+        } else {
+            return ResponseEntity.badRequest().body("Park already in favorites");
+        }
+    }
+
+    public ResponseEntity<?> removeFavorite(String username, String parkId) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        List<String> favorites = user.getFavorites();
+        if (favorites == null || !favorites.contains(parkId)) {
+            return ResponseEntity.badRequest().body("Park not in favorites");
+        }
+
+        favorites.remove(parkId);
+        userRepository.save(user);
+        return ResponseEntity.ok("Park removed from favorites");
+    }
+
+    public ResponseEntity<?> clearFavorites(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        user.setFavorites(new ArrayList<>());
+        userRepository.save(user);
+        return ResponseEntity.ok("All favorites cleared");
+    }
+
+
 }
+
+
+
+
+
+
