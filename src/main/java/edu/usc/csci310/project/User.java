@@ -1,11 +1,11 @@
 package edu.usc.csci310.project;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -22,10 +22,10 @@ public class User {
 
     private String password;
 
-    // WARNING: Do not use a User object or you may have a infinite cycle of referencing if two users have each other in a group.
-    // // @OneToMany (cascade = CascadeType.ALL) // CascadeType.ALL ensures cascading operations (use if making List<User>)
-    // @ElementCollection
-    // private List<String> groupOfFriends = new ArrayList<>();
+
+    //Favorites:
+    @ElementCollection
+    private List<String> favorites = new ArrayList<>();
 
     // Constructors, Getters, and Setters
     protected User() {}
@@ -45,6 +45,7 @@ public class User {
     public void setLockoutTime(Long lockoutTime) {
         this.lockoutTime = lockoutTime;
     }
+
     public String getUsername(){
         return username;
     }
@@ -59,6 +60,14 @@ public class User {
     }
     public long getLockoutTime() {
         return lockoutTime;
+    }
+
+    public List<String> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<String> favorites) {
+        this.favorites = favorites;
     }
 
 }

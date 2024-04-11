@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -13,11 +13,15 @@ const SearchParks = () => {
     const [pageNumber, setPageNumber] = useState(1);
     const limit = 10;
     const [parkAmenities, setParkAmenities] = useState([]); // State to store amenities
+    const [userFavorites, setUserFavorites] = useState([]);    const [isFavorite, setIsFavorite] = useState(false);
+    const [hoveredPark, setHoveredPark] = useState(null);
+    const [favoriteParks, setFavoriteParks] = useState([]);
+    const [favoriteMessage, setFavoriteMessage] = useState("");
+    const [favoriteMessageColor, setFavoriteMessageColor] = useState("");
 
     // const API_KEY = "uWVzTURerzitH3nepQc1tvbSW1Ia5cnt7g8Pp0yA";
     const API_KEY = process.env.REACT_APP_API_KEY;
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
-
     const [allFetchedParks, setFetchedParks] = useState([]); // Store ALL parks from previous search
     let start_idx = 0;
 
@@ -50,6 +54,21 @@ const SearchParks = () => {
             return [];
         }
     };
+    const fetchUserFavorites = async (username) => {
+        try {
+            const response = await fetch(`/favorites?username=${username}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch user favorites');
+            }
+            const data = await response.json();
+            console.log('User favorites:', data.favorites);
+            return data.favorites;
+        } catch (error) {
+            console.error('Error fetching user favorites:', error);
+            return [];
+        }
+    };
+
 
     const fetchAmenitiesOfPark = async (parkCode) => {
         const url = `https://developer.nps.gov/api/v1/amenities?q=${parkCode}`;
@@ -104,8 +123,31 @@ const SearchParks = () => {
             console.log(`Calling fetchAmenitiesOfPark(${parkCode})`)
             const amenities = await fetchAmenitiesOfPark(`${parkCode}`);
             setParkAmenities(amenities);
+            setIsFavorite(userFavorites.includes(parkCode));
         }
     };
+
+    const addToFavorites = async (parkCode) => {
+        try {
+            const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
+            const response = await fetch(`/favorites/add?username=${username}&parkId=${parkCode}`, {
+                method: 'POST',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add park to favorites');
+            }
+            else{
+                console.log("response ok");
+            }
+
+            const data = await response.json();
+            setUserFavorites([...userFavorites, parkCode]);
+        } catch (error) {
+            console.error('Error adding park to favorites:', error);
+        }
+    };
+
 
 
     const handleSearch = async (e) => {
@@ -151,6 +193,38 @@ const SearchParks = () => {
 
         const fetchedParks = await fetchParks(parameters);
         setParks(prevParks => [...prevParks, ...fetchedParks]);
+    };
+
+
+    const handleAddToFavorites = async (parkCode) => {
+        try {
+            const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
+
+            if (userFavorites.includes(parkCode)) {
+                setFavoriteMessage("Error: This park is already in your favorites.");
+                setFavoriteMessageColor("red");
+                return;
+            }
+            const response = await fetch(`/favorites/add?username=${username}&parkId=${parkCode}`, {
+                method: 'POST',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add park to favorites');
+            }
+            else{
+                console.log("response ok");
+                setFavoriteMessage("Park successfully added to favorites!");
+                setFavoriteMessageColor("green");
+            }
+
+            const data = await response.json();
+            setUserFavorites([...userFavorites, parkCode]);
+        } catch (error) {
+            console.error('Error adding park to favorites:', error);
+            setFavoriteMessage("Error adding park to favorites.");
+            setFavoriteMessageColor("red");
+        }
     };
 
     const handleAmenitiesClick = async (amenity) => {
@@ -206,41 +280,75 @@ const SearchParks = () => {
                         text-decoration: underline;
                         margin-right: 5px; /* Add a little space between the items */
                     }
+                    
+                    
+                    .add-to-favorites {
+                        font-size: 24px;
+                        font-weight: bold;
+                        color: green;
+                        margin-left: 10px;
+                        cursor: pointer;
+                    }
+
+                   
+               
                 `}</style>
             <div>
-                <Header />
+                <Header/>
+
                 <h2>Search Parks</h2>
+                <div className="favmessage" style={{color: favoriteMessageColor}}>
+                    {favoriteMessage && <p>{favoriteMessage}</p>}
+                </div>
                 <form onSubmit={handleSearch}>
                     <label htmlFor={"searchQuery"}>Search: </label>
                     <input id="searchQuery" type="text" value={searchQuery} title={"Search Box"}
                            onChange={(e) => setSearchQuery(e.target.value)} tabIndex={0} autoFocus/>
 
-                    <input type="radio" id="parkName" name="searchTerm" value="parkName" checked={searchType === "parkName"} title={"Park Radio Button"}
+                    <input type="radio" id="parkName" name="searchTerm" value="parkName"
+                           checked={searchType === "parkName"} title={"Park Radio Button"}
                            onChange={() => setSearchType("parkName")} tabIndex={1}/>
                     <label htmlFor="parkName">Park Name</label><br/>
 
-                    <input type="radio" id="amenities" name="searchTerm" value="amenities" title={"Amenities Radio Button"}
-                           checked={searchType === "amenities"} onChange={() => setSearchType("amenities")} />
+                    <input type="radio" id="amenities" name="searchTerm" value="amenities"
+                           title={"Amenities Radio Button"}
+                           checked={searchType === "amenities"} onChange={() => setSearchType("amenities")}/>
                     <label htmlFor="amenities">Amenities</label><br/>
 
-                    <input type="radio" title={"stateRadio"} id="state" name="searchTerm" value="state" checked={searchType === "state"}
-                           onChange={() => setSearchType("state")} />
+                    <input type="radio" title={"stateRadio"} id="state" name="searchTerm" value="state"
+                           checked={searchType === "state"}
+                           onChange={() => setSearchType("state")}/>
                     <label htmlFor="state">State</label><br/>
 
-                    <input type="radio" id="activity" name="searchTerm" value="activity" title={"Activity Radio Button"} checked={searchType === "activity"}
-                           onChange={() => setSearchType("activity")} />
+                    <input type="radio" id="activity" name="searchTerm" value="activity" title={"Activity Radio Button"}
+                           checked={searchType === "activity"}
+                           onChange={() => setSearchType("activity")}/>
                     <label htmlFor="activity">Activity</label><br/>
 
                     <input type="submit" value="Search" title={"search"} id={"search"} tabIndex={2}/>
                 </form>
                 {parks.length > 0 && (
-                    <button onClick={loadMoreResults} title={"loadMoreResults"} id={"loadMoreResults"} tabIndex={3}>Load More Results</button>
+                    <button onClick={loadMoreResults} title={"loadMoreResults"} id={"loadMoreResults"} tabIndex={3}>Load
+                        More Results</button>
                 )}
                 {error && <p>{error}</p>}
                 <ul>
                     {parks.map(park => (
-                        <li key={park.id}>
-                            <button title={"detailsButton_" + park.parkCode} onClick={() => handleParkSelection(park.parkCode)}>{park.fullName}</button>
+                        <li key={park.id}
+                            onMouseEnter={() => setHoveredPark(park.parkCode)}
+                            onMouseLeave={() => setHoveredPark(null)}>
+                            <div className="park-button">
+                                <button title={`detailsButton_${park.parkCode}`}
+                                        onClick={() => handleParkSelection(park.parkCode)}>
+                                    {park.fullName}
+                                </button>
+                                {hoveredPark === park.parkCode && (
+                                    <span className="add-to-favorites"
+                                          onClick={() => handleAddToFavorites(park.parkCode)}>
+                                            +
+                                    </span>
+                                )}
+                            </div>
                             {selectedPark && selectedPark.parkCode === park.parkCode && (
                                 <div className="detailsBox">
                                     <h3>{selectedPark.fullName}</h3>
@@ -249,7 +357,8 @@ const SearchParks = () => {
                                     <p>Description: {selectedPark.description}</p>
                                     <div>
                                         <h4>Location:</h4>
-                                        <p onClick={() => handleLocationClick(selectedPark.addresses[0].stateCode)} className="clickable-text">
+                                        <p onClick={() => handleLocationClick(selectedPark.addresses[0].stateCode)}
+                                           className="clickable-text">
                                             {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}
                                         </p>
                                     </div>
@@ -274,7 +383,8 @@ const SearchParks = () => {
                                     <p>
                                         {parkAmenities.map((amenity, index) => (
                                             <React.Fragment key={amenity.id}>
-                                            <span className="clickable-text" onClick={() => handleAmenitiesClick(amenity.name)}>
+                                            <span className="clickable-text"
+                                                  onClick={() => handleAmenitiesClick(amenity.name)}>
                                                 {amenity.name}
                                             </span>
                                                 {index < parkAmenities.length - 1 ? ', ' : ''}
@@ -287,11 +397,13 @@ const SearchParks = () => {
                                     </div>
 
                                 </div>
+
+
                             )}
                         </li>
                     ))}
                 </ul>
-                <Footer />
+                <Footer/>
             </div>
         </>
     );
