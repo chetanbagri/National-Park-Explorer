@@ -422,4 +422,24 @@ public class SearchParksStepDefs {
         assertTrue(favoriteStatusMessage.getText().contains("This park is in your favorites list"));
     }
 
+    @And("I click on the first result which is not on the user's favorite list")
+    public void iClickOnTheFirstResultWhichIsNotOnTheUsersFavoriteList() {
+        List<WebElement> searchResults = driver.findElements(By.cssSelector(".search-result-button"));
+        if (searchResults.size() > 0) {
+            searchResults.get(9).click(); // 9th probably not on the user's favorite list
+        } else {
+            fail("No search results found to click.");
+        }
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".detailsBox"))); // Adjust the selector to the details box
+    }
+
+
+    @Then("the details window displays and says the park is not on the user's fave list")
+    public void theDetailsWindowDisplaysAndSaysTheParkIsNotOnTheUsersFaveList() {
+        WebElement detailsBox = driver.findElement(By.cssSelector(".detailsBox"));
+        WebElement favoriteStatusMessage = detailsBox.findElement(By.cssSelector(".favorite-status"));
+        assertTrue(favoriteStatusMessage.getText().contains("This park is not in your favorites list"));
+    }
+
 }

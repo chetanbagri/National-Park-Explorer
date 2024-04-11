@@ -83,11 +83,11 @@ Feature: test the search page details feature
     And I click on the first result
     Then the details window shows and says the park is on the user's fave list
 
-  #Scenario: Details about details 10 - 2
-  #  Given I am on the search page
-  #  And I press the Search button
-  #  And I click on the first result which is not on the user's favorite list
-  #  Then the details window displays and says the park is not on the user's fave list
+  Scenario: Details about details 10 - 2
+    Given I am on the search page
+    And I press the Search button
+    And I click on the first result which is not on the user's favorite list
+    Then the details window displays and says the park is not on the user's fave list
 
   Scenario: Clicking on an amenity
     Given I am on the search page
