@@ -28,10 +28,10 @@ function Header() {
                 <img className="logo-general-image"
                      src={logo}
                      alt="Campfire logo and Let's Go Camping! message in bright green"/>
-                <a href={"search"} className={"nav-link"}>Search</a>
-                <a href={"Favorites"} className={"nav-link"}>Favorites</a>
-                <a href={"compare"} className={"nav-link"}>Compare</a>
-                <a href={""} onClick={handleLogOut} className={"nav-link"}>Logout</a>
+                <a href={"search"} id="nav-search" className={"nav-link"}>Search</a>
+                <a href={"favorites"} id="nav-favorites" className={"nav-link"}>Favorites</a>
+                <a href={"compare"} id="nav-compare" className={"nav-link"}>Compare</a>
+                <a href={""} id="nav-logout" onClick={handleLogOut} className={"nav-link"}>Logout</a>
             </div>
             <div className="header-text-div">
             <p className="header-text-p">Team 20</p>
