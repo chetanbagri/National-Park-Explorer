@@ -18,7 +18,7 @@ function App() {
                 <Route path="/login" testId="test-login" element={<Login />} /> {}
                 <Route path="/home" element={<Home />} /> {}
                 <Route path="/search" element={<SearchParks />} />
-                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/Favorites" element={<Favorites />} />
                 <Route path="/compare" element={<Compare />} />
             </Routes>
         </div>

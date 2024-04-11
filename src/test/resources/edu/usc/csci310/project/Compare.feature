@@ -1,4 +1,5 @@
 Feature: Compare favorite park list with friends (#5)
+  # Navigation
   Scenario: Navigate from this page to Search page
     Given I am on the "compare" page
     When I click on the nav button with id "nav-search"
@@ -8,8 +9,8 @@ Feature: Compare favorite park list with friends (#5)
   Scenario: Navigate from this page to Favorites page
     Given I am on the "compare" page
     When I click on the nav button with id "nav-favorites"
-    Then I should be redirected to the "favorites" page
-    And see that the page title is "My favorite Parks"
+    Then I should be redirected to the "Favorites" page
+    And see that the page title is "My Favorite Parks"
 
   Scenario: Logout from this page and go to Login page
     Given I am on the "compare" page
@@ -17,7 +18,14 @@ Feature: Compare favorite park list with friends (#5)
     Then I should be redirected to the "login" page
     And see that the page title is "Login"
 
+  # Add users to group
   Scenario: Add 1 friend to group successfully
+    Given I am on the Compare page
+    And I have "Nicko_1" registered
+    When I enter "NickoOG1" into element with id "usernameQuery"
+    And I click on the element with id "addUserBtn"
+    Then I should see "Successfully added NickoOG1 to your group of friends"
+
 
   Scenario: Add 1 friend to group successfully if user B has a public list
 

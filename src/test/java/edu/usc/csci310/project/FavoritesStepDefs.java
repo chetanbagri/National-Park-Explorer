@@ -41,7 +41,7 @@ public class FavoritesStepDefs {
         }
 
         @Given("I am on the favorites page")
-        public void iAmOnTheSearchPage() {
+        public void iAmOnTheFavoritesPage() {
             userService.registerUser("NickoOG_TMP", "Happy1", "Happy1");
             // Need to login user so they have the session storage filled in (to not get booted off general pages)
             driver.get(ROOT_URL + "login");
@@ -51,6 +51,8 @@ public class FavoritesStepDefs {
             driver.findElement(By.id("password")).sendKeys("Happy1");
             driver.findElement(By.id("loginBtn")).click();
             wait.until(ExpectedConditions.urlToBe("http://localhost:8080/search"));
+            driver.findElement(By.id("nav-favorites")).click();
+            wait.until(ExpectedConditions.urlToBe("http://localhost:8080/Favorites"));
         }
         @And("the user has Alcatraz Island in their favorites")
         public void the_user_has_alcatraz_island_in_their_favorites() {

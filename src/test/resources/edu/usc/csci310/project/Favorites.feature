@@ -1,4 +1,22 @@
 Feature: Update and Review a Favorite Park List
+  # Navigation
+  Scenario: Navigate from this page to Search page
+    Given I am on the "favorites" page
+    When I click on the nav button with id "nav-search"
+    Then I should be redirected to the "search" page
+    And see that the page title is "Search Parks"
+
+  Scenario: Navigate from this page to Favorites page
+    Given I am on the "favorites" page
+    When I click on the nav button with id "nav-compare"
+    Then I should be redirected to the "compare" page
+    And see that the page title is "Compare Parks and Give Suggestions"
+
+  Scenario: Logout from this page and go to Login page
+    Given I am on the "favorites" page
+    When I click on the nav button with id "nav-logout"
+    Then I should be redirected to the "login" page
+    And see that the page title is "Login"
 
   #search page
 #  Scenario: Navigate to Favorites page from Search page
