@@ -14,6 +14,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
 import java.util.List;
@@ -21,13 +23,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@SpringBootTest
 public class FavoritesStepDefs {
 
-        private static final String ROOT_URL = "http://localhost:8080/search"; // Adjust this to your search page URL
+        private static final String ROOT_URL = "http://localhost:8080/"; // Adjust this to your search page URL
 
         private final WebDriver driver = new ChromeDriver();
 
         private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        @Autowired
+        private UserService userService;
 
         @After
         public void afterScenario() {
@@ -36,7 +42,15 @@ public class FavoritesStepDefs {
 
         @Given("I am on the favorites page")
         public void iAmOnTheSearchPage() {
-            driver.get(ROOT_URL);
+            userService.registerUser("NickoOG_TMP", "Happy1", "Happy1");
+            // Need to login user so they have the session storage filled in (to not get booted off general pages)
+            driver.get(ROOT_URL + "login");
+            driver.findElement(By.id("username")).click();
+            driver.findElement(By.id("username")).sendKeys("NickoOG_TMP");
+            driver.findElement(By.id("password")).click();
+            driver.findElement(By.id("password")).sendKeys("Happy1");
+            driver.findElement(By.id("loginBtn")).click();
+            wait.until(ExpectedConditions.urlToBe("http://localhost:8080/search"));
         }
         @And("the user has Alcatraz Island in their favorites")
         public void the_user_has_alcatraz_island_in_their_favorites() {
