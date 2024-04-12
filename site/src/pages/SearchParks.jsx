@@ -58,8 +58,8 @@ const SearchParks = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
-                if (data.data.length == 0) {
-                    alert("There are no more results for this query")
+                if (data.data.length === 0) {
+                    setError("There are no more results for this query")
                 }
                 return data.data; // Return the parks data
             } else {
@@ -75,7 +75,7 @@ const SearchParks = () => {
         try {
             const response = await fetch(`/favorites?username=${username}`);
             if (!response.ok) {
-                throw new Error('Failed to fetch user favorites');
+                setError('Failed to fetch user favorites');
             }
             const data = await response.json();
             console.log('User favorites:', data.favorites);
@@ -145,26 +145,27 @@ const SearchParks = () => {
         }
     };
 
-    const addToFavorites = async (parkCode) => {
-        try {
-            const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
-            const response = await fetch(`/favorites/add?username=${username}&parkId=${parkCode}`, {
-                method: 'POST',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to add park to favorites');
-            }
-            else{
-                console.log("response ok");
-            }
-
-            const data = await response.json();
-            setUserFavorites([...userFavorites, parkCode]);
-        } catch (error) {
-            console.error('Error adding park to favorites:', error);
-        }
-    };
+    // Nick: Wasn't used so commented it to help with coverage
+    // const addToFavorites = async (parkCode) => {
+    //     try {
+    //         const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
+    //         const response = await fetch(`/favorites/add?username=${username}&parkId=${parkCode}`, {
+    //             method: 'POST',
+    //         });
+    //
+    //         if (!response.ok) {
+    //             throw new Error('Failed to add park to favorites');
+    //         }
+    //         else{
+    //             console.log("response ok");
+    //         }
+    //
+    //         const data = await response.json();
+    //         setUserFavorites([...userFavorites, parkCode]);
+    //     } catch (error) {
+    //         console.error('Error adding park to favorites:', error);
+    //     }
+    // };
 
 
 
