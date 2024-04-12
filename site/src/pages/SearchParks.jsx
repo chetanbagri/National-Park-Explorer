@@ -177,21 +177,23 @@ const SearchParks = () => {
 
         console.log(searchType);
 
-        if (searchType !== "state") {
-            /*if(searchType === "amenities"){
-                parameters = `/parksplaces${parameters}&q=${encodeURIComponent(searchQuery)}`;
-                const fetchedParks = await fetchAmenities(parameters);
-                setFetchedParks(fetchedParks);
-                setParks(fetchedParks.slice(0, 10));
-                start_idx = 0;
-                setSelectedPark(null); // Reset selected park details
-                return;
-            }*/
-            parameters += `&q=${encodeURIComponent(searchQuery)}`;
-        } else if (searchType === "state") {
-            parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+        if (searchQuery != "") {
+            if (searchType !== "state") {
+                /*if(searchType === "amenities"){
+                    parameters = `/parksplaces${parameters}&q=${encodeURIComponent(searchQuery)}`;
+                    const fetchedParks = await fetchAmenities(parameters);
+                    setFetchedParks(fetchedParks);
+                    setParks(fetchedParks.slice(0, 10));
+                    start_idx = 0;
+                    setSelectedPark(null); // Reset selected park details
+                    return;
+                }*/
+                parameters += `&q=${encodeURIComponent(searchQuery)}`;
+            } else if (searchType === "state") {
+                parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+            }
+            // Add more parameters based on searchType as necessary
         }
-        // Add more parameters based on searchType as necessary
 
         const fetchedParks = await fetchParks(parameters);
         setParks(fetchedParks);
@@ -203,10 +205,12 @@ const SearchParks = () => {
 
         let parameters = `?limit=${limit}&start=${pageNumber * limit}`;
 
-        if (searchType !== "state") {
-            parameters += `&q=${encodeURIComponent(searchQuery)}`;
-        } else if (searchType === "state") {
-            parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+        if (searchQuery != "") {
+            if (searchType !== "state") {
+                parameters += `&q=${encodeURIComponent(searchQuery)}`;
+            } else if (searchType === "state") {
+                parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+            }
         }
         // Handle other parameters as necessary
 
