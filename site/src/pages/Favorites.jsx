@@ -16,7 +16,6 @@ const Favorites = () => {
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
 
     useEffect(() => {
-        console.log("Session Storage:", sessionStorage.getItem('userInfo'));
         const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
         if(userInfo) {
             const username = userInfo.username;
@@ -25,12 +24,11 @@ const Favorites = () => {
                     setUserFavorites(favorites);
                     Promise.all(favorites.map(async (parkCode) => {
                         const park = await fetchParkDetails(parkCode);
-                        return park?.fullName || 'Loading...';
+                        return park?.fullName;
                     }))
                         .then(setFavoriteParks)
                         .catch((error) => {
                             console.error('Error fetching favorite park names:', error);
-                            setFavoriteParks(favorites.map(() => 'Loading...'));
                         });
                 })
                 .catch((error) => {
@@ -41,8 +39,6 @@ const Favorites = () => {
         }
     }, []);
 
-
-
     const fetchUserFavorites = async (username) => {
         try {
             const response = await fetch(`/favorites?username=${username}`);
@@ -50,16 +46,11 @@ const Favorites = () => {
                 throw new Error('Failed to fetch user favorites');
             }
             const data = await response.json();
-            console.log('User favorites:', data.favorites);
             return data.favorites;
         } catch (error) {
             console.error('Error fetching user favorites:', error);
             return [];
         }
-    };
-
-    const handleClearFavorites = () => {
-        setShowConfirmationPopup(true);
     };
 
 
@@ -80,7 +71,6 @@ const Favorites = () => {
 
         } catch (error) {
             console.error('Error clearing favorites:', error);
-
         }
     };
 
@@ -94,8 +84,6 @@ const Favorites = () => {
             return null;
         }
         const data = await response.json();
-        console.log(`fetchParkDetails: ${BASE_URL}?parkCode=${parkCode}`);
-        console.log(data);
         return data.data[0];
     };
 
@@ -108,8 +96,6 @@ const Favorites = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log(`fetchAmenitiesOfPark: ${url}`);
-                console.log(data);
                 return data.data;
             } else {
                 console.error("Failed to fetch amenities.");
@@ -123,21 +109,15 @@ const Favorites = () => {
 
     const handleParkSelection = async (parkCode) => {
         if (selectedPark && selectedPark.parkCode === parkCode) {
-            // If the selected park is already open, close the details
             setSelectedPark(null);
             setParkAmenities([]);
         } else {
-            // Fetch and show the details for the new park
-            console.log(`Calling fetchParkDetails(${parkCode})`)
             const details = await fetchParkDetails(parkCode);
             setSelectedPark(details);
-            // Fetch and show amenities for the new park
-            console.log(`Calling fetchAmenitiesOfPark(${parkCode})`)
             const amenities = await fetchAmenitiesOfPark(`${parkCode}`);
             setParkAmenities(amenities);
         }
     };
-
 
     const handleRemoveFavorite = async (parkCode) => {
         setParkToDelete(parkCode);
@@ -162,7 +142,6 @@ const Favorites = () => {
             console.error('Error removing park from favorites:', error);
         }
     };
-
 
     return (
         <>
@@ -252,19 +231,20 @@ const Favorites = () => {
                 )}
                 {userFavorites && userFavorites.length > 0 && (
                     <ul>
-
                         {userFavorites.map((parkCode, index) => (
                             <li key={parkCode}
                                 onMouseEnter={() => setHoveredPark(parkCode)}
                                 onMouseLeave={() => setHoveredPark(null)}>
                                 <button onClick={() => handleParkSelection(parkCode)}>
-                                    {favoriteParks[index] || 'Loading...'}
+                                    {favoriteParks[index]}
                                 </button>
                                 {hoveredPark === parkCode && (
-                                    <span className="remove-from-favorites" onClick={() => handleRemoveFavorite(parkCode)}>
+                                    <span className="remove-from-favorites"
+                                          onClick={() => handleRemoveFavorite(parkCode)}>
                                         -
                                     </span>
                                 )}
+
                                 {selectedPark && selectedPark.parkCode === parkCode && (
                                     <div className="detailsBox">
                                         <h3>{selectedPark.fullName}</h3>
@@ -289,10 +269,10 @@ const Favorites = () => {
                                         <p>
                                             {selectedPark.activities.map((activity, index) => (
                                                 <React.Fragment key={activity.id}>
-                                            {/*<span className="clickable-text"*/}
-                                            {/*      onClick={() => handleActivitiesClick(activity.name)}>*/}
-                                            {/*    {activity.name}*/}
-                                            {/*</span>*/}
+                                                    {/*<span className="clickable-text"*/}
+                                                    {/*      onClick={() => handleActivitiesClick(activity.name)}>*/}
+                                                    {/*    {activity.name}*/}
+                                                    {/*</span>*/}
                                                     {index < selectedPark.activities.length - 1 ? ', ' : ''}
                                                 </React.Fragment>
                                             ))}
@@ -302,10 +282,10 @@ const Favorites = () => {
                                         <p>
                                             {parkAmenities.map((amenity, index) => (
                                                 <React.Fragment key={amenity.id}>
-                                            {/*<span className="clickable-text"*/}
-                                            {/*      onClick={() => handleAmenitiesClick(amenity.name)}>*/}
-                                            {/*    {amenity.name}*/}
-                                            {/*</span>*/}
+                                                    {/*<span className="clickable-text"*/}
+                                                    {/*      onClick={() => handleAmenitiesClick(amenity.name)}>*/}
+                                                    {/*    {amenity.name}*/}
+                                                    {/*</span>*/}
                                                     {index < parkAmenities.length - 1 ? ', ' : ''}
                                                 </React.Fragment>
                                             ))}

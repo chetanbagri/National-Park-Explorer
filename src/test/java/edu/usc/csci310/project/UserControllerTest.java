@@ -87,6 +87,23 @@ class UserControllerTest {
     }
 
     @Test
+    void testCompareParks() {
+        UserComparing UC = new UserComparing();
+        UC.setUsername("NickoOG");
+        UC.setUsernameQuery("NickoOG1");
+
+        ResponseEntity mockResponse = ResponseEntity.ok("Parks compared");
+        when(userService.compareParks(anyString())).thenReturn(mockResponse);
+
+        ResponseEntity<?> response = userController.compareParks(UC);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Parks compared", response.getBody());
+
+        verify(userService).compareParks("NickoOG");
+    }
+
+    @Test
     void testGetFavorites() {
         String username = "Alice";
         String[] expectedFavorites = {"park1", "park2", "park3"};

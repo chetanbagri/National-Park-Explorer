@@ -6,7 +6,7 @@ Feature: Update and Review a Favorite Park List
     Then I should be redirected to the "search" page
     And see that the page title is "Search Parks"
 
-  Scenario: Navigate from this page to Favorites page
+  Scenario: Navigate from this page to Compare page
     Given I am on the "favorites" page
     When I click on the nav button with id "nav-compare"
     Then I should be redirected to the "compare" page

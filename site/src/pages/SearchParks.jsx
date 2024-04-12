@@ -19,11 +19,25 @@ const SearchParks = () => {
     const [favoriteMessage, setFavoriteMessage] = useState("");
     const [favoriteMessageColor, setFavoriteMessageColor] = useState("");
 
-    // const API_KEY = "uWVzTURerzitH3nepQc1tvbSW1Ia5cnt7g8Pp0yA";
     const API_KEY = process.env.REACT_APP_API_KEY;
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
     const [allFetchedParks, setFetchedParks] = useState([]); // Store ALL parks from previous search
     let start_idx = 0;
+
+    useEffect(() => {
+        // Assuming username is stored in sessionStorage; adjust as per your application's auth strategy
+        const username = JSON.parse(sessionStorage.getItem('userInfo'))?.username;
+        if (username) {
+            fetchUserFavorites(username).then(favorites => {
+                setUserFavorites(favorites)
+
+                let updatedUser = JSON.parse(sessionStorage.getItem('userInfo'));
+                updatedUser.favorites = favorites;
+                sessionStorage.setItem('userInfo', JSON.stringify(updatedUser));
+            });
+            // console.log(userFavorites);
+        }
+    }, []); // Empty dependency array ensures this runs only once on component mount
 
     const fetchParks = async (parameters) => {
         if (parameters === "?limit=10&q=") {
@@ -44,6 +58,9 @@ const SearchParks = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
+                if (data.data.length === 0) {
+                    setError("There are no more results for this query")
+                }
                 return data.data; // Return the parks data
             } else {
                 setError("Failed to fetch parks.");
@@ -58,7 +75,7 @@ const SearchParks = () => {
         try {
             const response = await fetch(`/favorites?username=${username}`);
             if (!response.ok) {
-                throw new Error('Failed to fetch user favorites');
+                setError('Failed to fetch user favorites');
             }
             const data = await response.json();
             console.log('User favorites:', data.favorites);
@@ -106,6 +123,7 @@ const SearchParks = () => {
         const data = await response.json();
         console.log(`fetchParkDetails: ${BASE_URL}?parkCode=${parkCode}`);
         console.log(data);
+
         return data.data[0]; // Assuming the API returns an array and you're interested in the first item
     };
 
@@ -127,26 +145,27 @@ const SearchParks = () => {
         }
     };
 
-    const addToFavorites = async (parkCode) => {
-        try {
-            const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
-            const response = await fetch(`/favorites/add?username=${username}&parkId=${parkCode}`, {
-                method: 'POST',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to add park to favorites');
-            }
-            else{
-                console.log("response ok");
-            }
-
-            const data = await response.json();
-            setUserFavorites([...userFavorites, parkCode]);
-        } catch (error) {
-            console.error('Error adding park to favorites:', error);
-        }
-    };
+    // Nick: Wasn't used so commented it to help with coverage
+    // const addToFavorites = async (parkCode) => {
+    //     try {
+    //         const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
+    //         const response = await fetch(`/favorites/add?username=${username}&parkId=${parkCode}`, {
+    //             method: 'POST',
+    //         });
+    //
+    //         if (!response.ok) {
+    //             throw new Error('Failed to add park to favorites');
+    //         }
+    //         else{
+    //             console.log("response ok");
+    //         }
+    //
+    //         const data = await response.json();
+    //         setUserFavorites([...userFavorites, parkCode]);
+    //     } catch (error) {
+    //         console.error('Error adding park to favorites:', error);
+    //     }
+    // };
 
 
 
@@ -158,21 +177,23 @@ const SearchParks = () => {
 
         console.log(searchType);
 
-        if (searchType !== "state") {
-            /*if(searchType === "amenities"){
-                parameters = `/parksplaces${parameters}&q=${encodeURIComponent(searchQuery)}`;
-                const fetchedParks = await fetchAmenities(parameters);
-                setFetchedParks(fetchedParks);
-                setParks(fetchedParks.slice(0, 10));
-                start_idx = 0;
-                setSelectedPark(null); // Reset selected park details
-                return;
-            }*/
-            parameters += `&q=${encodeURIComponent(searchQuery)}`;
-        } else if (searchType === "state") {
-            parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+        if (searchQuery != "") {
+            if (searchType !== "state") {
+                /*if(searchType === "amenities"){
+                    parameters = `/parksplaces${parameters}&q=${encodeURIComponent(searchQuery)}`;
+                    const fetchedParks = await fetchAmenities(parameters);
+                    setFetchedParks(fetchedParks);
+                    setParks(fetchedParks.slice(0, 10));
+                    start_idx = 0;
+                    setSelectedPark(null); // Reset selected park details
+                    return;
+                }*/
+                parameters += `&q=${encodeURIComponent(searchQuery)}`;
+            } else if (searchType === "state") {
+                parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+            }
+            // Add more parameters based on searchType as necessary
         }
-        // Add more parameters based on searchType as necessary
 
         const fetchedParks = await fetchParks(parameters);
         setParks(fetchedParks);
@@ -184,10 +205,12 @@ const SearchParks = () => {
 
         let parameters = `?limit=${limit}&start=${pageNumber * limit}`;
 
-        if (searchType !== "state") {
-            parameters += `&q=${encodeURIComponent(searchQuery)}`;
-        } else if (searchType === "state") {
-            parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+        if (searchQuery != "") {
+            if (searchType !== "state") {
+                parameters += `&q=${encodeURIComponent(searchQuery)}`;
+            } else if (searchType === "state") {
+                parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+            }
         }
         // Handle other parameters as necessary
 
@@ -291,11 +314,23 @@ const SearchParks = () => {
                     }
 
                    
-               
+                    .main {
+                        overflow: scroll;
+                        height: 80%;
+                    }
+                    
+                    ul {
+                        list-style-type: none; /* Remove bullet points from ul elements */
+                        padding-left: 30; /* Remove padding to align content to the left */
+                    }
+                    
+                    .favorite-status {
+                        font-weight: bold;
+                        color: red;
+                    }
                 `}</style>
-            <div>
+            <div className={"main"}>
                 <Header/>
-
                 <h2>Search Parks</h2>
                 <div className="favmessage" style={{color: favoriteMessageColor}}>
                     {favoriteMessage && <p>{favoriteMessage}</p>}
@@ -334,11 +369,11 @@ const SearchParks = () => {
                 {error && <p>{error}</p>}
                 <ul>
                     {parks.map(park => (
-                        <li key={park.id}
+                        <li key={park.id} className={"search-result"}
                             onMouseEnter={() => setHoveredPark(park.parkCode)}
                             onMouseLeave={() => setHoveredPark(null)}>
                             <div className="park-button">
-                                <button title={`detailsButton_${park.parkCode}`}
+                                <button title={`detailsButton_${park.parkCode}`} className={"search-result-button"}
                                         onClick={() => handleParkSelection(park.parkCode)}>
                                     {park.fullName}
                                 </button>
@@ -351,24 +386,32 @@ const SearchParks = () => {
                             </div>
                             {selectedPark && selectedPark.parkCode === park.parkCode && (
                                 <div className="detailsBox">
-                                    <h3>{selectedPark.fullName}</h3>
-                                    <img src={selectedPark.images[0].url} alt={`View of ${selectedPark.fullName}`}
+                                    <h3 className={"park-full-name"}>{selectedPark.fullName}</h3>
+                                    <img className={"park-picture"} src={selectedPark.images[0].url}
+                                         alt={`View of ${selectedPark.fullName}`}
                                          style={{width: '100%', maxHeight: '300px', objectFit: 'cover'}}/>
-                                    <p>Description: {selectedPark.description}</p>
+                                    <p className={"park-description"}>Description: {selectedPark.description}</p>
                                     <div>
                                         <h4>Location:</h4>
                                         <p onClick={() => handleLocationClick(selectedPark.addresses[0].stateCode)}
-                                           className="clickable-text">
+                                           className="clickable-text park-location">
                                             {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}
                                         </p>
                                     </div>
-                                    <a href={selectedPark.url} target="_blank" rel="noopener noreferrer">Visit Park
+                                    <a className={"park-url"} href={selectedPark.url} target="_blank"
+                                       rel="noopener noreferrer">Visit Park
                                         Website</a>
-                                    <p>Entrance
+                                    <p className={"park-entrance-fee"}>Entrance
                                         Fees: {selectedPark.entranceFees.length > 0 ? `$${selectedPark.entranceFees[0].cost}` : 'No fees information available'}</p>
 
+                                    {userFavorites.includes(park.parkCode) && (
+                                        <p className="favorite-status">This park is in your favorites list.</p>
+                                    )}
+                                    {!userFavorites.includes(park.parkCode) && (
+                                        <p className="favorite-status">This park is not in your favorites list.</p>
+                                    )}
                                     <h4>Activities:</h4>
-                                    <p>
+                                    <p className={"park-activities"}>
                                         {selectedPark.activities.map((activity, index) => (
                                             <React.Fragment key={activity.id}>
                                             <span className="clickable-text"
@@ -380,10 +423,10 @@ const SearchParks = () => {
                                     </p>
 
                                     <h4>Amenities:</h4>
-                                    <p>
+                                    <p className={"park-amenities"}>
                                         {parkAmenities.map((amenity, index) => (
                                             <React.Fragment key={amenity.id}>
-                                            <span className="clickable-text"
+                                            <span className="amenities-clickable-text clickable-text"
                                                   onClick={() => handleAmenitiesClick(amenity.name)}>
                                                 {amenity.name}
                                             </span>

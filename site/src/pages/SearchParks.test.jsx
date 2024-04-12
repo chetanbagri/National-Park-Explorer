@@ -926,12 +926,15 @@ test('changes search type from park name to amenities and performs a search', as
 });
 test('adds a park to favorites', async () => {
     const createdUser = {
-        username: "NickoOG"
+        username: "NickoOG_SEARCH_TMP"
     };
     sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
 
     // Mock the fetch responses for fetching parks and user favorites
     fetch.mockResponses(
+        [JSON.stringify({
+            favorites: []
+        })],
         [JSON.stringify({
             data: [
                 {
@@ -947,9 +950,6 @@ test('adds a park to favorites', async () => {
                     operatingHours: [{ description: '9 AM to 5 PM' }],
                 }
             ]
-        })],
-        [JSON.stringify({
-            favorites: []
         })]
     );
 
@@ -968,11 +968,14 @@ test('adds a park to favorites', async () => {
 
 test('does not add a park to favorites if it is already in the list', async () => {
     const createdUser = {
-        username: "NickoOG"
+        username: "NickoOG_SEARCH_TMP"
     };
     sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
 
     fetch.mockResponses(
+        [JSON.stringify({
+            favorites: ['abcd']
+        })],
         [JSON.stringify({
             data: [
                 {
@@ -988,9 +991,6 @@ test('does not add a park to favorites if it is already in the list', async () =
                     operatingHours: [{ description: '9 AM to 5 PM' }],
                 }
             ]
-        })],
-        [JSON.stringify({
-            favorites: ['abcd']
         })]
     );
 
@@ -1004,112 +1004,147 @@ test('does not add a park to favorites if it is already in the list', async () =
     fireEvent.mouseEnter(screen.getByText('Mock Park Details'));
     fireEvent.click(screen.getByText('+'));
 
-    // OLD (change to this if issue in SearchParks is fixed)
-    // await waitFor(() => expect(screen.getByText('Error: This park is already in your favorites.')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Error: This park is already in your favorites.')).toBeInTheDocument());
+
+    fireEvent.mouseLeave(screen.getByText('Mock Park Details'));
+});
+
+test('handles error when adding a park to favorites', async () => {
+    const createdUser = {
+        username: "NickoOG_SEARCH_TMP"
+    };
+    sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
+
+    fetch.mockResponses(
+        [JSON.stringify({
+            favorites: []
+        })],
+        [JSON.stringify({
+            data: [
+                {
+                    id: '1',
+                    parkCode: 'abcd',
+                    fullName: 'Mock Park Details',
+                    images: [{ url: 'https://example.com/image.jpg' }],
+                    description: 'Detailed description',
+                    addresses: [{ city: 'Mock City', stateCode: 'MC' }],
+                    url: 'https://example.com',
+                    entranceFees: [{ cost: '0' }],
+                    activities: [{ id: 'act1', name: 'Hiking' }],
+                    operatingHours: [{ description: '9 AM to 5 PM' }],
+                }
+            ]
+        })]
+    );
+
+    fetch.mockResponseOnce('', { status: 500, statusText: 'Internal Server Error' });
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
+
+    fireEvent.mouseEnter(screen.getByText('Mock Park Details'));
+    fireEvent.click(screen.getByText('+'));
 
     await waitFor(() => expect(screen.getByText('Error adding park to favorites.')).toBeInTheDocument());
 });
 
-// test('handles error when adding a park to favorites', async () => {
-//     const createdUser = {
-//         username: "NickoOG"
-//     };
-//     sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
-//
-//     fetch.mockResponses(
-//         [JSON.stringify({
-//             data: [
-//                 {
-//                     id: '1',
-//                     parkCode: 'abcd',
-//                     fullName: 'Mock Park Details',
-//                     images: [{ url: 'https://example.com/image.jpg' }],
-//                     description: 'Detailed description',
-//                     addresses: [{ city: 'Mock City', stateCode: 'MC' }],
-//                     url: 'https://example.com',
-//                     entranceFees: [{ cost: '0' }],
-//                     activities: [{ id: 'act1', name: 'Hiking' }],
-//                     operatingHours: [{ description: '9 AM to 5 PM' }],
-//                 }
-//             ]
-//         })],
-//         [JSON.stringify({
-//             favorites: []
-//         })]
-//     );
-//
-//     fetch.mockResponseOnce('', { status: 500, statusText: 'Internal Server Error' });
-//
-//     renderWithRouter(<SearchParks />);
-//
-//     fireEvent.click(screen.getByTitle('search'));
-//     await waitFor(() => expect(screen.getByText('Mock Park Details')).toBeInTheDocument());
-//
-//     fireEvent.mouseEnter(screen.getByText('Mock Park Details'));
-//     fireEvent.click(screen.getByText('+'));
-//
-//     await waitFor(() => expect(screen.getByText('Error adding park to favorites.')).toBeInTheDocument());
-// });
-//
-// test('fetches user favorites on component mount', async () => {
-//     const createdUser = {
-//         username: "NickoOG"
-//     };
-//     sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
-//
-//     fetch.mockResponseOnce(JSON.stringify({
-//         favorites: ['abcd', 'efgh', 'ijkl']
-//     }));
-//
-//     fetch.mockResponseOnce(JSON.stringify({
-//         data: [
-//             {
-//                 id: '1',
-//                 parkCode: 'abcd',
-//                 fullName: 'Mock Park 1',
-//                 images: [{ url: 'https://example.com/image1.jpg' }],
-//                 description: 'Description of Mock Park 1',
-//                 addresses: [{ city: 'Mock City 1', stateCode: 'MC1' }],
-//                 url: 'https://example.com/park1',
-//                 entranceFees: [{ cost: '0' }],
-//                 activities: [{ id: 'act1', name: 'Hiking' }],
-//                 operatingHours: [{ description: '9 AM to 5 PM' }],
-//             },
-//             {
-//                 id: '2',
-//                 parkCode: 'efgh',
-//                 fullName: 'Mock Park 2',
-//                 images: [{ url: 'https://example.com/image2.jpg' }],
-//                 description: 'Description of Mock Park 2',
-//                 addresses: [{ city: 'Mock City 2', stateCode: 'MC2' }],
-//                 url: 'https://example.com/park2',
-//                 entranceFees: [{ cost: '5' }],
-//                 activities: [{ id: 'act2', name: 'Camping' }],
-//                 operatingHours: [{ description: '8 AM to 6 PM' }],
-//             },
-//             {
-//                 id: '3',
-//                 parkCode: 'ijkl',
-//                 fullName: 'Mock Park 3',
-//                 images: [{ url: 'https://example.com/image3.jpg' }],
-//                 description: 'Description of Mock Park 3',
-//                 addresses: [{ city: 'Mock City 3', stateCode: 'MC3' }],
-//                 url: 'https://example.com/park3',
-//                 entranceFees: [{ cost: '10' }],
-//                 activities: [{ id: 'act3', name: 'Kayaking' }],
-//                 operatingHours: [{ description: '7 AM to 7 PM' }],
-//             }
-//         ]
-//     }));
-//
-//     renderWithRouter(<SearchParks />);
-//
-//     await waitFor(() => expect(screen.getByText('Mock Park 1')).toBeInTheDocument());
-//     await waitFor(() => expect(screen.getByText('Mock Park 2')).toBeInTheDocument());
-//     await waitFor(() => expect(screen.getByText('Mock Park 3')).toBeInTheDocument());
-//
-//     expect(JSON.parse(sessionStorage.getItem('userInfo')).username).toBeDefined();
-//     expect(JSON.parse(sessionStorage.getItem('userInfo')).favorites).toEqual(['abcd', 'efgh', 'ijkl']);
-// });
+test('fetches user favorites on component mount', async () => {
+    const createdUser = {
+        username: "NickoOG_SEARCH_TMP"
+    };
+    sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
 
+    fetch.mockResponseOnce(JSON.stringify({
+        favorites: ['abcd', 'efgh', 'ijkl']
+    }));
+
+    fetch.mockResponseOnce(JSON.stringify({
+        data: [
+            {
+                id: '1',
+                parkCode: 'abcd',
+                fullName: 'Mock Park 1',
+                images: [{ url: 'https://example.com/image1.jpg' }],
+                description: 'Description of Mock Park 1',
+                addresses: [{ city: 'Mock City 1', stateCode: 'MC1' }],
+                url: 'https://example.com/park1',
+                entranceFees: [{ cost: '0' }],
+                activities: [{ id: 'act1', name: 'Hiking' }],
+                operatingHours: [{ description: '9 AM to 5 PM' }],
+            },
+            {
+                id: '2',
+                parkCode: 'efgh',
+                fullName: 'Mock Park 2',
+                images: [{ url: 'https://example.com/image2.jpg' }],
+                description: 'Description of Mock Park 2',
+                addresses: [{ city: 'Mock City 2', stateCode: 'MC2' }],
+                url: 'https://example.com/park2',
+                entranceFees: [{ cost: '5' }],
+                activities: [{ id: 'act2', name: 'Camping' }],
+                operatingHours: [{ description: '8 AM to 6 PM' }],
+            },
+            {
+                id: '3',
+                parkCode: 'ijkl',
+                fullName: 'Mock Park 3',
+                images: [{ url: 'https://example.com/image3.jpg' }],
+                description: 'Description of Mock Park 3',
+                addresses: [{ city: 'Mock City 3', stateCode: 'MC3' }],
+                url: 'https://example.com/park3',
+                entranceFees: [{ cost: '10' }],
+                activities: [{ id: 'act3', name: 'Kayaking' }],
+                operatingHours: [{ description: '7 AM to 7 PM' }],
+            }
+        ]
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.click(screen.getByTitle('search'));
+    await waitFor(() => expect(screen.getByText('Mock Park 1')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Mock Park 2')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Mock Park 3')).toBeInTheDocument());
+
+    expect(JSON.parse(sessionStorage.getItem('userInfo')).username).toBeDefined();
+    expect(JSON.parse(sessionStorage.getItem('userInfo')).favorites).toEqual(['abcd', 'efgh', 'ijkl']);
+});
+
+test('fail to fetch user favorites on component mount', async () => {
+    const createdUser = {
+        username: "NickoOG_SEARCH_TMP"
+    };
+    sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
+    fetch.mockResolvedValue({
+        ok: false,
+        text: () => Promise.resolve(''), // Mock error text
+    });
+    renderWithRouter(<SearchParks />);
+    await waitFor(() => expect(screen.getByText('Failed to fetch user favorites')).toBeInTheDocument());
+    expect(JSON.parse(sessionStorage.getItem('userInfo')).username).toBeDefined();
+});
+
+test('fetch zero parks', async () => {
+    const createdUser = {
+        username: "NickoOG_SEARCH_TMP"
+    };
+    sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
+
+    fetch.mockResponseOnce(JSON.stringify({
+        favorites: []
+    }));
+    fetch.mockResponseOnce(JSON.stringify({
+        ok: true,
+        data: []
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'Mock' } });
+    fireEvent.click(screen.getByTitle('search'));
+
+    await waitFor(() => expect(screen.getByText('There are no more results for this query')).toBeInTheDocument());
+});
 
