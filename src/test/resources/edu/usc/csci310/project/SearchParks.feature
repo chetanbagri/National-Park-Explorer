@@ -2,6 +2,25 @@ Feature: test the search page
   Background:
     Given I'm logged in
 
+  # Navigation
+  Scenario: Navigate from this page to Compare page
+    Given I am on the "search" page
+    When I click on the nav button with id "nav-compare"
+    Then I should be redirected to the "compare" page
+    And see that the page title is "Compare Parks and Give Suggestions"
+
+  Scenario: Navigate from this page to Favorites page
+    Given I am on the "search" page
+    When I click on the nav button with id "nav-favorites"
+    Then I should be redirected to the "Favorites" page
+    And see that the page title is "My Favorite Parks"
+
+  Scenario: Logout from this page and go to Login page
+    Given I am on the "search" page
+    When I click on the nav button with id "nav-logout"
+    Then I should be redirected to the "login" page
+    And see that the page title is "Login"
+
   Scenario: Search basic
     Given I'm on search and I enter some kind of search
     Then 10 results will be displayed

@@ -333,6 +333,44 @@ class UserServiceTest {
     }
 
     @Test
+    void testNullUsernameCompare() {
+        User user = null;
+        when(mockRepository.findByUsername("NickoOG")).thenReturn(null);
+
+        ResponseEntity<?> response = userService.compareParks("NickoOG");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username does not exist", response.getBody());
+    }
+
+    @Test
+    void testNoFriendsToCompare() {
+        User user = new User();
+        user.setUsername("NickoOG_comp_tmp_no_friend");
+        when(mockRepository.findByUsername("NickoOG_comp_tmp_no_friend")).thenReturn(user);
+        userService.registerUser("NickoOG_comp_tmp_no_friend", "Happy1", "Happy1");
+
+        ResponseEntity<?> response = userService.compareParks("NickoOG_comp_tmp_no_friend");
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("You have no friends in your group to compare parks with", response.getBody());
+    }
+
+    @Test
+    void testSuccessfulCompare() {
+        User user = new User();
+        User userB = new User();
+        user.setUsername("NickoOG_comp_tmp");
+        userB.setUsername("NickoOG_comp_tmp_friend");
+        when(mockRepository.findByUsername("NickoOG_comp_tmp")).thenReturn(user);
+        when(mockRepository.findByUsername("NickoOG_comp_tmp_friend")).thenReturn(userB);
+
+        userService.registerUser("NickoOG_comp_tmp", "Happy1", "Happy1");
+        userService.registerUser("NickoOG_comp_tmp_friend", "Happy1", "Happy1");
+        userService.addUserToGroup("NickoOG_comp_tmp", "NickoOG_comp_tmp_friend");
+        ResponseEntity<?> response = userService.compareParks("NickoOG_comp_tmp");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
     void testGetFavorites() {
         User user = new User();
         user.setUsername("testUser");
