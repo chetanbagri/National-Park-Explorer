@@ -43,7 +43,7 @@ const Favorites = () => {
         try {
             const response = await fetch(`/favorites?username=${username}`);
             if (!response.ok) {
-                throw new Error('Failed to fetch user favorites');
+                console.error('Failed to fetch user favorites');
             }
             const data = await response.json();
             return data.favorites;
@@ -62,7 +62,7 @@ const Favorites = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to clear favorites');
+                console.error('Failed to clear favorites');
             }
 
             setUserFavorites([]);
@@ -70,7 +70,7 @@ const Favorites = () => {
             setShowConfirmationPopup(false);
 
         } catch (error) {
-            console.error('Error clearing favorites:', error);
+            console.error(`Error clearing favorites: ${error.message}`);
         }
     };
 
@@ -132,7 +132,7 @@ const Favorites = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to remove park from favorites');
+                console.error('Failed to remove park from favorites');
             }
 
             setUserFavorites((prevFavorites) => prevFavorites.filter((code) => code !== parkToDelete));
@@ -254,10 +254,9 @@ const Favorites = () => {
                                         <p>Description: {selectedPark.description}</p>
                                         <div>
                                             <h4>Location:</h4>
-                                            {/*<p onClick={() => handleLocationClick(selectedPark.addresses[0].stateCode)}*/}
-                                            {/*   className="clickable-text">*/}
-                                            {/*    {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}*/}
-                                            {/*</p>*/}
+                                            <p>
+                                                {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}
+                                            </p>
                                         </div>
                                         <a href={selectedPark.url} target="_blank" rel="noopener noreferrer">Visit
                                             Park
@@ -269,10 +268,9 @@ const Favorites = () => {
                                         <p>
                                             {selectedPark.activities.map((activity, index) => (
                                                 <React.Fragment key={activity.id}>
-                                                    {/*<span className="clickable-text"*/}
-                                                    {/*      onClick={() => handleActivitiesClick(activity.name)}>*/}
-                                                    {/*    {activity.name}*/}
-                                                    {/*</span>*/}
+                                                    <span>
+                                                        {activity.name}
+                                                    </span>
                                                     {index < selectedPark.activities.length - 1 ? ', ' : ''}
                                                 </React.Fragment>
                                             ))}
@@ -282,10 +280,9 @@ const Favorites = () => {
                                         <p>
                                             {parkAmenities.map((amenity, index) => (
                                                 <React.Fragment key={amenity.id}>
-                                                    {/*<span className="clickable-text"*/}
-                                                    {/*      onClick={() => handleAmenitiesClick(amenity.name)}>*/}
-                                                    {/*    {amenity.name}*/}
-                                                    {/*</span>*/}
+                                                    <span>
+                                                        {amenity.name}
+                                                    </span>
                                                     {index < parkAmenities.length - 1 ? ', ' : ''}
                                                 </React.Fragment>
                                             ))}
