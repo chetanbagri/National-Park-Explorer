@@ -71,6 +71,7 @@ const CreateAccount = () => {
                     <div>
                         <label htmlFor={"username"}>Username:</label>
                         <input
+                            aria-label= "Username field"
                             id="username"
                             type="text"
                             value={username}
@@ -80,6 +81,7 @@ const CreateAccount = () => {
                     <div>
                         <label htmlFor={"password"}>Password:</label>
                         <input
+                            aria-label= "Password field"
                             id="password"
                             type="password"
                             value={password}
@@ -90,14 +92,15 @@ const CreateAccount = () => {
                     <div>
                         <label htmlFor={"confirmPassword"}>Confirm Password:</label>
                         <input
+                            aria-label= "Confirm password field"
                             id="confirmPassword"
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     </div>
-                    <button id="submission" type="submit" name={"submit"} role={"button"} title={"submitcreateaccount"}>Create Account</button>
-                    <button id= "cancel" type="button" onClick={handleCancel}>Cancel</button>
+                    <button aria-label= "Submit button" id="submission" type="submit" name={"submit"} role={"button"} title={"submitcreateaccount"}>Create Account</button>
+                    <button aria-label= "Cancel button" id= "cancel" type="button" onClick={handleCancel}>Cancel</button>
                 </form>
             </div>
             {showCancelDiv && (
@@ -105,8 +108,8 @@ const CreateAccount = () => {
                     <div className="modal-content">
                         <p>Are you sure you want to cancel your account creation?</p>
                         <div>
-                            <button id="yes" onClick={handleYes}>Yes</button>
-                            <button id="no" onClick={handleNo}>No</button>
+                            <button aria-label= "Confirm cancel button" id="yes" onClick={handleYes}>Yes</button>
+                            <button aria-label= "Deny cancel button" id="no" onClick={handleNo}>No</button>
                         </div>
                     </div>
                 </div>

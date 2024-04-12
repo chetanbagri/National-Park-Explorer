@@ -46,6 +46,7 @@ function Login() {
                 <div>
                     <label htmlFor="username">Username:</label>
                     <input
+                        aria-label= "Username field"
                         type="text"
                         id="username"
                         data-testid="test-username"
@@ -56,6 +57,7 @@ function Login() {
                 <div>
                     <label htmlFor="password">Password:</label>
                     <input
+                        aria-label= "Password field"
                         type="password"
                         id="password"
                         data-testid="test-password"
@@ -64,10 +66,10 @@ function Login() {
                     />
                 </div>
                 <div>
-                    <button id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login</button>
+                    <button aria-label= "Login Button" id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login</button>
                 </div>
                 <div>
-                    <a  id="create-account" href="/create-account">Create Account</a>
+                    <a aria-label= "Create account link" id="create-account" href="/create-account">Create Account</a>
                 </div>
             </div>
         </div>
