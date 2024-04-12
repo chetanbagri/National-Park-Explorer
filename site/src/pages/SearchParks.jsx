@@ -19,7 +19,6 @@ const SearchParks = () => {
     const [favoriteMessage, setFavoriteMessage] = useState("");
     const [favoriteMessageColor, setFavoriteMessageColor] = useState("");
 
-    // const API_KEY = "uWVzTURerzitH3nepQc1tvbSW1Ia5cnt7g8Pp0yA";
     const API_KEY = process.env.REACT_APP_API_KEY;
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
     const [allFetchedParks, setFetchedParks] = useState([]); // Store ALL parks from previous search
@@ -29,7 +28,14 @@ const SearchParks = () => {
         // Assuming username is stored in sessionStorage; adjust as per your application's auth strategy
         const username = JSON.parse(sessionStorage.getItem('userInfo'))?.username;
         if (username) {
-            fetchUserFavorites(username).then(favorites => setUserFavorites(favorites));
+            fetchUserFavorites(username).then(favorites => {
+                setUserFavorites(favorites)
+
+                let updatedUser = JSON.parse(sessionStorage.getItem('userInfo'));
+                updatedUser.favorites = favorites;
+                sessionStorage.setItem('userInfo', JSON.stringify(updatedUser));
+            });
+            // console.log(userFavorites);
         }
     }, []); // Empty dependency array ensures this runs only once on component mount
 

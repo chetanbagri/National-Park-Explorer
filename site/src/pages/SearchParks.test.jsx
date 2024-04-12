@@ -1101,6 +1101,7 @@ test('fetches user favorites on component mount', async () => {
 
     renderWithRouter(<SearchParks />);
 
+    fireEvent.click(screen.getByTitle('search'));
     await waitFor(() => expect(screen.getByText('Mock Park 1')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Mock Park 2')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Mock Park 3')).toBeInTheDocument());
