@@ -22,7 +22,7 @@ Feature: Compare favorite park list with friends (#5)
   Scenario: Add 1 friend to group successfully
     Given I am on the Compare page
     And I have "Nicko_1" registered
-    When I enter "NickoOG1" into element with id "usernameQuery"
+    When I enter "Nicko_1" into element with id "usernameQuery"
     And I click on the element with id "addUserBtn"
     Then I should see "Successfully added NickoOG1 to your group of friends"
 
