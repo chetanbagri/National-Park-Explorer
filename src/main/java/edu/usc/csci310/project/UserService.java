@@ -5,6 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 public class UserService {
@@ -78,7 +86,7 @@ public class UserService {
                             user.setTime1(0L);
                             user.setTime2(0L);
                             userRepository.save(user);
-                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are locked out for 30 seconds!");
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are locked out for 30 seconds");
                         } else {
                             user.setTime1(user.getTime2());
                             user.setTime2(System.currentTimeMillis());
@@ -113,4 +121,139 @@ public class UserService {
         else if(!hasNumber) return 3;
         else return 4;
     }
+
+    public ResponseEntity<?> addUserToGroup(String username, String usernameQuery) {
+        User user = userRepository.findByUsername(username);
+        User userB = userRepository.findByUsername(usernameQuery);
+        if(user != null && userB != null) { // Both usernames exists within database
+            if(Objects.equals(username, usernameQuery)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot add yourself to your own friend group");
+            }
+            if(Groups.getGroupOfFriends(username).contains(usernameQuery)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is already in your friend group");
+            }
+            Groups.addToGroupOfFriends(username, usernameQuery);
+            // userRepository.save(user); // Update the database
+
+            return ResponseEntity.ok(Groups.getGroupOfFriends(username));
+        }
+        else { // Username does not exists within database
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");
+        }
+    }
+
+    public ResponseEntity<?> compareParks(String username) {
+        User user = userRepository.findByUsername(username);
+        if(user != null){
+            // Get usernames of friends in group
+            List<String> userGroup = Groups.getGroupOfFriends(username);
+            if(userGroup.isEmpty()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have no friends in your group to compare parks with");
+            }
+
+            // Retrieve ALL parks of each username, including myself
+            userGroup.add(username);
+            /*
+            List<String> tmp1 = Arrays.asList("1", "2");
+            List<String> tmp2 = Arrays.asList("1", "3");
+            List<String> tmp3 = Arrays.asList("4", "5");
+            HashMap<String, Integer> parkCounts = new HashMap<>();
+            for(String userI : userGroup){
+                // do something with userI
+                for(each parkID in userI favorites list) {
+                    int count = parkCounts.getOrDefault("1", 0);
+                    parkCounts.put(key, count + 1);
+                }
+            }
+
+            // Sort the HashMap based on their count values
+            List<Map.Entry<String, Integer>> sortedIDs = new ArrayList<>(parkCounts.entrySet());
+            Collections.sort(sortedIDs, new Comparator<Map.Entry<String, Integer>>() {
+                @Override
+                public int compare(Map.Entry<String, Integer> entry1, Map.Entry<String, Integer> entry2) {
+                    return entry2.getValue().compareTo(entry1.getValue()); // Sort in descending order of count values
+                }
+            });
+            */
+
+            // Sort parks based on amount of times I see a park ID
+            // IDEA: Use Map to store ID as key, count as value.
+            // Then sort based on the count (value)
+            // Can also use Max-Heap but seems like too much work.
+
+            // Return ID data (with counts) to frontend sorted with
+
+            return ResponseEntity.ok(Groups.getGroupOfFriends(username));
+        }
+        else { // Username does not exists within database
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");
+        }
+    }
+
+
+    public ResponseEntity<?> getFavorites(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        List<String> favorites = user.getFavorites();
+        return ResponseEntity.ok(new FavoritesResponse(favorites));
+    }
+
+    public ResponseEntity<?> addFavorite(String username, String parkId) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        List<String> favorites = user.getFavorites();
+        if (favorites == null) {
+            favorites = new ArrayList<>();
+            user.setFavorites(favorites);
+        }
+
+        if (!favorites.contains(parkId)) {
+            favorites.add(parkId);
+            userRepository.save(user);
+            return ResponseEntity.ok(new FavoritesResponse(favorites));
+        } else {
+            return ResponseEntity.badRequest().body("Park already in favorites");
+        }
+    }
+
+    public ResponseEntity<?> removeFavorite(String username, String parkId) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        List<String> favorites = user.getFavorites();
+        if (favorites == null || !favorites.contains(parkId)) {
+            return ResponseEntity.badRequest().body("Park not in favorites");
+        }
+
+        favorites.remove(parkId);
+        userRepository.save(user);
+        return ResponseEntity.ok("Park removed from favorites");
+    }
+
+    public ResponseEntity<?> clearFavorites(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        user.setFavorites(new ArrayList<>());
+        userRepository.save(user);
+        return ResponseEntity.ok("All favorites cleared");
+    }
+
+
 }
+
+
+
+
+
+

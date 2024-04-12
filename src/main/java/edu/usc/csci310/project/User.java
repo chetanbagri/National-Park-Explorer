@@ -3,6 +3,10 @@ package edu.usc.csci310.project;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 
 @Entity
 @Table(name = "users")
@@ -17,6 +21,11 @@ public class User {
     private String username;
 
     private String password;
+
+
+    //Favorites:
+    @ElementCollection
+    private List<String> favorites = new ArrayList<>();
 
     // Constructors, Getters, and Setters
     protected User() {}
@@ -36,6 +45,7 @@ public class User {
     public void setLockoutTime(Long lockoutTime) {
         this.lockoutTime = lockoutTime;
     }
+
     public String getUsername(){
         return username;
     }
@@ -51,4 +61,13 @@ public class User {
     public long getLockoutTime() {
         return lockoutTime;
     }
+
+    public List<String> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<String> favorites) {
+        this.favorites = favorites;
+    }
+
 }

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import logo from "../images/login_camping_logo.png";
+import "../styles/header.css";
 
 const CreateAccount = () => {
     const [username, setUsername] = useState("");
@@ -66,10 +68,20 @@ const CreateAccount = () => {
 
     return (
         <div>
-            <Header />
+            <header className="header">
+                <div className="logo-general-image-div">
+                    <img className="logo-general-image"
+                         src={logo}
+                         alt="Campfire logo and Let's Go Camping! message in bright green"/>
+                </div>
+                <div className="header-text-div">
+                    <p className="header-text-p">Team 20</p>
+                </div>
+            </header>
+
             <div className="createAccount-form">
                 <h2>Create Account</h2>
-                {<p title="error" id="error" style={{ color: "red" }}>{error}</p>}
+                {<p title="error" id="error" style={{color: "red"}}>{error}</p>}
                 <form onSubmit={handleSubmit}>
                     <div>
                         <label htmlFor={"username"}>Username:</label>
