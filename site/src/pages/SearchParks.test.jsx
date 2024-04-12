@@ -1005,6 +1005,8 @@ test('does not add a park to favorites if it is already in the list', async () =
     fireEvent.click(screen.getByText('+'));
 
     await waitFor(() => expect(screen.getByText('Error: This park is already in your favorites.')).toBeInTheDocument());
+
+    fireEvent.mouseLeave(screen.getByText('Mock Park Details'));
 });
 
 test('handles error when adding a park to favorites', async () => {
@@ -1101,6 +1103,7 @@ test('fetches user favorites on component mount', async () => {
 
     renderWithRouter(<SearchParks />);
 
+    fireEvent.click(screen.getByTitle('search'));
     await waitFor(() => expect(screen.getByText('Mock Park 1')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Mock Park 2')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Mock Park 3')).toBeInTheDocument());
@@ -1109,4 +1112,39 @@ test('fetches user favorites on component mount', async () => {
     expect(JSON.parse(sessionStorage.getItem('userInfo')).favorites).toEqual(['abcd', 'efgh', 'ijkl']);
 });
 
+test('fail to fetch user favorites on component mount', async () => {
+    const createdUser = {
+        username: "NickoOG_SEARCH_TMP"
+    };
+    sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
+    fetch.mockResolvedValue({
+        ok: false,
+        text: () => Promise.resolve(''), // Mock error text
+    });
+    renderWithRouter(<SearchParks />);
+    await waitFor(() => expect(screen.getByText('Failed to fetch user favorites')).toBeInTheDocument());
+    expect(JSON.parse(sessionStorage.getItem('userInfo')).username).toBeDefined();
+});
+
+test('fetch zero parks', async () => {
+    const createdUser = {
+        username: "NickoOG_SEARCH_TMP"
+    };
+    sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
+
+    fetch.mockResponseOnce(JSON.stringify({
+        favorites: []
+    }));
+    fetch.mockResponseOnce(JSON.stringify({
+        ok: true,
+        data: []
+    }));
+
+    renderWithRouter(<SearchParks />);
+
+    fireEvent.change(screen.getByLabelText('Search:'), { target: { value: 'Mock' } });
+    fireEvent.click(screen.getByTitle('search'));
+
+    await waitFor(() => expect(screen.getByText('There are no more results for this query')).toBeInTheDocument());
+});
 

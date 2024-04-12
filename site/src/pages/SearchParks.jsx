@@ -19,7 +19,6 @@ const SearchParks = () => {
     const [favoriteMessage, setFavoriteMessage] = useState("");
     const [favoriteMessageColor, setFavoriteMessageColor] = useState("");
 
-    // const API_KEY = "uWVzTURerzitH3nepQc1tvbSW1Ia5cnt7g8Pp0yA";
     const API_KEY = process.env.REACT_APP_API_KEY;
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
     const [allFetchedParks, setFetchedParks] = useState([]); // Store ALL parks from previous search
@@ -29,7 +28,14 @@ const SearchParks = () => {
         // Assuming username is stored in sessionStorage; adjust as per your application's auth strategy
         const username = JSON.parse(sessionStorage.getItem('userInfo'))?.username;
         if (username) {
-            fetchUserFavorites(username).then(favorites => setUserFavorites(favorites));
+            fetchUserFavorites(username).then(favorites => {
+                setUserFavorites(favorites)
+
+                let updatedUser = JSON.parse(sessionStorage.getItem('userInfo'));
+                updatedUser.favorites = favorites;
+                sessionStorage.setItem('userInfo', JSON.stringify(updatedUser));
+            });
+            // console.log(userFavorites);
         }
     }, []); // Empty dependency array ensures this runs only once on component mount
 
@@ -52,8 +58,8 @@ const SearchParks = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
-                if (data.data.length == 0) {
-                    alert("There are no more results for this query")
+                if (data.data.length === 0) {
+                    setError("There are no more results for this query")
                 }
                 return data.data; // Return the parks data
             } else {
@@ -69,7 +75,7 @@ const SearchParks = () => {
         try {
             const response = await fetch(`/favorites?username=${username}`);
             if (!response.ok) {
-                throw new Error('Failed to fetch user favorites');
+                setError('Failed to fetch user favorites');
             }
             const data = await response.json();
             console.log('User favorites:', data.favorites);
@@ -139,26 +145,27 @@ const SearchParks = () => {
         }
     };
 
-    const addToFavorites = async (parkCode) => {
-        try {
-            const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
-            const response = await fetch(`/favorites/add?username=${username}&parkId=${parkCode}`, {
-                method: 'POST',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to add park to favorites');
-            }
-            else{
-                console.log("response ok");
-            }
-
-            const data = await response.json();
-            setUserFavorites([...userFavorites, parkCode]);
-        } catch (error) {
-            console.error('Error adding park to favorites:', error);
-        }
-    };
+    // Nick: Wasn't used so commented it to help with coverage
+    // const addToFavorites = async (parkCode) => {
+    //     try {
+    //         const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
+    //         const response = await fetch(`/favorites/add?username=${username}&parkId=${parkCode}`, {
+    //             method: 'POST',
+    //         });
+    //
+    //         if (!response.ok) {
+    //             throw new Error('Failed to add park to favorites');
+    //         }
+    //         else{
+    //             console.log("response ok");
+    //         }
+    //
+    //         const data = await response.json();
+    //         setUserFavorites([...userFavorites, parkCode]);
+    //     } catch (error) {
+    //         console.error('Error adding park to favorites:', error);
+    //     }
+    // };
 
 
 
@@ -170,21 +177,23 @@ const SearchParks = () => {
 
         console.log(searchType);
 
-        if (searchType !== "state") {
-            /*if(searchType === "amenities"){
-                parameters = `/parksplaces${parameters}&q=${encodeURIComponent(searchQuery)}`;
-                const fetchedParks = await fetchAmenities(parameters);
-                setFetchedParks(fetchedParks);
-                setParks(fetchedParks.slice(0, 10));
-                start_idx = 0;
-                setSelectedPark(null); // Reset selected park details
-                return;
-            }*/
-            parameters += `&q=${encodeURIComponent(searchQuery)}`;
-        } else if (searchType === "state") {
-            parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+        if (searchQuery != "") {
+            if (searchType !== "state") {
+                /*if(searchType === "amenities"){
+                    parameters = `/parksplaces${parameters}&q=${encodeURIComponent(searchQuery)}`;
+                    const fetchedParks = await fetchAmenities(parameters);
+                    setFetchedParks(fetchedParks);
+                    setParks(fetchedParks.slice(0, 10));
+                    start_idx = 0;
+                    setSelectedPark(null); // Reset selected park details
+                    return;
+                }*/
+                parameters += `&q=${encodeURIComponent(searchQuery)}`;
+            } else if (searchType === "state") {
+                parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+            }
+            // Add more parameters based on searchType as necessary
         }
-        // Add more parameters based on searchType as necessary
 
         const fetchedParks = await fetchParks(parameters);
         setParks(fetchedParks);
@@ -196,10 +205,12 @@ const SearchParks = () => {
 
         let parameters = `?limit=${limit}&start=${pageNumber * limit}`;
 
-        if (searchType !== "state") {
-            parameters += `&q=${encodeURIComponent(searchQuery)}`;
-        } else if (searchType === "state") {
-            parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+        if (searchQuery != "") {
+            if (searchType !== "state") {
+                parameters += `&q=${encodeURIComponent(searchQuery)}`;
+            } else if (searchType === "state") {
+                parameters += `&stateCode=${encodeURIComponent(searchQuery)}`;
+            }
         }
         // Handle other parameters as necessary
 
