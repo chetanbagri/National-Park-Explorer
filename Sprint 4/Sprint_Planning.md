@@ -91,6 +91,7 @@ The required contents of this file are described in the *Sprint Planning* sectio
 
 ## Explanation for Sprint Backlog Selection
 Paragraph, no more than 300 words, explaining how and why the sprint backlog items were chosen by the team
+We chose these items as they were issues brought up by our Stakeholder during the Sprint 3 Review. We also knew subfeatures discovered from previous RE Meetings that we have not yet fully implemented. This sprint, we plan to finish every subfeature previously discovered through the RE meetings and Sprint 3 Review so we can maximize our implementation score. Some of our features are nearly complete such as the details feature, while other features have a lot more work needed or depend on the completion of other features. An example is that the accessibility feature primarily depends on a particular page/feature being completed before accessibility can be taken into consideration. We also wrote specific use cases and practices that should be completed this sprint to maximize client satisfaction (and our point gain).
 
 ## Task Chart
 Embed screenshot of the initial task chart
