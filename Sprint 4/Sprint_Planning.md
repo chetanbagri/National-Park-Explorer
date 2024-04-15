@@ -3,10 +3,10 @@ The required contents of this file are described in the *Sprint Planning* sectio
 
 ## List of Meeting Participants
 1. Nicholas Schumacher (Present)
-2. Chetan Bagri (Present|Absent)
-3. Anika Patel (Present|Absent)
-4. Jainee Shah (Present|Absent)
-5. Mahum Syed (Present|Absent)
+2. Chetan Bagri (Present)
+3. Anika Patel (Present)
+4. Jainee Shah (Present)
+5. Mahum Syed (Present)
 
 ## List of Items on Product Backlog
 1. Feature 2: Obtain details about the various parks
@@ -95,6 +95,7 @@ We chose these items as they were issues brought up by our Stakeholder during th
 
 ## Task Chart
 Embed screenshot of the initial task chart
+![image](https://github.com/CSCI310-20241/project-team-20/assets/89752707/6ee07283-e612-465f-b15a-fc9a749b869f)
 
 
 
