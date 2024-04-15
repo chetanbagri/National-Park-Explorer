@@ -8,3 +8,4 @@ Feature: Is secure and protects users’ data (#9)
   Scenario: User can access Create and Login pages while not logged in.
 
   Scenario: User cannot access Create and Login pages while logged in.
+
