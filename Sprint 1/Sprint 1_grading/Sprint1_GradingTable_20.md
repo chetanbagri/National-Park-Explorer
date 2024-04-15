@@ -6,7 +6,7 @@ Sprint Process
     | ------------------------ | ----------------- |
     | Sprint Planning          | 8.0/8             |
     | Scrums                   | 24.0/24           |
-    |                          |
+    |                          |                   |
     | Retrospective            | 8.0/8             |
     | TDD                      | 0.0/12            |
     | GitFlow                  | 12.0/12           |
