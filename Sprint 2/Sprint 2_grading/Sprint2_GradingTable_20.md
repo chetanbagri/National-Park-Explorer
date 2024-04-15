@@ -6,16 +6,16 @@ Sprint Process
     | ------------------------ | ----------------- | ----------------- |
     | Sprint Planning          | 8.0/8             | 8.0/8             |
     | Scrums                   | 24.0/24           | 24.0/24           |
-    |                          |
-    | Retrospective            | 8.0/8             | TBD/8             |
+    |                          |                   |                   |
+    | Retrospective            | 8.0/8             | 8.0/8             |
     | TDD                      | 0.0/12            | 12.0/12           |
     | GitFlow                  | 12.0/12           | 12.0/12           |
     | Continuous Integration   | 12.0/12           | 12.0/12           |
     | Refactor                 | 12.0/12           | 12.0/12           |
     | Coverage                 | 6.9/12            | 12.0/12           |
     | ------------------------ | ----------------- | ----------------- |
-    | Sprint Process Grade     | 82.9              | 92.0              |
-    | Process Grade Total      | 82.9/400          | 174.9/400         |
+    | Sprint Process Grade     | 82.9              | 100.0             |
+    | Process Grade Total      | 82.9/400          | 182.9/400         |
     | ------------------------ | ----------------- | ----------------- |
 
 Implementation
@@ -30,8 +30,8 @@ Overall Project Score
 ----------------------------
     | Section                  |     Sprint 1      |     Sprint 2      |
     | ------------------------ | ----------------- | ----------------- |
-    | Points Gained            | 84.9              | 162.0             |
+    | Points Gained            | 84.9              | 170.0             |
     | Sustainable Pace Penalty | -0                | -0                |
     | Total SP Penalty         | -0.0              | -0.0              |
-    | Total Project Score      | 84.9/800          | 246.9/800         |
+    | Total Project Score      | 84.9/800          | 254.9/800         |
     | ------------------------ | ----------------- | ----------------- |
