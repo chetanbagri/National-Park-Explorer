@@ -87,7 +87,7 @@ Feature: test the search page details feature
     Given I am on the search page
     And I press the Search button
     And I click on the first result which is not on the user's favorite list
-    Then the details window displays and says the park is not on the user's fave list
+    Then the details window displays, says the park isnt on user's fav list
 
   Scenario: Clicking on an amenity
     Given I am on the search page
