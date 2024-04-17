@@ -355,7 +355,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testSuccessfulCompare() {
+    void testSuccessfulCompareNoFavorites() {
         User user = new User();
         User userB = new User();
         user.setUsername("NickoOG_comp_tmp");
@@ -369,6 +369,69 @@ class UserServiceTest {
         ResponseEntity<?> response = userService.compareParks("NickoOG_comp_tmp");
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
+    @Test
+    void testSuccessfulCompare() {
+        String u1 = "NickoOG_comp_tmp";
+        String u2 = "NickoOG_comp_tmp_friend";
+        List<String> favs = new ArrayList<>();
+        List<String> favs2 = new ArrayList<>();
+        favs.add("CAT");
+        favs.add("DOG");
+        favs2.add("DOG");
+        favs2.add("PIG");
+        User user = new User();
+        User userB = new User();
+        user.setUsername(u1);
+        user.setFavorites(favs);
+        userB.setUsername(u2);
+        userB.setFavorites(favs2);
+        when(mockRepository.findByUsername(u1)).thenReturn(user);
+        when(mockRepository.findByUsername(u2)).thenReturn(userB);
+
+        userService.registerUser(u1, "Happy1", "Happy1");
+        userService.registerUser(u2, "Happy1", "Happy1");
+        userService.addUserToGroup(u1, u2);
+        ResponseEntity<?> response = userService.compareParks(u1);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        // Cleanup
+        userService.removeUser(u1);
+        userService.removeUser(u2);
+    }
+
+//    @Test
+//    void testSuccessfulCompareEdgeCases() {
+//        String u1 = "NickoOG_comp_tmp";
+//        String u2 = "NickoOG_comp_tmp_friend";
+//        List<String> favs = new ArrayList<>();
+//        List<String> favs2 = new ArrayList<>(favs); // Deep copy
+//        favs.add("CAT");
+//        favs.add("DOG");
+//        favs2.add("PIG");
+//        User user = new User();
+//        User userB = new User();
+//        user.setUsername(u1);
+//        user.setFavorites(favs);
+//        userB.setUsername(u2);
+//        userB.setFavorites(favs);
+//        when(mockRepository.findByUsername(u1)).thenReturn(user);
+//        when(mockRepository.findByUsername(u2)).thenReturn(userB);
+//
+//        userService.registerUser(u1, "Happy1", "Happy1");
+//        userService.registerUser(u2, "Happy1", "Happy1");
+//        userService.addUserToGroup(u1, u2);
+//        ResponseEntity<?> response = userService.compareParks(u1);
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//
+//        favs.add("DOG"); // Duplicate for testing edge case
+//        user.setFavorites(favs);
+//
+//
+//        // Cleanup
+//        userService.removeUser(u1);
+//        userService.removeUser(u2);
+//    }
 
     @Test
     void testGetFavorites() {
