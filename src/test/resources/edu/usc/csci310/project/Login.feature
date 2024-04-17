@@ -20,7 +20,7 @@ Feature: test the login functionality of website
     When I enter the username "Bob" on login page
     And I enter the password "Happy1" on login page
     And I press the Login button
-    Then I should get a login "Error: Wait 30 seconds!" message
+    Then I should get a login "Error: Wait 30 seconds!"
 
   Scenario: login attempt with correct password after lockout expires
     Given I am on the login page
