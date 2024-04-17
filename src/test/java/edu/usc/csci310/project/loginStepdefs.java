@@ -36,7 +36,7 @@ public class loginStepdefs {
         passwordInput.click();
         passwordInput.clear();
         wait.until((WebDriver d) -> passwordInput.getAttribute("value").isEmpty());
-//        System.out.println("Password field value afterhand: " + passwordInput.getAttribute("value")); // Debugging output
+//        System.out.println("Password field value afterhand: " + passwordInput.getAttribute("value")); // Debugging
     }
 
     @And("I enter the password {string} on login page")
