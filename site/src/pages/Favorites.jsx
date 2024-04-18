@@ -285,12 +285,17 @@ const Favorites = () => {
                                                     </span>
                                                     {index < parkAmenities.length - 1 ? ', ' : ''}
                                                 </React.Fragment>
-                                            ))}
-                                        </p>
+                                            ))}</p>
+
                                         <div>
-                                            <h4>Operating Hours:</h4>
-                                            <p>{selectedPark.operatingHours[0].description}</p>
+                                            <h4>
+                                                Operating Hours:
+                                            </h4>
+                                            <p>
+                                                {selectedPark.operatingHours[0].description}
+                                            </p>
                                         </div>
+
 
                                     </div>
                                 )}
@@ -303,5 +308,6 @@ const Favorites = () => {
         </>
     );
 }
+
 
 export default Favorites;

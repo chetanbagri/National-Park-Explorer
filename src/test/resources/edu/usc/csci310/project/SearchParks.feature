@@ -75,7 +75,7 @@ Feature: test the search page
     Then clicks the "load more results" button
     And 10 more results should be appended to the list
 
-  Scenario: View more results
+  Scenario: View more results 2
     Given I am on the search page
     When the user presses the favorites button at the top
     Then the user is navigated to the favorites page
@@ -84,4 +84,3 @@ Feature: test the search page
     Given I am on the search page
     When I click on the compare and suggest button
     Then the user is navigated to the compare and suggest screen
-
