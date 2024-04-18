@@ -233,7 +233,7 @@ function Compare(/* {initexpanded= null} */){
                         <li key={parkCode}
                             onMouseEnter={() => setHoveredPark(parkCode)}
                             onMouseLeave={() => setHoveredPark(null)}>
-                            <button onClick={() => handleParkSelection(parkCode)}>
+                            <button title={`detailsButton_${parkCode}`} onClick={() => handleParkSelection(parkCode)}>
                                 {favoriteParks[index]}
                             </button>
                             <span data-testid={`p-${index}`} onClick={() => handleRatioHover(parkCode)}>

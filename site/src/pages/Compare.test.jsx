@@ -386,6 +386,30 @@ test('fetchParkDetails NOT OK', async () => {
     await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Failed to fetch park details'));
 });
 
+test('fetchGroupFavorites NOT OK', async () => {
+    sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
+
+    // 1 fetch from handleAddToGroup()
+    // handleCompare() -> fetchGroupFavorites(username)
+    fetch.mockResponses(
+        [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
+        [null, { status: 404 }]
+    );
+
+
+    renderWithRouter(<Compare />);
+
+    const user = userEvent.setup(); // Configures some stuff and starts a session
+    await act(()=>{
+        user.type(screen.getByLabelText(/Username/), "NickoOG1");
+        user.click(screen.getByTitle(/Submit Username/));
+        user.click(screen.getByTitle(/Submit Compare/));
+    });
+    const consoleSpy = jest.spyOn(console, 'error');
+    await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Error fetching group favorites:'));
+    // Nick: Somehow causes an exception in handleCompare() but it works for this test since it does the console.error() there...
+});
+
 test('fetchAmenitiesOfPark EXCEPTION', async () => {
     sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
 
@@ -484,4 +508,73 @@ test('handleCompare EXCEPTION', async () => {
 
 
     global.fetch = origFetch; // IMPORTANT TO RESET FOR FUTURE TESTS
+});
+
+test('open and close details widget', async () => {
+    sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
+
+    // 1 fetch from handleAddToGroup()
+    // handleCompare() -> fetchGroupFavorites(username)
+    // handleCompare() -> fetchParkDetails(parkCode) // Just need to display names for initial list
+    // handleParkSelection() -> fetchParkDetails(parkCode)
+    // handleParkSelection() -> fetchAmenitiesOfPark(parkCode)
+    fetch.mockResponses(
+        [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
+        [
+            JSON.stringify({
+                parksToUsers: [
+                    {parkCode1: ['NickoOG1', 'testUser']}
+                ],
+                groupSize: 1,
+                sortedIDs: [{parkCode1: 2}]
+            }),
+            { status: 200 }
+        ],
+        [JSON.stringify({ data: [{ fullName: 'Park One' }] }), { status: 200 }],
+        [JSON.stringify({
+            data: [{
+                parkCode: 'parkCode1',
+                fullName: 'Park One',
+                images: [{ url: 'http://example.com/test.jpg' }],
+                description: 'Test Description',
+                addresses: [{
+                    city: 'Test City',
+                    stateCode: 'TC'
+                }],
+                url: 'http://example.com',
+                entranceFees: [{ cost: '10.00' }],
+                activities: [{ id: 'act1', name: 'Hiking' }],
+                operatingHours: [{ description: '9 AM to 5 PM' }]
+            }],
+            ok: true
+        }), { status: 200 }],
+        [JSON.stringify({
+            data: [
+                { id: 'amenity1', name: 'Restrooms' },
+                { id: 'amenity2', name: 'Picnic Areas' }
+            ]
+        }), { status: 200 }]
+    );
+
+    renderWithRouter(<Compare />);
+
+    fireEvent.change(screen.getByLabelText('Username:'), { target: { value: 'NickoOG' } });
+    fireEvent.click(screen.getByTitle('Submit Username'));
+
+    fireEvent.click(screen.getByTitle("Submit Compare"));
+
+    await waitFor(() => expect(screen.getByText('Park One')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('Park One'));
+
+    await waitFor(() => {
+        expect(screen.getByText(/test description/i)).toBeInTheDocument();
+        expect(screen.getByText('Test City, TC')).toBeInTheDocument();
+        expect(screen.getByText('Visit Park Website')).toHaveAttribute('href', 'http://example.com');
+        expect(screen.getByText('Hiking')).toBeInTheDocument();
+        expect(screen.getByText('Restrooms')).toBeInTheDocument();
+        expect(screen.getByText('Picnic Areas')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTitle('detailsButton_parkCode1'));
+    await waitFor(() => expect(screen.getByText('Park One')).toBeInTheDocument());
 });
