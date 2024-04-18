@@ -510,7 +510,7 @@ test('handleCompare EXCEPTION', async () => {
     global.fetch = origFetch; // IMPORTANT TO RESET FOR FUTURE TESTS
 });
 
-test('open and close details widget', async () => {
+test('with no fee info, open and close details widget', async () => {
     sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
 
     // 1 fetch from handleAddToGroup()
@@ -542,7 +542,7 @@ test('open and close details widget', async () => {
                     stateCode: 'TC'
                 }],
                 url: 'http://example.com',
-                entranceFees: [{ cost: '10.00' }],
+                entranceFees: [],
                 activities: [{ id: 'act1', name: 'Hiking' }],
                 operatingHours: [{ description: '9 AM to 5 PM' }]
             }],
@@ -573,6 +573,8 @@ test('open and close details widget', async () => {
         expect(screen.getByText('Hiking')).toBeInTheDocument();
         expect(screen.getByText('Restrooms')).toBeInTheDocument();
         expect(screen.getByText('Picnic Areas')).toBeInTheDocument();
+
+        expect(screen.getByText('Entrance Fees: No fees information available')).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByTitle('detailsButton_parkCode1'));
