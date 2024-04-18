@@ -27,24 +27,14 @@ Feature: Compare favorite park list with friends (#5)
     Then I should see "Successfully added Nicko_1 to your group of friends"
 
   Scenario: Add 1 friend to group successfully if user B has a public list
-
   Scenario: Add 2 friends to group successfully
-
   Scenario: Fail to add friend if they are already in the user's group
-
   Scenario: Fail to add friend to group if the user attempts to add themselves
-
   Scenario: Fail to add friend to group if their username does not exist
-
   Scenario: Fail to compare if user A has no other user in their group
-
   Scenario: Compared parks appear in ranked order based on individual rankings
-
   Scenario: Show ratio in the number of people that have a compared park favorited
-
   Scenario: All parks displayed are on at least one group member's favorites list
-
   # Verified
   Scenario: Fail to add to group if user B does not have a public list
-
   Scenario: Clicking on compared park list displays detail window like search page
