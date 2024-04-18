@@ -231,8 +231,9 @@ function Compare(/* {initexpanded= null} */){
                 <ul>
                     {userFavorites.map((parkCode, index) => (
                         <li key={parkCode}
-                            onMouseEnter={() => setHoveredPark(parkCode)}
-                            onMouseLeave={() => setHoveredPark(null)}>
+                            // onMouseEnter={() => setHoveredPark(parkCode)}
+                            // onMouseLeave={() => setHoveredPark(null)}
+                        >
                             <button title={`detailsButton_${parkCode}`} onClick={() => handleParkSelection(parkCode)}>
                                 {favoriteParks[index]}
                             </button>
