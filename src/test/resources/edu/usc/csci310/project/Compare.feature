@@ -18,7 +18,7 @@ Feature: Compare favorite park list with friends (#5)
     Then I should be redirected to the "login" page
     And see that the page title is "Login"
 
-  # Add users to group
+  # Add users to group (verified)
   Scenario: Add 1 friend to group successfully if they have a public list
     Given I am on the Compare page
     And I have "Nicko_1" registered
@@ -29,25 +29,17 @@ Feature: Compare favorite park list with friends (#5)
   #Verified
   Scenario: User B cannot be added if they do not have a public list
 
-#  Scenario: Add 2 friends to group successfully
-#  Scenario: Fail to add friend if they are already in the user's group
-#  Scenario: Fail to add friend to group if the user attempts to add themselves
-
   #Verified
   Scenario: Fail to add friend to group if their account does not exist
 
-#  Scenario: Fail to compare if user A has no other user in their group
-
   #Verified
-  Scenario: Clicking on compare button will compare parks and display the parks in a ranked order
+  Scenario: Clicking on compare button will display compared parks in ranked order
+
   # Verified
   Scenario: Each compared park shows a ratio
 
-     # Implicitly covered already
-#  Scenario: All compared parks displayed are on at least one group member's favorites list
-
   #Verified
-  Scenario: Clicking/hovering on park ratio displays accounts that favorited the park
+  Scenario: Clicking on park ratio displays accounts that favorited the park
 
   # Verified
-  Scenario: Clicking on compared park within the list displays detail window like search page
+  Scenario: Clicking on compared park within the list displays detail window
