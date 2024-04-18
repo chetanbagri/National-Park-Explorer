@@ -19,34 +19,43 @@ Feature: Compare favorite park list with friends (#5)
     And see that the page title is "Login"
 
   # Add users to group
-  Scenario: Add 1 friend to group successfully
+  # FIX THIS TO SET OR CHECK FOR PUBLIC LIST
+  Scenario: Add 1 friend to group successfully if they have a public list
     Given I am on the Compare page
     And I have "Nicko_1" registered
     When I enter "Nicko_1" into element with id "usernameQuery"
     And I click on the element with id "addUserBtn"
     Then I should see "Successfully added Nicko_1 to your group of friends"
 
+  #Verified
+  Scenario: User B cannot be added if they do not have a public list
 
-  Scenario: Add 1 friend to group successfully if user B has a public list
+#  Scenario: Add 2 friends to group successfully if both have a public list
 
-  Scenario: Add 2 friends to group successfully
+#  Scenario: Fail to add friend if they are already in the user's group
 
-  Scenario: Fail to add friend if they are already in the user's group
+#  Scenario: Fail to add friend to group if the user attempts to add themselves
 
-  Scenario: Fail to add friend to group if the user attempts to add themselves
-    
-  Scenario: Fail to add friend to group if their username does not exist
+  #verified
+  Scenario: Fail to add friend to group if their account does not exist
 
-  Scenario: Fail to compare if user A does not have at least one other user in their group
+    # Display error message still
+#  Scenario: Fail to compare if user A does not have at least one other user in their group
 
-  Scenario: Compared parks appear in ranked order based members having it favorited
+  #Verified
+  Scenario: Clicking on compare button will compare parks and display the parks in a ranked order
 
-  Scenario: Each compared park shows a ratio in the number of people that have it favorited over the total group
+    # Verified
+  Scenario: Each compared park shows a ratio
 
-  Scenario: All compared parks displayed are on at least one group member's favorites list
+    # Implicitly covered already
+#  Scenario: All compared parks displayed are on at least one group member's favorites list
+
+  #Verified
+  Scenario: Clicking/hovering on park ratio displays accounts that favorited the park
 
   # Verified
-  Scenario: Fail to add to group if user B does not have a public list
 
-  Scenario: Clicking on compared park list displays detail window to display similar to search page
+  # Verified
+  Scenario: Clicking on compared park within the list displays detail window similar to search page
 
