@@ -343,12 +343,60 @@ test('fetchAmenitiesOfPark NOT OK', async () => {
     await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Failed to fetch amenities.'));
 });
 
+test('fetchParkDetails NOT OK', async () => {
+    sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
+
+    // 1 fetch from handleAddToGroup()
+    // handleCompare() -> fetchGroupFavorites(username)
+    // handleCompare() -> fetchParkDetails(parkCode) // Just need to display names for initial list
+    // handleParkSelection() -> fetchParkDetails(parkCode)
+    fetch.mockResponses(
+        [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
+        [
+            JSON.stringify({
+                parksToUsers: [
+                    {parkCode1: ['NickoOG1', 'testUser']}
+                ],
+                groupSize: 1,
+                sortedIDs: [{parkCode1: 2}]
+            }),
+            { status: 200, ok: false }
+        ],
+        [JSON.stringify({ data: [{ fullName: 'Park One' }] }), { status: 200 }],
+        [null, { status: 404 }]
+    );
+
+
+    renderWithRouter(<Compare />);
+
+    const user = userEvent.setup(); // Configures some stuff and starts a session
+    await act(()=>{
+        user.type(screen.getByLabelText(/Username/), "NickoOG1");
+        user.click(screen.getByTitle(/Submit Username/));
+        user.click(screen.getByTitle(/Submit Compare/));
+    });
+
+    await waitFor(() => {
+        expect(screen.getByText('Park One')).toBeInTheDocument();
+    });
+    await act(() => {
+        user.click(screen.getByText('Park One'));
+    });
+    const consoleSpy = jest.spyOn(console, 'error');
+    await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Failed to fetch park details'));
+});
+
 test('fetchAmenitiesOfPark EXCEPTION', async () => {
     sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
 
     // Mock fetch to throw an error
     const origFetch = global.fetch;
 
+    // 1 fetch from handleAddToGroup()
+    // handleCompare() -> fetchGroupFavorites(username)
+    // handleCompare() -> fetchParkDetails(parkCode) // Just need to display names for initial list
+    // handleParkSelection() -> fetchParkDetails(parkCode)
+    // handleParkSelection() -> fetchAmenitiesOfPark(parkCode) -> EXCEPTION
     fetch.mockResponses(
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
@@ -400,6 +448,39 @@ test('fetchAmenitiesOfPark EXCEPTION', async () => {
     });
     const consoleSpy = jest.spyOn(console, 'error');
     await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Error fetching amenities data.'));
+
+
+    global.fetch = origFetch; // IMPORTANT TO RESET FOR FUTURE TESTS
+});
+
+test('handleCompare EXCEPTION', async () => {
+    sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
+
+    // Mock fetch to throw an error
+    const origFetch = global.fetch;
+
+    // 1 fetch from handleAddToGroup()
+    // handleCompare() -> fetchGroupFavorites(username) -> EXCEPTION
+    fetch.mockResponses(
+        [JSON.stringify({data: ["NickoOG1"]}), {status: 200}]
+    );
+    fetch.mockReject(new Error(''));
+
+
+    renderWithRouter(<Compare />);
+
+    const user = userEvent.setup(); // Configures some stuff and starts a session
+    await act(()=>{
+        user.type(screen.getByLabelText(/Username/), "NickoOG1");
+        user.click(screen.getByTitle(/Submit Username/));
+        user.click(screen.getByTitle(/Submit Compare/));
+    });
+
+    const consoleSpy = jest.spyOn(console, 'error');
+    await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Error fetching group favorites:'));
+    // An exception seems to trigger and be catched in fetchGroupFavorites(), which does a setError but since it won't
+    // return the valid data that handleCompare() needs, that will also throw an exception with an error message
+    // regarding sortedIDs (if you include the error variable in the catch).
 
 
     global.fetch = origFetch; // IMPORTANT TO RESET FOR FUTURE TESTS

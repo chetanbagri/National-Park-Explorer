@@ -107,8 +107,8 @@ function Compare(/* {initexpanded= null} */){
                     //     console.error('Error fetching group favorite park names:', error);
                     // });
             })
-            .catch((error) => {
-                console.error('Error fetching group favorites:', error);
+            .catch(() => {
+                console.error('Error fetching group favorites:');
             });
 
         setError("");
