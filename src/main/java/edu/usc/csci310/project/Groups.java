@@ -18,4 +18,8 @@ public class Groups {
         group.add(u2);
         groupOfFriends.put(u1, group);
     }
+
+    public static void removeUserEntry(String u){
+        if(groupOfFriends.get(u) != null) groupOfFriends.remove(u);
+    }
 }

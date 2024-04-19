@@ -234,10 +234,10 @@ function Compare(/* {initexpanded= null} */){
                             // onMouseEnter={() => setHoveredPark(parkCode)}
                             // onMouseLeave={() => setHoveredPark(null)}
                         >
-                            <button title={`detailsButton_${parkCode}`} onClick={() => handleParkSelection(parkCode)}>
+                            <button title={`detailsButton_${parkCode}`} onClick={() => handleParkSelection(parkCode)} className="search-result-button">
                                 {favoriteParks[index]}
                             </button>
-                            <span data-testid={`p-${index}`} onClick={() => handleRatioHover(parkCode)}>
+                            <span data-testid={`p-${index}`} id={`pid-${index}`} onClick={() => handleRatioHover(parkCode)}>
                                 <span>{numberFavorited[index]} / {numberInGroup}</span>
                                 {hoveredRatio === parkCode && (
                                     <span className="ratio-popup">
@@ -252,28 +252,29 @@ function Compare(/* {initexpanded= null} */){
 
                             {selectedPark && selectedPark.parkCode === parkCode && (
                                 <div className="detailsBox">
-                                    <h3>{selectedPark.fullName}</h3>
+                                    <h3 className={"park-full-name"}>{selectedPark.fullName}</h3>
                                     <img src={selectedPark.images[0].url}
                                          alt={`View of ${selectedPark.fullName}`}
-                                         style={{width: '100%', maxHeight: '300px', objectFit: 'cover'}}/>
-                                    <p>Description: {selectedPark.description}</p>
+                                         style={{width: '100%', maxHeight: '300px', objectFit: 'cover'}}
+                                         className={"park-picture"}/>
+                                    <p className={"park-description"}>Description: {selectedPark.description}</p>
                                     <div>
                                         <h4>Location:</h4>
-                                        <p>
+                                        <p className="clickable-text park-location">
                                             {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}
                                         </p>
                                     </div>
-                                    <a href={selectedPark.url} target="_blank" rel="noopener noreferrer">Visit
+                                    <a className={"park-url"} href={selectedPark.url} target="_blank" rel="noopener noreferrer">Visit
                                         Park
                                         Website</a>
-                                    <p>Entrance
+                                    <p className={"park-entrance-fee"}>Entrance
                                         Fees: {selectedPark.entranceFees.length > 0 ? `$${selectedPark.entranceFees[0].cost}` : 'No fees information available'}</p>
 
                                     <h4>Activities:</h4>
-                                    <p>
+                                    <p className={"park-activities"}>
                                         {selectedPark.activities.map((activity, index) => (
                                             <React.Fragment key={activity.id}>
-                                                    <span>
+                                                    <span className="clickable-text">
                                                         {activity.name}
                                                     </span>
                                                 {index < selectedPark.activities.length - 1 ? ', ' : ''}
@@ -282,10 +283,10 @@ function Compare(/* {initexpanded= null} */){
                                     </p>
 
                                     <h4>Amenities:</h4>
-                                    <p>
+                                    <p className={"park-amenities"}>
                                         {parkAmenities.map((amenity, index) => (
                                             <React.Fragment key={amenity.id}>
-                                                    <span>
+                                                    <span className="amenities-clickable-text clickable-text">
                                                         {amenity.name}
                                                     </span>
                                                 {index < parkAmenities.length - 1 ? ', ' : ''}

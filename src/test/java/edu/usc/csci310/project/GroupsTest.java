@@ -23,4 +23,16 @@ public class GroupsTest {
         assertEquals(1, myGroup.size());
         assertEquals(myGroup.get(0), "NickooFriend");
     }
+
+    @Test
+    void testRemoveUserEntry(){
+        Groups.removeUserEntry("Nickoo");
+        Groups.addToGroupOfFriends("Nickoo", "NickooFriend");
+        List<String> myGroup = Groups.getGroupOfFriends("Nickoo");
+        assertEquals(1, myGroup.size());
+        assertEquals(myGroup.get(0), "NickooFriend");
+        Groups.removeUserEntry("Nickoo");
+        myGroup = Groups.getGroupOfFriends("Nickoo");
+        assertEquals(0, myGroup.size());
+    }
 }

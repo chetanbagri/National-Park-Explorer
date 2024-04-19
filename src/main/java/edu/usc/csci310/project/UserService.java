@@ -100,6 +100,7 @@ public class UserService {
     public ResponseEntity<?> removeUser(String username) {
         if(userRepository.findByUsername(username) != null){
             userRepository.delete(userRepository.findByUsername(username));
+            Groups.removeUserEntry(username);
             return ResponseEntity.ok("User Deleted");
         }
         else{
