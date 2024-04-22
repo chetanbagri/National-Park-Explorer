@@ -440,4 +440,18 @@ public class SearchParksStepDefs {
         WebElement favoriteStatusMessage = detailsBox.findElement(By.cssSelector(".favorite-status"));
         assertTrue(favoriteStatusMessage.getText().contains("This park is not in your favorites list"));
     }
+
+    @And("I should see a plus sign while hovering on details widget")
+    public void iShouldSeeAPlusSignWhileHoveringOnDetailsWidget() {
+        WebElement firstSearchResult = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-result:first-child .park-button")));
+
+        Actions actions = new Actions(driver);
+        actions.moveToElement(firstSearchResult).perform();
+
+        WebElement favoriteIcon = new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-result:first-child .add-to-favorites")));
+
+        assertTrue(favoriteIcon.isDisplayed());
+    }
 }
