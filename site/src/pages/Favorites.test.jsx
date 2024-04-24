@@ -21,7 +21,7 @@ afterEach(() => {
     jest.restoreAllMocks();
 });
 
-async function performFavoriteParkSequence(screen, parkName) {
+async function performRemoveParkSequence(screen, parkName) {
     const parkButton = await screen.findByText(parkName);
     fireEvent.mouseEnter(parkButton);
     fireEvent.mouseLeave(parkButton);
@@ -196,7 +196,7 @@ describe('Favorites component', () => {
         );
 
         render(<Favorites />);
-        await performRemoveParkSequence(screen);
+        await performRemoveParkSequence(screen, 'Park One');
     });
 
 
@@ -208,7 +208,7 @@ describe('Favorites component', () => {
             [JSON.stringify({}), { status: 400 }]
         );
         render(<Favorites />);
-        await performRemoveParkSequence(screen);
+        await performRemoveParkSequence(screen, 'Park One');
         expect(console.error).toHaveBeenCalledWith('Failed to remove park from favorites');
     });
 
