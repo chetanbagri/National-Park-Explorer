@@ -21,6 +21,31 @@ afterEach(() => {
     jest.restoreAllMocks();
 });
 
+async function performRemoveParkSequence(screen, parkName) {
+    const parkButton = await screen.findByText(parkName);
+    fireEvent.mouseEnter(parkButton);
+    fireEvent.mouseLeave(parkButton);
+    fireEvent.mouseEnter(parkButton);
+
+    const removeButton = await screen.findByText('-');
+    fireEvent.click(removeButton);
+
+    const cancelButton = await screen.findByText('Cancel');
+    fireEvent.click(cancelButton);
+
+    fireEvent.click(removeButton);
+
+    const confirmButton = await screen.findByText('Confirm');
+    fireEvent.click(confirmButton);
+
+    await waitFor(() => {
+        expect(fetch).toHaveBeenCalledWith(
+            `/favorites/remove?username=testUser&parkId=parkCode1`,
+            { method: 'DELETE' }
+        );
+    });
+}
+
 describe('Favorites component', () => {
     test('render page', async () => {
         sessionStorage.setItem('userInfo', JSON.stringify({username: 'testUser'}));
@@ -171,31 +196,9 @@ describe('Favorites component', () => {
         );
 
         render(<Favorites />);
-
-        const parkButton = await screen.findByText('Park One');
-
-        fireEvent.mouseEnter(parkButton);
-        fireEvent.mouseLeave(parkButton);
-        fireEvent.mouseEnter(parkButton);
-
-        const removeButton = await screen.findByText('-');
-        fireEvent.click(removeButton);
-
-        const cancelButton = await screen.findByText('Cancel');
-        fireEvent.click(cancelButton);
-
-        fireEvent.click(removeButton);
-
-        const confirmButton = await screen.findByText('Confirm');
-        fireEvent.click(confirmButton);
-
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledWith(
-                '/favorites/remove?username=testUser&parkId=parkCode1',
-                { method: 'DELETE' }
-            );
-        });
+        await performRemoveParkSequence(screen, 'Park One');
     });
+
 
     test('removes a park error', async () => {
         sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
@@ -204,33 +207,11 @@ describe('Favorites component', () => {
             [JSON.stringify({ data: [{ parkCode: 'parkCode1', fullName: 'Park One' }] }), { status: 200 }],
             [JSON.stringify({}), { status: 400 }]
         );
-
         render(<Favorites />);
-
-        const parkButton = await screen.findByText('Park One');
-
-        fireEvent.mouseEnter(parkButton);
-
-
-        const removeButton = await screen.findByText('-');
-        fireEvent.click(removeButton);
-
-        const cancelButton = await screen.findByText('Cancel');
-        fireEvent.click(cancelButton);
-
-        fireEvent.click(removeButton);
-
-        const confirmButton = await screen.findByText('Confirm');
-        fireEvent.click(confirmButton);
-
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledWith(
-                '/favorites/remove?username=testUser&parkId=parkCode1',
-                { method: 'DELETE' }
-            );
-        });
+        await performRemoveParkSequence(screen, 'Park One');
         expect(console.error).toHaveBeenCalledWith('Failed to remove park from favorites');
     });
+
 
     test('handles error fetching park details correctly', async () => {
         sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
