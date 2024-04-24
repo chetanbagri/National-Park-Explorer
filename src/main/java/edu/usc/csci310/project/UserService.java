@@ -100,7 +100,6 @@ public class UserService {
     public ResponseEntity<?> removeUser(String username) {
         if(userRepository.findByUsername(username) != null){
             userRepository.delete(userRepository.findByUsername(username));
-            Groups.removeUserEntry(username);
             return ResponseEntity.ok("User Deleted");
         }
         else{
@@ -142,52 +141,45 @@ public class UserService {
     public ResponseEntity<?> compareParks(String username) {
         User user = userRepository.findByUsername(username);
         if(user != null){
-            // Get string usernames of friends in group
+            // Get usernames of friends in group
             List<String> userGroup = Groups.getGroupOfFriends(username);
             if(userGroup.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have no friends in your group to compare parks with");
             }
 
-            // Retrieve ALL favorite parks of each username, including myself
+            // Retrieve ALL parks of each username, including myself
+            userGroup.add(username);
+            /*
+            List<String> tmp1 = Arrays.asList("1", "2");
+            List<String> tmp2 = Arrays.asList("1", "3");
+            List<String> tmp3 = Arrays.asList("4", "5");
             HashMap<String, Integer> parkCounts = new HashMap<>();
-            HashMap<String, List<String>> parksToUsers = new HashMap<>(); // Map park ID to associated usernames
-            List<String> favs = user.getFavorites();
-            for(String parkID : favs) { // each parkID in userI favorites list
-                int count = parkCounts.getOrDefault(parkID, 0);
-                parkCounts.put(parkID, count + 1);
-//                if(!parksToUsers.containsKey(parkID)){ // IMPOSSIBLE to fail since I'm starting with fresh parksToUsers
-                    parksToUsers.put(parkID, new ArrayList<>());
-//                }
-                parksToUsers.get(parkID).add(user.getUsername());
-            }
-            for(String userI : userGroup){ // Now retrieve for the entire group
+            for(String userI : userGroup){
                 // do something with userI
-                favs = userRepository.findByUsername(userI).getFavorites();
-                for(String parkID : favs) { // each parkID in userI favorites list
-                    int count = parkCounts.getOrDefault(parkID, 0);
-                    parkCounts.put(parkID, count + 1);
-                    if(!parksToUsers.containsKey(parkID)){
-                        parksToUsers.put(parkID, new ArrayList<>());
-                    }
-                    parksToUsers.get(parkID).add(userI);
+                for(each parkID in userI favorites list) {
+                    int count = parkCounts.getOrDefault("1", 0);
+                    parkCounts.put(key, count + 1);
                 }
             }
 
-
             // Sort the HashMap based on their count values
             List<Map.Entry<String, Integer>> sortedIDs = new ArrayList<>(parkCounts.entrySet());
-            sortedIDs.sort(new Comparator<Map.Entry<String, Integer>>() {
+            Collections.sort(sortedIDs, new Comparator<Map.Entry<String, Integer>>() {
                 @Override
                 public int compare(Map.Entry<String, Integer> entry1, Map.Entry<String, Integer> entry2) {
                     return entry2.getValue().compareTo(entry1.getValue()); // Sort in descending order of count values
                 }
             });
+            */
 
-            CompareResponse cr = new CompareResponse();
-            cr.setSortedIDs(sortedIDs);
-            cr.setParksToUsers(parksToUsers);
-            cr.setGroupSize(userGroup.size());
-            return ResponseEntity.ok(cr);
+            // Sort parks based on amount of times I see a park ID
+            // IDEA: Use Map to store ID as key, count as value.
+            // Then sort based on the count (value)
+            // Can also use Max-Heap but seems like too much work.
+
+            // Return ID data (with counts) to frontend sorted with
+
+            return ResponseEntity.ok(Groups.getGroupOfFriends(username));
         }
         else { // Username does not exists within database
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");
@@ -197,9 +189,7 @@ public class UserService {
 
     public ResponseEntity<?> getFavorites(String username) {
         User user = userRepository.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
+
 
         List<String> favorites = user.getFavorites();
         return ResponseEntity.ok(new FavoritesResponse(favorites));
@@ -212,19 +202,27 @@ public class UserService {
         }
 
         List<String> favorites = user.getFavorites();
+        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
+
         if (favorites == null) {
             favorites = new ArrayList<>();
             user.setFavorites(favorites);
         }
+        if (favoriteRanks == null) {
+            favoriteRanks = new HashMap<>();
+            user.setFavoriteRanks(favoriteRanks);
+        }
 
         if (!favorites.contains(parkId)) {
             favorites.add(parkId);
+            favoriteRanks.put(parkId, favorites.size());
             userRepository.save(user);
             return ResponseEntity.ok(new FavoritesResponse(favorites));
         } else {
             return ResponseEntity.badRequest().body("Park already in favorites");
         }
     }
+
 
     public ResponseEntity<?> removeFavorite(String username, String parkId) {
         User user = userRepository.findByUsername(username);
@@ -233,14 +231,23 @@ public class UserService {
         }
 
         List<String> favorites = user.getFavorites();
+        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
+
         if (favorites == null || !favorites.contains(parkId)) {
             return ResponseEntity.badRequest().body("Park not in favorites");
         }
 
         favorites.remove(parkId);
+        favoriteRanks.remove(parkId);
+        int rank = 1;
+        for (String favId : favorites) {
+            favoriteRanks.put(favId, rank++);
+        }
+
         userRepository.save(user);
         return ResponseEntity.ok("Park removed from favorites");
     }
+
 
     public ResponseEntity<?> clearFavorites(String username) {
         User user = userRepository.findByUsername(username);
@@ -249,15 +256,66 @@ public class UserService {
         }
 
         user.setFavorites(new ArrayList<>());
+        user.setFavoriteRanks(new HashMap<>());
         userRepository.save(user);
         return ResponseEntity.ok("All favorites cleared");
     }
 
 
+    public ResponseEntity<?> toggleFavoritesPrivacy(String username) {
+        User user = userRepository.findByUsername(username);
+
+
+        boolean currentStatus = user.isFavPrivate();
+        user.setFavPrivate(!currentStatus);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Favorites privacy status updated to " + !currentStatus);
+    }
+
+    public void addFavoriteWithRank(String username, String parkId, int rank) {
+        User user = userRepository.findByUsername(username);
+
+        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
+        favoriteRanks.put(parkId, rank);
+        userRepository.save(user);
+    }
+
+    public void updateFavoriteRank(String username, String parkId, int newRank) {
+        User user = userRepository.findByUsername(username);
+        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
+        if (favoriteRanks.containsKey(parkId)) {
+            favoriteRanks.put(parkId, newRank);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("Park not found in favorites");
+        }
+    }
+
+    public ResponseEntity<?> reorderFavorites(String username, List<String> newOrder) {
+        User user = userRepository.findByUsername(username);
+
+
+        List<String> currentFavorites = user.getFavorites();
+        if (new HashSet<>(currentFavorites).equals(new HashSet<>(newOrder))) {
+            user.setFavorites(newOrder);
+            Map<String, Integer> updatedRanks = new HashMap<>();
+            int rank = 1;
+            for (String parkId : newOrder) {
+                updatedRanks.put(parkId, rank++);
+            }
+            user.setFavoriteRanks(updatedRanks);
+            userRepository.save(user);
+            return ResponseEntity.ok("Favorites reordered successfully");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid park list submitted");
+        }
+    }
+
+
+
+
+
+
+
 }
-
-
-
-
-
-

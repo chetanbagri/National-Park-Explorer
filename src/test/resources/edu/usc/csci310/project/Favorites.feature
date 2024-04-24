@@ -18,51 +18,6 @@ Feature: Update and Review a Favorite Park List
     Then I should be redirected to the "login" page
     And see that the page title is "Login"
 
-  #search page
-#  Scenario: Navigate to Favorites page from Search page
-#    Given I am on the search page
-#    When the user clicks on "Favorites" in the nav bar
-#    Then the user should be navigated to the Favorites page
-#
-#  Scenario: Navigate to Compare page from Search page
-#    Given I am on the search page
-#    When the user clicks on "Compare" in the nav bar
-#    Then the user should be navigated to the Compare page
-#
-#
-#  Scenario: User adds a park to their Favorites and sees success message
-#    Given I am on the search page
-#    And the search results for Alcatraz Island are displayed
-#    When the user hovers over the name of the park "Alcataraz Island"
-#    Then a plus sign should appear
-#    When the user clicks the plus sign
-#    Then a success message should be displayed
-#
-#  Scenario: User tries to add a park that is already in their Favorites
-#    Given I am on the search page
-#    And "Alcatraz Island" is already in the user's favorites
-#    And the search results for Alcatraz Island are displayed
-#    When the user hovers over the name of the park "Alcataraz Island"
-#    Then a plus sign should appear
-#    When the user clicks the plus sign
-#    Then an error message should be displayed
-#
-#  Scenario: User adds a park to their Favorites and sees it in Favorites list
-#    Given I am on the search page
-#    And the user has added "Alcatraz Island" to their favorites
-#    When the user navigates to the Favorites page
-#    Then the user should see "Alcatraz Island"
-
-    #favorites page
-#  Scenario: Navigate to Search page from Favorites page
-#    Given I am on the favorites page
-#    When the user clicks on "Search" in the nav bar
-#    Then the user should be navigated to the Search page
-#
-#  Scenario: Navigate to Compare page from Favorites page
-#    Given I am on the favorites page
-#    When the user clicks on "Compare" in the nav bar
-#    Then the user should be navigated to the Compare page
 
   Scenario: User deletes a single park from their Favorites
     Given I am on the favorites page
@@ -112,5 +67,5 @@ Feature: Update and Review a Favorite Park List
 
   Scenario: Favorites looks the same as Search page
     Given I am on the favorites page
-    And the user has at least 1 parks in their Favorites
-    Then their Favorites list should look the same as the Search results list
+    And the user has Alcatraz Island in their favorites
+    Then the user should see Alcatraz Island in a list like format

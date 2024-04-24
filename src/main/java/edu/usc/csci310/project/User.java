@@ -3,9 +3,7 @@ package edu.usc.csci310.project;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -27,6 +25,13 @@ public class User {
     @ElementCollection
     private List<String> favorites = new ArrayList<>();
 
+    private boolean favPrivate = true;
+
+    @ElementCollection
+    @CollectionTable(name = "favorite_ranks", joinColumns = @JoinColumn(name = "user_id"))
+    @MapKeyColumn(name = "park_id")
+    @Column(name = "rank")
+    private Map<String, Integer> favoriteRanks = new HashMap<>();
     // Constructors, Getters, and Setters
     protected User() {}
 
@@ -70,4 +75,29 @@ public class User {
         this.favorites = favorites;
     }
 
+    public boolean isFavPrivate(){
+        return favPrivate;
+    }
+
+    public void setFavPrivate(boolean favPrivate){
+        this.favPrivate = favPrivate;
+    }
+
+
+    public Map<String, Integer> getFavoriteRanks() {
+        return favoriteRanks;
+    }
+
+    public void setFavoriteRanks(Map<String, Integer> favoriteRanks) {
+        this.favoriteRanks = favoriteRanks;
+    }
+
+
+    public void updateFavoriteRank(String parkId, Integer rank) {
+        this.favoriteRanks.put(parkId, rank);
+    }
+
+    public void removeFavoriteRank(String parkId) {
+        this.favoriteRanks.remove(parkId);
+    }
 }

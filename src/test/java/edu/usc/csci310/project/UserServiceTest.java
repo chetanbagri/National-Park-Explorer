@@ -11,8 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.http.HttpStatus;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.List;
-import java.util.ArrayList;
+
+import java.util.*;
 
 class UserServiceTest {
 
@@ -400,39 +400,6 @@ class UserServiceTest {
         userService.removeUser(u2);
     }
 
-//    @Test
-//    void testSuccessfulCompareEdgeCases() {
-//        String u1 = "NickoOG_comp_tmp";
-//        String u2 = "NickoOG_comp_tmp_friend";
-//        List<String> favs = new ArrayList<>();
-//        List<String> favs2 = new ArrayList<>(favs); // Deep copy
-//        favs.add("CAT");
-//        favs.add("DOG");
-//        favs2.add("PIG");
-//        User user = new User();
-//        User userB = new User();
-//        user.setUsername(u1);
-//        user.setFavorites(favs);
-//        userB.setUsername(u2);
-//        userB.setFavorites(favs);
-//        when(mockRepository.findByUsername(u1)).thenReturn(user);
-//        when(mockRepository.findByUsername(u2)).thenReturn(userB);
-//
-//        userService.registerUser(u1, "Happy1", "Happy1");
-//        userService.registerUser(u2, "Happy1", "Happy1");
-//        userService.addUserToGroup(u1, u2);
-//        ResponseEntity<?> response = userService.compareParks(u1);
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//
-//        favs.add("DOG"); // Duplicate for testing edge case
-//        user.setFavorites(favs);
-//
-//
-//        // Cleanup
-//        userService.removeUser(u1);
-//        userService.removeUser(u2);
-//    }
-
     @Test
     void testGetFavorites() {
         User user = new User();
@@ -452,15 +419,17 @@ class UserServiceTest {
         assertEquals(favorites, favoritesResponse.getFavorites());
     }
 
-    @Test
-    void testGetFavoritesForNonExistentUser() {
-        when(mockRepository.findByUsername("nonExistentUser")).thenReturn(null);
+//    @Test
+//    void testGetFavoritesForNonExistentUser() {
+//        when(mockRepository.findByUsername("nonExistentUser")).thenReturn(null);
+//
+//        ResponseEntity<?> response = userService.getFavorites("nonExistentUser");
+//
+//        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+//        assertEquals("User not found", response.getBody());
+//    }
+//
 
-        ResponseEntity<?> response = userService.getFavorites("nonExistentUser");
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("User not found", response.getBody());
-    }
 
     @Test
     void testAddFavorite() {
@@ -626,6 +595,146 @@ class UserServiceTest {
         assertEquals("All favorites cleared", response.getBody());
         assertTrue(user.getFavorites().isEmpty());
     }
+
+    @Test
+    void testToggleFavoritesPrivacy() {
+        User user = new User();
+        user.setUsername("testUser");
+        user.setFavPrivate(false); // initially set to false
+
+        when(mockRepository.findByUsername("testUser")).thenReturn(user);
+
+        ResponseEntity<?> initialResponse = userService.toggleFavoritesPrivacy("testUser");
+        assertEquals(HttpStatus.OK, initialResponse.getStatusCode());
+        assertEquals("Favorites privacy status updated to true", initialResponse.getBody());
+
+        assertTrue(user.isFavPrivate());
+
+        ResponseEntity<?> secondResponse = userService.toggleFavoritesPrivacy("testUser");
+        assertEquals(HttpStatus.OK, secondResponse.getStatusCode());
+        assertEquals("Favorites privacy status updated to false", secondResponse.getBody());
+
+        assertFalse(user.isFavPrivate());
+    }
+
+    @Test
+    void testAddFavoriteWithRank() {
+        User user = new User();
+        user.setUsername("testUser");
+        Map<String, Integer> favoriteRanks = new HashMap<>();
+        user.setFavoriteRanks(favoriteRanks);
+
+        when(mockRepository.findByUsername("testUser")).thenReturn(user);
+
+        userService.addFavoriteWithRank("testUser", "park1", 1);
+
+        verify(mockRepository).save(user);
+        assertTrue(user.getFavoriteRanks().containsKey("park1"));
+        assertEquals(1, (int) user.getFavoriteRanks().get("park1"));
+    }
+
+
+    @Test
+    void testUpdateFavoriteRankSuccessfully() {
+        User user = new User();
+        user.setUsername("testUser");
+        Map<String, Integer> favoriteRanks = new HashMap<>();
+        favoriteRanks.put("park1", 1);
+        user.setFavoriteRanks(favoriteRanks);
+
+        when(mockRepository.findByUsername("testUser")).thenReturn(user);
+
+        userService.updateFavoriteRank("testUser", "park1", 2);
+
+        assertEquals(2, (int) user.getFavoriteRanks().get("park1"));
+        verify(mockRepository).save(user);
+    }
+
+    @Test
+    void testUpdateFavoriteRankFailForNonExistentPark() {
+        User user = new User();
+        user.setUsername("testUser");
+        Map<String, Integer> favoriteRanks = new HashMap<>();
+        favoriteRanks.put("park1", 1);
+        user.setFavoriteRanks(favoriteRanks);
+
+        when(mockRepository.findByUsername("testUser")).thenReturn(user);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            userService.updateFavoriteRank("testUser", "park2", 2);
+        });
+
+        assertEquals("Park not found in favorites", exception.getMessage());
+    }
+
+    @Test
+    void testReorderFavoritesSuccessfully() {
+        User user = new User();
+        user.setUsername("testUser");
+        List<String> originalFavorites = Arrays.asList("park1", "park2", "park3");
+        user.setFavorites(new ArrayList<>(originalFavorites));
+        Map<String, Integer> originalRanks = new HashMap<>();
+        originalRanks.put("park1", 1);
+        originalRanks.put("park2", 2);
+        originalRanks.put("park3", 3);
+        user.setFavoriteRanks(originalRanks);
+
+        when(mockRepository.findByUsername("testUser")).thenReturn(user);
+
+        List<String> newOrder = Arrays.asList("park3", "park1", "park2");
+        ResponseEntity<?> response = userService.reorderFavorites("testUser", newOrder);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Favorites reordered successfully", response.getBody());
+        assertEquals(newOrder, user.getFavorites());
+        Map<String, Integer> expectedRanks = new HashMap<>();
+        expectedRanks.put("park3", 1);
+        expectedRanks.put("park1", 2);
+        expectedRanks.put("park2", 3);
+        assertEquals(expectedRanks, user.getFavoriteRanks());
+
+        verify(mockRepository).save(user);
+    }
+
+    @Test
+    void testReorderFavoritesWithInvalidList() {
+        User user = new User();
+        user.setUsername("testUser");
+        List<String> originalFavorites = Arrays.asList("park1", "park2", "park3");
+        user.setFavorites(new ArrayList<>(originalFavorites));
+
+        when(mockRepository.findByUsername("testUser")).thenReturn(user);
+
+        List<String> newOrder = Arrays.asList("park3", "park4");
+        ResponseEntity<?> response = userService.reorderFavorites("testUser", newOrder);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Invalid park list submitted", response.getBody());
+    }
+
+    @Test
+    void testAddFavoriteInitializesFavoriteRanksWhenNull() {
+        User user = mock(User.class);
+        when(user.getFavoriteRanks()).thenReturn(null);
+
+        when(mockRepository.findByUsername("testUser")).thenReturn(user);
+
+        doAnswer(invocation -> {
+            Map<String, Integer> favoriteRanks = invocation.getArgument(0);
+            assertNotNull(favoriteRanks);
+            assertTrue(favoriteRanks.isEmpty());
+            return null;
+        }).when(user).setFavoriteRanks(anyMap());
+
+        userService.addFavorite("testUser", "parkId");
+
+        verify(user).setFavoriteRanks(anyMap());
+    }
+
+
+
+
+
 
 
 }

@@ -84,3 +84,53 @@ Feature: test the search page
     Given I am on the search page
     When I click on the compare and suggest button
     Then the user is navigated to the compare and suggest screen
+
+
+
+  Scenario: User adds a park to their Favorites and sees success message
+    Given I am on the search page
+    And the search results for Alcatraz Island are displayed
+    When the user hovers over the name of the park "Alcataraz Island"
+    Then a plus sign should appear
+    When the user clicks the plus sign
+    Then a success message should be displayed
+
+  Scenario: User tries to add a park that is already in their Favorites
+    Given I am on the search page
+    And "Alcatraz Island" is already in the user's favorites
+    And the search results for Alcatraz Island are displayed
+    When the user hovers over the name of the park "Alcataraz Island"
+    Then a plus sign should appear
+    When the user clicks the plus sign
+    Then an error message should be displayed
+
+  Scenario: User adds a park to their Favorites and sees it in Favorites list
+    Given I am on the search page
+    And the user has added "Alcatraz Island" to their favorites
+    When the user navigates to the Favorites page
+    Then the user should see "Alcatraz Island"
+
+
+
+  Scenario: User adds a park to their Favorites and sees success message
+    Given I am on the search page
+    And the search results for Alcatraz Island are displayed
+    When the user hovers over the name of the park "Alcataraz Island"
+    Then a plus sign should appear
+    When the user clicks the plus sign
+    Then a success message should be displayed
+
+  Scenario: User tries to add a park that is already in their Favorites
+    Given I am on the search page
+    And "Alcatraz Island" is already in the user's favorites
+    And the search results for Alcatraz Island are displayed
+    When the user hovers over the name of the park "Alcataraz Island"
+    Then a plus sign should appear
+    When the user clicks the plus sign
+    Then an error message should be displayed
+
+  Scenario: User adds a park to their Favorites and sees it in Favorites list
+    Given I am on the search page
+    And the user has added "Alcatraz Island" to their favorites
+    When the user navigates to the Favorites page
+    Then the user should see "Alcatraz Island"

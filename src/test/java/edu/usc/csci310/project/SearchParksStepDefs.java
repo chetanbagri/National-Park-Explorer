@@ -454,4 +454,91 @@ public class SearchParksStepDefs {
 
         assertTrue(favoriteIcon.isDisplayed());
     }
+
+    @When("the user hovers over the name of the park {string}")
+    public void theUserHoversOverTheNameOfThePark(String parkName) {
+        WebElement parkElement = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(), '" + parkName + "')]")));
+        Actions action = new Actions(driver);
+        action.moveToElement(parkElement).perform();
+    }
+
+    @Then("a plus sign should appear")
+    public void aPlusSignShouldAppear() {
+        WebElement plusSign = new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".add-to-favorites")));
+        assertTrue(plusSign.isDisplayed());
+    }
+
+    @Then("the user should see {string} in Favorites list")
+    public void theUserShouldSeeInFavoritesList(String parkName) {
+        navigateToFavoritesPage();
+        WebElement favoritesList = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("favorites-list")));
+        assertTrue(favoritesList.getText().contains(parkName));
+    }
+
+    private void navigateToFavoritesPage() {
+        WebElement navFavorites = driver.findElement(By.id("nav-favorites"));
+        navFavorites.click();
+    }
+//
+//    @And("the search results for Alcatraz Island are displayed")
+//    public void theSearchResultsForAlcatrazIslandAreDisplayed() {
+//        driver.get("http://localhost:8080/search?query=Alcatraz+Island");
+//        assertTrue(driver.findElement(By.id("searchResults")).getText().contains("Alcatraz Island"));
+//    }
+//
+//
+//
+//    @When("the user clicks the plus sign")
+//    public void theUserClicksThePlusSign() {
+//        WebElement plusSign = driver.findElement(By.className("add-to-favorites"));
+//        plusSign.click();
+//    }
+//
+//    @Then("a success message should be displayed")
+//    public void aSuccessMessageShouldBeDisplayed() {
+//        WebElement successMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successMessage")));
+//        assertTrue(successMessage.isDisplayed());
+//    }
+//
+//    @And("{string} is already in the user's favorites")
+//    public void isAlreadyInTheUserSFavorites(String parkName) {
+//        driver.get("http://localhost:8080/favorites");
+//        assertTrue(driver.getPageSource().contains(parkName));
+//    }
+//
+//    @Then("an error message should be displayed")
+//    public void anErrorMessageShouldBeDisplayed() {
+//        WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("errorMessage")));
+//        assertTrue(errorMessage.isDisplayed());
+//    }
+//
+//    @And("the user has added {string} to their favorites")
+//    public void theUserHasAddedToTheirFavorites(String parkName) {
+//        driver.get("http://localhost:8080/search?query=" + parkName);
+//        WebElement plusSign = driver.findElement(By.className("add-to-favorites"));
+//        plusSign.click();
+//        WebElement successMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("successMessage")));
+//        assertTrue(successMessage.getText().contains("added to favorites"));
+//    }
+//
+//    @When("the user navigates to the Favorites page")
+//    public void theUserNavigatesToTheFavoritesPage() {
+//        WebElement favoritesNav = driver.findElement(By.id("nav-favorites"));
+//        favoritesNav.click();
+//    }
+//
+//    @Then("the user should see \"Alcatraz Island\" in Favorites list")
+//    public void theUserShouldSeeInFavoritesList() {
+//        WebElement favoritesList = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("favorites-list")));
+//        assertTrue(favoritesList.getText().contains("Alcatraz Island"), "Alcatraz Island should be visible in the favorites list but was not found.");
+//    }
+//
+//
+//
+
+
+
 }
