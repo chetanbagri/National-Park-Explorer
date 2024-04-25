@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class FavoritesStepDefs {
 
-        private static final String ROOT_URL = "http://localhost:8080/"; // Adjust this to your search page URL
+        private static final String ROOT_URL = "http://localhost:8080/";
 
         private final WebDriver driver = new ChromeDriver();
 
@@ -172,7 +172,6 @@ public class FavoritesStepDefs {
 
     @Then("the favorites list should be set to private by default")
     public void theFavoritesListShouldBeSetToPrivateByDefault() {
-        // Assuming there is a display element or attribute indicating privacy
         Assertions.assertTrue(Boolean.parseBoolean(driver.findElement(By.xpath("//button[contains(text(), 'Make Favorites Public')]")).getAttribute("data-private")));
     }
 
