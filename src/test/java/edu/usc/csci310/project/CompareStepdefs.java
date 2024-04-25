@@ -75,6 +75,7 @@ public class CompareStepdefs {
 
     @When("I enter {string} into element with id {string}")
     public void iEnterIntoElementWithId(String arg0, String arg1) {
+        driver.findElement(By.id(arg1)).clear();
         driver.findElement(By.id(arg1)).sendKeys(arg0);
     }
 

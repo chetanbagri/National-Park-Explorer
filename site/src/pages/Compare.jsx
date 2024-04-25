@@ -193,6 +193,7 @@ function Compare(/* {initexpanded= null} */){
 
     const handleSuggestHelper = async () => {
         let commonFavorites = [];
+        let favoriteCounts = [];
         console.log("groupMembers: " + groupMembers);
         for (const member of groupMembers) {
             const favorites = await fetchUserFavorites(member);
@@ -201,22 +202,35 @@ function Compare(/* {initexpanded= null} */){
                 continue;
             }
 
-            if (commonFavorites.length === 0) {
-                commonFavorites = favorites;
-            } else {
-                commonFavorites = commonFavorites.filter(park => favorites.includes(park));
+            for(const favorite of favorites){ // Iterate over favorite park codes array
+                favoriteCounts[favorite] = (favoriteCounts[favorite] || 0) + 1;
             }
+
+            // if (commonFavorites.length === 0) {
+            //     commonFavorites = favorites;
+            // } else {
+            //     commonFavorites = commonFavorites.filter(park => favorites.includes(park));
+            // }
         }
         // Now do it again for the user themselves
         // console.log("username: " + JSON.parse(sessionStorage.getItem('userInfo')).username);
         const favorites = await fetchUserFavorites(JSON.parse(sessionStorage.getItem('userInfo')).username);
-        if (commonFavorites.length === 0) {
-            commonFavorites = favorites;
-        } else {
-            commonFavorites = commonFavorites.filter(park => favorites.includes(park));
+        for(const favorite of favorites){ // Iterate over favorite park codes array
+            favoriteCounts[favorite] = (favoriteCounts[favorite] || 0) + 1;
         }
+        console.log(favoriteCounts);
+        // if (commonFavorites.length === 0) {
+        //     commonFavorites = favorites;
+        // } else {
+        //     commonFavorites = commonFavorites.filter(park => favorites.includes(park));
+        // }
+        favoriteCounts.sort((a, b) => b.count - a.count); // Sort the counts I retrieved
+        console.log(groupMembers);
+        console.log(favoriteCounts);
+        commonFavorites = Object.keys(favoriteCounts)[0];
+        console.log(commonFavorites);
         if (commonFavorites.length > 0) {
-            const parkDetails = await fetchParkDetails(commonFavorites[0]);
+            const parkDetails = await fetchParkDetails(commonFavorites);
             console.log(parkDetails);
             // setSelectedPark(parkDetails); // Just makes details window appear with no amenities. NOT GOOD ENOUGH.
             setParkAmenities([]);

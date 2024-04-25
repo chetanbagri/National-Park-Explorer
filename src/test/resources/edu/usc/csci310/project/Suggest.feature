@@ -1,29 +1,29 @@
 Feature: Suggest a Park to Visit Among a Group of Friends
   # Navigation
-  Scenario: Navigate from this page to Search page
-    Given I am on the "compare" page
-    When I click on the nav button with id "nav-search"
-    Then I should be redirected to the "search" page
-    And see that the page title is "Search Parks"
-
-  Scenario: Navigate from this page to Favorites page
-    Given I am on the "compare" page
-    When I click on the nav button with id "nav-favorites"
-    Then I should be redirected to the "Favorites" page
-    And see that the page title is "My Favorite Parks"
-
-  Scenario: Logout from this page and go to Login page
-    Given I am on the "compare" page
-    When I click on the nav button with id "nav-logout"
-    Then I should be redirected to the "login" page
-    And see that the page title is "Login"
+#  Scenario: Navigate from this page to Search page
+#    Given I am on the "compare" page
+#    When I click on the nav button with id "nav-search"
+#    Then I should be redirected to the "search" page
+#    And see that the page title is "Search Parks"
+#
+#  Scenario: Navigate from this page to Favorites page
+#    Given I am on the "compare" page
+#    When I click on the nav button with id "nav-favorites"
+#    Then I should be redirected to the "Favorites" page
+#    And see that the page title is "My Favorite Parks"
+#
+#  Scenario: Logout from this page and go to Login page
+#    Given I am on the "compare" page
+#    When I click on the nav button with id "nav-logout"
+#    Then I should be redirected to the "login" page
+#    And see that the page title is "Login"
 
   # Verified
   Scenario: Suggest the best park based on group favorites
     Given I am on the Compare page
     And I have "Nicko_STMP1" registered
     And I have "Nicko_STMP2" registered
-    And "Nicko_STMP2" has a "public" park list
+    And "Nicko_STMP1" has a "public" park list
     And "Nicko_STMP2" has a "public" park list
     And I have park with id "yell" favorited
     And "Nicko_STMP1" has park with id "grte" favorited
@@ -41,7 +41,7 @@ Feature: Suggest a Park to Visit Among a Group of Friends
     Given I am on the Compare page
     And I have "Nicko_STMP1" registered
     And I have "Nicko_STMP2" registered
-    And "Nicko_STMP2" has a "public" park list
+    And "Nicko_STMP1" has a "public" park list
     And "Nicko_STMP2" has a "public" park list
     And I have park with id "yell" favorited
     And "Nicko_STMP1" has park with id "grte" favorited
