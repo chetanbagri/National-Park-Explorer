@@ -293,7 +293,7 @@ const Favorites = () => {
                             <p>Are you sure you want to delete all your favorite parks?</p>
                             <div className="confirmation-buttons">
                                 <button className="confirm-remove-button" onClick={handleConfirmClearFavorites}>Confirm</button>
-                                <button onClick={() => setShowConfirmationPopup(false)}>Cancel</button>
+                                <button className="confirm-cancel-button" onClick={() => setShowConfirmationPopup(false)}>Cancel</button>
                             </div>
                         </div>
                     </div>
