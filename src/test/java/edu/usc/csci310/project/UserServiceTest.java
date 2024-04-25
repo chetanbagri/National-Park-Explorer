@@ -58,11 +58,14 @@ class UserServiceTest {
 
     @Test
     void testRegisterUserWithExistingUsername() {
-        User existingUser = new User();
-        existingUser.setUsername("existingUser");
-        when(mockRepository.findByUsername("existingUser")).thenReturn(existingUser);
+        String username = "newUser";
+        String password = "Validpassword1";
+        String confirmPassword = "Validpassword1";
+        String encryptedUsername = mockEncryptor.encrypt(username);
 
-        ResponseEntity<?> response = userService.registerUser("existingUser", "ValidPassword1!", "ValidPassword1!");
+        when(mockRepository.findByUsername(encryptedUsername)).thenReturn(new User());
+
+        ResponseEntity<?> response = userService.registerUser(username, password, confirmPassword);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Username exists", response.getBody());
