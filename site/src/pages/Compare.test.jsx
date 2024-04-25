@@ -580,3 +580,59 @@ test('with no fee info, open and close details widget', async () => {
     fireEvent.click(screen.getByTitle('detailsButton_parkCode1'));
     await waitFor(() => expect(screen.getByText('Park One')).toBeInTheDocument());
 });
+
+// --------------------------------
+// Anika's Suggest Park tests
+test('successfully suggests a common favorite park', async () => {
+    fetch.mockResponses(
+        [JSON.stringify([{ username: 'user1', favorites: ['park1', 'park2'] }, { username: 'user2', favorites: ['park2'] }]), { status: 200 }],
+        [JSON.stringify({ fullName: 'Common Park', description: 'A common favorite park', images: [{ url: 'http://example.com/park.jpg' }] }), { status: 200 }]
+    );
+
+    renderWithRouter(<Compare />);
+    fireEvent.click(screen.getByTitle('Submit Suggestion'));
+
+    await waitFor(() => {
+        expect(screen.getByText('Common Park')).toBeInTheDocument();
+        expect(screen.getByText('A common favorite park')).toBeInTheDocument();
+        expect(screen.getByAltText('View of Common Park').src).toBe('http://example.com/park.jpg');
+    });
+});
+
+test('handles no common favorites scenario', async () => {
+    fetch.mockResponseOnce(JSON.stringify([]), { status: 200 }); // No common favorites returned
+
+    renderWithRouter(<Compare />);
+    fireEvent.click(screen.getByTitle('Submit Suggestion'));
+
+    await waitFor(() => {
+        expect(screen.getByText('No common favorites found among the group.')).toBeInTheDocument();
+    });
+});
+
+test('error handling when suggestion fetch fails', async () => {
+    fetch.mockReject(new Error('Network Error'));
+
+    renderWithRouter(<Compare />);
+    fireEvent.click(screen.getByTitle('Submit Suggestion'));
+
+    await waitFor(() => {
+        expect(screen.getByText('Error fetching suggestions: Network Error')).toBeInTheDocument();
+    });
+});
+
+test('suggests a park when no common favorites are found', async () => {
+    fetch.mockResponses(
+        [JSON.stringify([]), { status: 200 }],
+        [JSON.stringify({ fullName: 'Random Park', description: 'Randomly chosen park', images: [{ url: 'http://example.com/park.jpg' }] }), { status: 200 }]
+    );
+
+    renderWithRouter(<Compare />);
+    fireEvent.click(screen.getByTitle('Submit Suggestion'));
+
+    await waitFor(() => {
+        expect(screen.getByText('Random Park')).toBeInTheDocument();
+        expect(screen.getByText('Randomly chosen park')).toBeInTheDocument();
+        expect(screen.getByAltText('View of Random Park').src).toBe('http://example.com/park.jpg');
+    });
+});

@@ -41,7 +41,7 @@ function Compare(/* {initexpanded= null} */){
             })
             if(response.ok) {
                 const groupMembersTmp = await response.json();
-                console.log(groupMembersTmp);
+                // console.log(groupMembersTmp);
                 setGroupMembers(groupMembersTmp);
                 setError("");
                 setSuccess(`Successfully added ${usernameQuery} to your group of friends`);
@@ -64,7 +64,7 @@ function Compare(/* {initexpanded= null} */){
         const username = userInfo.username; // Username of currently logged in user
         fetchGroupFavorites(username)
             .then((favorites) => {
-                console.log(favorites);
+                // console.log(favorites);
                 let parkIDs = [];
                 let counts = [];
 
@@ -79,16 +79,13 @@ function Compare(/* {initexpanded= null} */){
                     counts.push(count);
                 });
 
-                console.log("parkIDs: " + parkIDs);
-                console.log("counts: " + counts);
+                // console.log("parkIDs: " + parkIDs);
+                // console.log("counts: " + counts);
                 setNumberFavorited(counts);
-
-                console.log("favorites.parksToUsers: ", favorites.parksToUsers);
 
                 setParksToUsers(favorites.parksToUsers);
 
                 setNumberInGroup(favorites.groupSize + 1);
-
                 // console.log("groupMembers: " + groupMembers); // Will be NULL if user leaves page and comes back without
                 // adding anyone new. That's OKAY since it's not really used for this part
 
@@ -100,7 +97,6 @@ function Compare(/* {initexpanded= null} */){
                     // console.log(park);
                     // console.log("park?.fullName: " + park?.fullName);
                     return park?.fullName;
-                    // return "";
                 }))
                     .then(setFavoriteParks);
                     // .catch((error) => {
@@ -141,12 +137,10 @@ function Compare(/* {initexpanded= null} */){
                 const data = await response.json();
                 return data.data;
             } else {
-                // console.log("HI");
                 console.error("Failed to fetch amenities.");
                 return [];
             }
         } catch (error) {
-            console.log("HI2");
             console.error("Error fetching amenities data.");
             return [];
         }
@@ -160,18 +154,37 @@ function Compare(/* {initexpanded= null} */){
 
         setHoveredRatio(parkCode);
 
-        console.log("handleRatioHover(): ", parksToUsers);
-        console.log("parkCode: " + parkCode);
-        console.log("parksToUsers[parkCode]: ", parksToUsers[parkCode]);
+        // console.log("handleRatioHover(): ", parksToUsers);
+        // console.log("parkCode: " + parkCode);
+        // console.log("parksToUsers[parkCode]: ", parksToUsers[parkCode]);
         // const parkObject = parksToUsers.find(item => item[parkCode]);
         // console.log(parkObject);
         setRatioUsers(parksToUsers[parkCode]);
         // setRatioUsers(parkObject);
     };
 
-    const handleSuggest = async (e) => {
-
-    };
+    // const handleSuggest = async (e) => {
+    //         e.preventDefault();
+    //         try {
+    //             let commonFavorites = [];
+    //             for (const member of groupMembers) {
+    //                 const favorites = await fetchUserFavorites(member);
+    //                 if (commonFavorites.length === 0) {
+    //                     commonFavorites = favorites;
+    //                 } else {
+    //                     commonFavorites = commonFavorites.filter(park => favorites.includes(park));
+    //                 }
+    //             }
+    //             if (commonFavorites.length > 0) {
+    //                 const parkDetails = await fetchParkDetails(commonFavorites[0]);
+    //                 setSelectedPark(parkDetails);
+    //             } else {
+    //                 setError("No common favorites found among the group.");
+    //             }
+    //         } catch (error) {
+    //             setError(`Error fetching suggestions: ${error.message}`);
+    //         }
+    // };
 
     const fetchGroupFavorites = async (username) => {
         try {
@@ -198,6 +211,24 @@ function Compare(/* {initexpanded= null} */){
         }
     };
 
+
+    // Completely written by Anika
+    // const fetchUserFavorites = async (username) => {
+    //     try {
+    //         const response = await fetch(`/favorites?username=${username}`);
+    //         if (!response.ok) {
+    //             console.error('Failed to fetch user favorites');
+    //             throw new Error('Failed to fetch user favorites');
+    //         }
+    //         const data = await response.json();
+    //         return data.favorites;
+    //     } catch (error) {
+    //         console.error('Error fetching user favorites:', error);
+    //         setError(`Error fetching favorites for user ${username}: ${error.message}`);
+    //         return [];
+    //     }
+    // };
+
     const fetchParkDetails = async (parkCode) => {
         const response = await fetch(`${BASE_URL}?parkCode=${parkCode}`, {
             method: 'GET',
@@ -211,22 +242,35 @@ function Compare(/* {initexpanded= null} */){
         return data.data[0];
     };
 
-    return(
+    return (
         <div>
             <Header/>
             <h2>Add A Friend to Your Group</h2>
             <form onSubmit={handleAddToGroup}>
                 <label htmlFor={"usernameQuery"}>Username: </label>
-                <input id="usernameQuery" type="text" value={usernameQuery} title={"Username Box for adding to group"}
-                       onChange={(e) => setUsernameQuery(e.target.value)} tabIndex={0} autoFocus/>
-                <input type="submit" value="Add To Group" title={"Submit Username"} id={"addUserBtn"} tabIndex={1}/>
+                <input
+                    id="usernameQuery"
+                    type="text"
+                    value={usernameQuery}
+                    onChange={(e) => setUsernameQuery(e.target.value)}
+                    title={"Username Box for adding to group"}
+                    tabIndex={0}
+                    autoFocus
+                />
+                <input
+                    type="submit"
+                    value="Add To Group"
+                    title={"Submit Username"}
+                    id={"addUserBtn"}
+                    tabIndex={1}
+                />
             </form>
             {success && <p>{success}</p>}
             {error && <p>{error}</p>}
 
             <h2>Compare Parks and Give Suggestions</h2>
-            <button title={"Submit Compare"} id={"compareBtn"} tabIndex={3} onClick={handleCompare}>Compare</button>
-            <button title={"Submit Suggestion"} id={"suggestBtn"} tabIndex={4} onClick={handleSuggest}>Suggest the Best Park</button>
+            <button title={"Submit Compare"} id={"compareBtn"} tabIndex={2} onClick={handleCompare}>Compare</button>
+            <button title={"Submit Suggestion"} id={"suggestBtn"} tabIndex={3} onClick={handleSuggest}>Suggest the Best Park</button>
             {userFavorites && userFavorites.length > 0 && (
                 <ul>
                     {userFavorites.map((parkCode, index) => (
@@ -249,7 +293,6 @@ function Compare(/* {initexpanded= null} */){
                                     </span>
                                 )}
                             </span>
-
                             {selectedPark && selectedPark.parkCode === parkCode && (
                                 <div className="detailsBox">
                                     <h3 className={"park-full-name"}>{selectedPark.fullName}</h3>
@@ -264,40 +307,35 @@ function Compare(/* {initexpanded= null} */){
                                             {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}
                                         </p>
                                     </div>
-                                    <a className={"park-url"} href={selectedPark.url} target="_blank" rel="noopener noreferrer">Visit
-                                        Park
-                                        Website</a>
-                                    <p className={"park-entrance-fee"}>Entrance
-                                        Fees: {selectedPark.entranceFees.length > 0 ? `$${selectedPark.entranceFees[0].cost}` : 'No fees information available'}</p>
-
+                                    <a className={"park-url"} href={selectedPark.url} target="_blank"
+                                       rel="noopener noreferrer">
+                                        Visit Park Website
+                                    </a>
+                                    <p className={"park-entrance-fee"}>
+                                        Entrance
+                                        Fees: {selectedPark.entranceFees.length > 0 ? `$${selectedPark.entranceFees[0].cost}` : 'No fees information available'}
+                                    </p>
                                     <h4>Activities:</h4>
                                     <p className={"park-activities"}>
                                         {selectedPark.activities.map((activity, index) => (
                                             <React.Fragment key={activity.id}>
-                                                    <span className="clickable-text">
-                                                        {activity.name}
-                                                    </span>
+                                                <span className="clickable-text">{activity.name}</span>
                                                 {index < selectedPark.activities.length - 1 ? ', ' : ''}
                                             </React.Fragment>
                                         ))}
                                     </p>
-
                                     <h4>Amenities:</h4>
                                     <p className={"park-amenities"}>
                                         {parkAmenities.map((amenity, index) => (
                                             <React.Fragment key={amenity.id}>
-                                                    <span className="amenities-clickable-text clickable-text">
-                                                        {amenity.name}
-                                                    </span>
+                                                <span
+                                                    className="amenities-clickable-text clickable-text">{amenity.name}</span>
                                                 {index < parkAmenities.length - 1 ? ', ' : ''}
                                             </React.Fragment>
                                         ))}
                                     </p>
-                                    <div>
-                                        <h4>Operating Hours:</h4>
-                                        <p>{selectedPark.operatingHours[0].description}</p>
-                                    </div>
-
+                                    <h4>Operating Hours:</h4>
+                                    <p>{selectedPark.operatingHours[0].description}</p>
                                 </div>
                             )}
                         </li>
