@@ -59,7 +59,7 @@ function Compare(/* {initexpanded= null} */){
         }
     };
 
-    const handleCompare = async (e) => {
+    const handleCompare = async () => {
 
         let fetchedParks = [];
         let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
@@ -182,48 +182,51 @@ function Compare(/* {initexpanded= null} */){
     const handleSuggest = async (e) => {
             e.preventDefault();
             try {
-                let commonFavorites = [];
                 if(groupMembers == null){
-                    setError("Error handling suggest: Need to compare parks first");
-                    return;
+                    await handleCompare().then(handleSuggestHelper);
                 }
-                console.log("groupMembers: " + groupMembers);
-                for (const member of groupMembers) {
-                    const favorites = await fetchUserFavorites(member);
-                    console.log(favorites);
-                    if(favorites == null){
-                        continue;
-                    }
-
-                    if (commonFavorites.length === 0) {
-                        commonFavorites = favorites;
-                    } else {
-                        commonFavorites = commonFavorites.filter(park => favorites.includes(park));
-                    }
-                }
-                // Now do it again for the user themselves
-                // console.log("username: " + JSON.parse(sessionStorage.getItem('userInfo')).username);
-                const favorites = await fetchUserFavorites(JSON.parse(sessionStorage.getItem('userInfo')).username);
-                if (commonFavorites.length === 0) {
-                    commonFavorites = favorites;
-                } else {
-                    commonFavorites = commonFavorites.filter(park => favorites.includes(park));
-                }
-                if (commonFavorites.length > 0) {
-                    const parkDetails = await fetchParkDetails(commonFavorites[0]);
-                    console.log(parkDetails);
-                    // setSelectedPark(parkDetails); // Just makes details window appear with no amenities. NOT GOOD ENOUGH.
-                    setParkAmenities([]);
-                    setSelectedPark(null);
-                    setUserFavorites([]);
-                    setSuggestedPark(parkDetails);
-                } else {
-                    setError("No common favorites found among the group.");
-                }
+                await handleSuggestHelper();
             } catch (error) {
                 setError(`Error fetching suggestions: ${error.message}`);
             }
     };
+
+    const handleSuggestHelper = async () => {
+        let commonFavorites = [];
+        console.log("groupMembers: " + groupMembers);
+        for (const member of groupMembers) {
+            const favorites = await fetchUserFavorites(member);
+            console.log(favorites);
+            if(favorites == null){
+                continue;
+            }
+
+            if (commonFavorites.length === 0) {
+                commonFavorites = favorites;
+            } else {
+                commonFavorites = commonFavorites.filter(park => favorites.includes(park));
+            }
+        }
+        // Now do it again for the user themselves
+        // console.log("username: " + JSON.parse(sessionStorage.getItem('userInfo')).username);
+        const favorites = await fetchUserFavorites(JSON.parse(sessionStorage.getItem('userInfo')).username);
+        if (commonFavorites.length === 0) {
+            commonFavorites = favorites;
+        } else {
+            commonFavorites = commonFavorites.filter(park => favorites.includes(park));
+        }
+        if (commonFavorites.length > 0) {
+            const parkDetails = await fetchParkDetails(commonFavorites[0]);
+            console.log(parkDetails);
+            // setSelectedPark(parkDetails); // Just makes details window appear with no amenities. NOT GOOD ENOUGH.
+            setParkAmenities([]);
+            setSelectedPark(null);
+            setUserFavorites([]);
+            setSuggestedPark(parkDetails);
+        } else {
+            setError("No common favorites found among the group.");
+        }
+    }
 
     const fetchGroupFavorites = async (username) => {
         try {
@@ -301,15 +304,15 @@ function Compare(/* {initexpanded= null} */){
                     value="Add To Group"
                     title={"Submit Username"}
                     id={"addUserBtn"}
-                    tabIndex={1}
+                    tabIndex={0}
                 />
             </form>
             {success && <p>{success}</p>}
             {error && <p>{error}</p>}
 
             <h2>Compare Parks and Give Suggestions</h2>
-            <button title={"Submit Compare"} id={"compareBtn"} tabIndex={2} onClick={handleCompare}>Compare</button>
-            <button title={"Submit Suggestion"} id={"suggestBtn"} tabIndex={3} onClick={handleSuggest}>Suggest the Best Park</button>
+            <button title={"Submit Compare"} id={"compareBtn"} tabIndex={0} onClick={handleCompare}>Compare</button>
+            <button title={"Submit Suggestion"} id={"suggestBtn"} tabIndex={0} onClick={handleSuggest}>Suggest the Best Park</button>
             {userFavorites && userFavorites.length > 0 && (
                 <ul>
                     {userFavorites.map((parkCode, index) => (
@@ -317,10 +320,10 @@ function Compare(/* {initexpanded= null} */){
                             // onMouseEnter={() => setHoveredPark(parkCode)}
                             // onMouseLeave={() => setHoveredPark(null)}
                         >
-                            <button title={`detailsButton_${parkCode}`} onClick={() => handleParkSelection(parkCode)} className="search-result-button">
+                            <button tabIndex={0} title={`detailsButton_${parkCode}`} onClick={() => handleParkSelection(parkCode)} className="search-result-button">
                                 {favoriteParks[index]}
                             </button>
-                            <span data-testid={`p-${index}`} id={`pid-${index}`} onClick={() => handleRatioHover(parkCode)}>
+                            <span tabIndex={0} data-testid={`p-${index}`} id={`pid-${index}`} onClick={() => handleRatioHover(parkCode)} onKeyDown={() => handleRatioHover(parkCode)}>
                                 <span>{numberFavorited[index]} / {numberInGroup}</span>
                                 {hoveredRatio === parkCode && (
                                     <span className="ratio-popup">
@@ -333,7 +336,7 @@ function Compare(/* {initexpanded= null} */){
                                 )}
                             </span>
                             {selectedPark && selectedPark.parkCode === parkCode && (
-                                <div className="detailsBox">
+                                <div className="detailsBox" tabIndex={0}>
                                     <h3 className={"park-full-name"}>{selectedPark.fullName}</h3>
                                     <img src={selectedPark.images[0].url}
                                          alt={`View of ${selectedPark.fullName}`}
@@ -342,7 +345,7 @@ function Compare(/* {initexpanded= null} */){
                                     <p className={"park-description"}>Description: {selectedPark.description}</p>
                                     <div>
                                         <h4>Location:</h4>
-                                        <p className="clickable-text park-location">
+                                        <p className="park-location">
                                             {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}
                                         </p>
                                     </div>
@@ -358,7 +361,7 @@ function Compare(/* {initexpanded= null} */){
                                     <p className={"park-activities"}>
                                         {selectedPark.activities.map((activity, index) => (
                                             <React.Fragment key={activity.id}>
-                                                <span className="clickable-text">{activity.name}</span>
+                                                <span >{activity.name}</span>
                                                 {index < selectedPark.activities.length - 1 ? ', ' : ''}
                                             </React.Fragment>
                                         ))}
@@ -367,8 +370,7 @@ function Compare(/* {initexpanded= null} */){
                                     <p className={"park-amenities"}>
                                         {parkAmenities.map((amenity, index) => (
                                             <React.Fragment key={amenity.id}>
-                                                <span
-                                                    className="amenities-clickable-text clickable-text">{amenity.name}</span>
+                                                <span >{amenity.name}</span>
                                                 {index < parkAmenities.length - 1 ? ', ' : ''}
                                             </React.Fragment>
                                         ))}
@@ -382,7 +384,7 @@ function Compare(/* {initexpanded= null} */){
                 </ul>
             )}
             {suggestedPark && Object.keys(suggestedPark).length > 0 && (
-                <div title="Click Suggested Park for Details" className="suggestedParkBox" onClick={() => handleSuggestParkSelection(suggestedPark.parkCode, suggestedPark)}>
+                <div tabIndex={0} title="Click Suggested Park for Details" className="suggestedParkBox" onClick={() => handleSuggestParkSelection(suggestedPark.parkCode, suggestedPark)} onKeyDown={() => handleSuggestParkSelection(suggestedPark.parkCode, suggestedPark)}>
                     <div key={suggestedPark.parkCode}> {/* Add a unique key to each child element */}
                         <h2 className="suggestedName">Your suggested park is</h2>
                         <p className="suggestedName">{suggestedPark.fullName}</p> {/* Access suggested park's fullName property */}
@@ -409,7 +411,7 @@ function Compare(/* {initexpanded= null} */){
                             <p className={"park-description"}>Description: {suggestedPark.description}</p>
                             <div>
                                 <h4>Location:</h4>
-                                <p className="clickable-text park-location">
+                                <p className="park-location">
                                     {suggestedPark.addresses[0].city}, {suggestedPark.addresses[0].stateCode}
                                 </p>
                             </div>
@@ -425,7 +427,7 @@ function Compare(/* {initexpanded= null} */){
                             <p className={"park-activities"}>
                                 {suggestedPark.activities.map((activity, index) => (
                                     <React.Fragment key={activity.id}>
-                                        <span className="clickable-text">{activity.name}</span>
+                                        <span >{activity.name}</span>
                                         {index < suggestedPark.activities.length - 1 ? ', ' : ''}
                                     </React.Fragment>
                                 ))}
@@ -434,8 +436,7 @@ function Compare(/* {initexpanded= null} */){
                             <p className={"park-amenities"}>
                                 {parkAmenities.map((amenity, index) => (
                                     <React.Fragment key={amenity.id}>
-                                                <span
-                                                    className="amenities-clickable-text clickable-text">{amenity.name}</span>
+                                                <span>{amenity.name}</span>
                                         {index < parkAmenities.length - 1 ? ', ' : ''}
                                     </React.Fragment>
                                 ))}
