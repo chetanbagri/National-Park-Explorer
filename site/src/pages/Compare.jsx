@@ -392,13 +392,16 @@ function Compare(/* {initexpanded= null} */){
                         <div className="suggestedParkImgContainer">
                             <img
                                 src={suggestedPark.images[0].url}
-                                alt={suggestedPark.images[0].altText}/>
+                                alt={suggestedPark.images[0].altText}
+                                className="suggestedImage"/>
                             <img
                                 src={suggestedPark.images[1].url}
-                                alt={suggestedPark.images[1].altText}/>
+                                alt={suggestedPark.images[1].altText}
+                                className="suggestedImage"/>
                             <img
                                 src={suggestedPark.images[2].url}
-                                alt={suggestedPark.images[2].altText}/>
+                                alt={suggestedPark.images[2].altText}
+                                className="suggestedImage"/>
                         </div>
                     </div>
                     {selectedPark && selectedPark.parkCode === suggestedPark.parkCode && (
