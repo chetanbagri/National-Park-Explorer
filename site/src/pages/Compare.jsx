@@ -22,6 +22,8 @@ function Compare(/* {initexpanded= null} */){
     const [groupMembers, setGroupMembers] = useState(null);
     const [parksToUsers, setParksToUsers] = useState(null);
     const [ratioUsers, setRatioUsers] = useState("");
+    const [suggestedPark, setSuggestedPark] = useState([]);
+    // const [suggestedParkSelected, setSuggestedParkSelected] = useState([]);
 
     const API_KEY = process.env.REACT_APP_API_KEY;
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
@@ -126,6 +128,20 @@ function Compare(/* {initexpanded= null} */){
         }
     };
 
+    const handleSuggestParkSelection = async (parkCode, suggestedParkDetails) => {
+        console.log(parkCode);
+        if (selectedPark && selectedPark.parkCode === parkCode) {
+            setSelectedPark(null);
+            setParkAmenities([]);
+        } else {
+            // We already have details from handleSuggest()
+            // const details = await fetchParkDetails(parkCode);
+            setSelectedPark(suggestedParkDetails);
+            const amenities = await fetchAmenitiesOfPark(`${parkCode}`);
+            setParkAmenities(amenities);
+        }
+    };
+
     const fetchAmenitiesOfPark = async (parkCode) => {
         const url = `https://developer.nps.gov/api/v1/amenities?q=${parkCode}`;
         try {
@@ -188,17 +204,19 @@ function Compare(/* {initexpanded= null} */){
                 // Now do it again for the user themselves
                 // console.log("username: " + JSON.parse(sessionStorage.getItem('userInfo')).username);
                 const favorites = await fetchUserFavorites(JSON.parse(sessionStorage.getItem('userInfo')).username);
-                console.log(favorites);
                 if (commonFavorites.length === 0) {
                     commonFavorites = favorites;
                 } else {
                     commonFavorites = commonFavorites.filter(park => favorites.includes(park));
                 }
-                console.log(commonFavorites);
                 if (commonFavorites.length > 0) {
                     const parkDetails = await fetchParkDetails(commonFavorites[0]);
                     console.log(parkDetails);
-                    setSelectedPark(parkDetails);
+                    // setSelectedPark(parkDetails); // Just makes details window appear with no amenities. NOT GOOD ENOUGH.
+                    setParkAmenities([]);
+                    setSelectedPark(null);
+                    setUserFavorites([]);
+                    setSuggestedPark(parkDetails);
                 } else {
                     setError("No common favorites found among the group.");
                 }
@@ -363,6 +381,72 @@ function Compare(/* {initexpanded= null} */){
                     ))}
                 </ul>
             )}
+            {suggestedPark && Object.keys(suggestedPark).length > 0 && (
+                <div title="Click Suggested Park for Details" className="suggestedParkBox" onClick={() => handleSuggestParkSelection(suggestedPark.parkCode, suggestedPark)}>
+                    <div key={suggestedPark.parkCode}> {/* Add a unique key to each child element */}
+                        <h2 className="suggestedName">Your suggested park is</h2>
+                        <p className="suggestedName">{suggestedPark.fullName}</p> {/* Access suggested park's fullName property */}
+                        <p className="suggestedLocation">{suggestedPark.addresses[0].city}, {suggestedPark.addresses[0].stateCode}</p>
+                        <div className="suggestedParkImgContainer">
+                            <img
+                                src={suggestedPark.images[0].url}
+                                alt={suggestedPark.images[0].altText}/>
+                            <img
+                                src={suggestedPark.images[1].url}
+                                alt={suggestedPark.images[1].altText}/>
+                            <img
+                                src={suggestedPark.images[2].url}
+                                alt={suggestedPark.images[2].altText}/>
+                        </div>
+                    </div>
+                    {selectedPark && selectedPark.parkCode === suggestedPark.parkCode && (
+                        <div className="detailsBox">
+                            <h3 className={"park-full-name"}>{suggestedPark.fullName}</h3>
+                            <img src={suggestedPark.images[0].url}
+                                 alt={`View of ${suggestedPark.fullName}`}
+                                 style={{width: '100%', maxHeight: '300px', objectFit: 'cover'}}
+                                 className={"park-picture"}/>
+                            <p className={"park-description"}>Description: {suggestedPark.description}</p>
+                            <div>
+                                <h4>Location:</h4>
+                                <p className="clickable-text park-location">
+                                    {suggestedPark.addresses[0].city}, {suggestedPark.addresses[0].stateCode}
+                                </p>
+                            </div>
+                            <a className={"park-url"} href={suggestedPark.url} target="_blank"
+                               rel="noopener noreferrer">
+                                Visit Park Website
+                            </a>
+                            <p className={"park-entrance-fee"}>
+                                Entrance
+                                Fees: {suggestedPark.entranceFees.length > 0 ? `$${suggestedPark.entranceFees[0].cost}` : 'No fees information available'}
+                            </p>
+                            <h4>Activities:</h4>
+                            <p className={"park-activities"}>
+                                {suggestedPark.activities.map((activity, index) => (
+                                    <React.Fragment key={activity.id}>
+                                        <span className="clickable-text">{activity.name}</span>
+                                        {index < suggestedPark.activities.length - 1 ? ', ' : ''}
+                                    </React.Fragment>
+                                ))}
+                            </p>
+                            <h4>Amenities:</h4>
+                            <p className={"park-amenities"}>
+                                {parkAmenities.map((amenity, index) => (
+                                    <React.Fragment key={amenity.id}>
+                                                <span
+                                                    className="amenities-clickable-text clickable-text">{amenity.name}</span>
+                                        {index < parkAmenities.length - 1 ? ', ' : ''}
+                                    </React.Fragment>
+                                ))}
+                            </p>
+                            <h4>Operating Hours:</h4>
+                            <p>{suggestedPark.operatingHours[0].description}</p>
+                        </div>
+                    )}
+                </div>
+            )}
+
             <Footer/>
         </div>
     );

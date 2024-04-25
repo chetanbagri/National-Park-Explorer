@@ -620,7 +620,7 @@ test('successfully suggests a common favorite park', async () => {
             data: [{
                 parkCode: 'parkCode1',
                 fullName: 'Common Park',
-                images: [{ url: 'http://example.com/park.jpg' }],
+                images: [{ url: 'http://example.com/park.jpg', altText: 'alt text 1'}, { url: 'http://example.com/park2.jpg', altText: 'alt text 2'}, { url: 'http://example.com/park3.jpg', altText: 'alt text 3'}],
                 description: 'A common favorite park',
                 addresses: [{
                     city: 'Test City',
@@ -654,11 +654,105 @@ test('successfully suggests a common favorite park', async () => {
 
     await waitFor(() => {
         expect(screen.getByText('Common Park')).toBeInTheDocument();
-        expect(screen.getByText('Description: A common favorite park')).toBeInTheDocument();
-        expect(screen.getByAltText('View of Common Park').src).toBe('http://example.com/park.jpg');
+        expect(screen.getByText('Test City, TC')).toBeInTheDocument();
+        expect(screen.getByAltText('alt text 1').src).toBe('http://example.com/park.jpg');
     });
 });
 
+test('successfully see details of a suggested park', async () => {
+    sessionStorage.setItem('userInfo', JSON.stringify({ username: 'testUser' }));
+
+    // 1 fetch from handleAddToGroup()
+    // handleCompare() -> fetchGroupFavorites(username)
+    // handleCompare() -> fetchParkDetails(parkCode)
+    // handleSuggest() -> fetchUserFavorites(member)
+    // handleSuggest() -> fetchUserFavorites(member)
+    // handleSuggest() -> fetchParkDetails(commonFavorites[0])
+    // handleSuggestedParkSelection() --> fetchAmenitiesOfPark(`${parkCode}`)
+    fetch.mockResponses(
+        [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
+        [
+            JSON.stringify({
+                parksToUsers: [
+                    {parkCode1: ['NickoOG1', 'testUser']}
+                ],
+                groupSize: 1,
+                sortedIDs: [{parkCode1: 2}],
+                groupMembers: ["NickoOG1"]
+            }),
+            { status: 200 }
+        ],
+        [JSON.stringify({ data: [{ fullName: 'Park One' }] }), { status: 200 }],
+        [JSON.stringify({favorites: ['parkCode1']}), { status: 200 }],
+        [JSON.stringify({favorites: ['parkCode1']}), { status: 200 }],
+        [JSON.stringify({
+            data: [{
+                parkCode: 'parkCode1',
+                fullName: 'Common Park',
+                images: [{ url: 'http://example.com/park.jpg', altText: 'alt text 1'}, { url: 'http://example.com/park2.jpg', altText: 'alt text 2'}, { url: 'http://example.com/park3.jpg', altText: 'alt text 3'}],
+                description: 'A common favorite park',
+                addresses: [{
+                    city: 'Test City',
+                    stateCode: 'TC'
+                }],
+                url: 'http://example.com',
+                entranceFees: [{ cost: '10.00' }],
+                activities: [{ id: 'act1', name: 'Hiking' }],
+                operatingHours: [{ description: '9 AM to 5 PM' }]
+            }],
+            ok: true
+        }), { status: 200 }],
+        [JSON.stringify({
+            data: [
+                { id: 'amenity1', name: 'Restrooms' },
+                { id: 'amenity2', name: 'Picnic Areas' }
+            ]
+        }), { status: 200 }]
+    );
+
+    renderWithRouter(<Compare />);
+
+    fireEvent.change(screen.getByLabelText('Username:'), { target: { value: 'NickoOG1' } });
+    fireEvent.click(screen.getByTitle('Submit Username'));
+
+    await waitFor(() => expect(screen.getByText('Successfully added NickoOG1 to your group of friends')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTitle("Submit Compare"));
+
+    await waitFor(() => {
+        expect(screen.getByText(/Park One/i)).toBeInTheDocument();
+    });
+
+
+    // Compare parks done, now do suggest stuff
+    fireEvent.click(screen.getByTitle('Submit Suggestion'));
+
+    await waitFor(() => {
+        expect(screen.getByText('Common Park')).toBeInTheDocument();
+        expect(screen.getByText('Test City, TC')).toBeInTheDocument();
+        expect(screen.getByAltText('alt text 1').src).toBe('http://example.com/park.jpg');
+    });
+
+    fireEvent.click(screen.getByTitle("Click Suggested Park for Details"));
+
+    await waitFor(() => {
+        expect(screen.getByText(/A common favorite park/i)).toBeInTheDocument();
+        expect(screen.getByText('Visit Park Website')).toHaveAttribute('href', 'http://example.com');
+        expect(screen.getByText('Hiking')).toBeInTheDocument();
+        expect(screen.getByText('Restrooms')).toBeInTheDocument();
+        expect(screen.getByText('Picnic Areas')).toBeInTheDocument();
+    });
+
+    // Test closing the details widget for suggested park
+    fireEvent.click(screen.getByTitle("Click Suggested Park for Details"));
+    await waitFor(() => {
+        expect(screen.getByText('Common Park')).toBeInTheDocument();
+        expect(screen.getByText('Test City, TC')).toBeInTheDocument();
+        expect(screen.getByAltText('alt text 1').src).toBe('http://example.com/park.jpg');
+    });
+});
+
+// Nick: The following tests DO NOT WORK. These were written by Anika but she couldn't verify it.
 // test('handles no common favorites scenario', async () => {
 //     fetch.mockResponseOnce(JSON.stringify([]), { status: 200 }); // No common favorites returned
 //
