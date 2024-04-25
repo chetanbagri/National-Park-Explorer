@@ -58,6 +58,28 @@ Feature: Suggest a Park to Visit Among a Group of Friends
     And I should see "Moose, WY"
     And I should see 3 photos
 
+  Scenario: Once suggested display is clicked, a park detail window appears
+    Given I am on the Compare page
+    And I have "Nicko_STMP1" registered
+    And I have "Nicko_STMP2" registered
+    And "Nicko_STMP1" has a "public" park list
+    And "Nicko_STMP2" has a "public" park list
+    And I have park with id "yell" favorited
+    And "Nicko_STMP1" has park with id "grte" favorited
+    And "Nicko_STMP2" has park with id "grte" favorited
+    When I enter "Nicko_STMP1" into element with id "usernameQuery"
+    And I click on the element with id "addUserBtn"
+    Then I should see "Successfully added Nicko_STMP1 to your group of friends"
+    When I enter "Nicko_STMP2" into element with id "usernameQuery"
+    And I click on the element with id "addUserBtn"
+    Then I should see "Successfully added Nicko_STMP2 to your group of friends"
+    And I click on the element with id "suggestBtn"
+    Then the most common park should be displayed
+    And I should see "Grand Teton National Park"
+    And I should see "Moose, WY"
+    And I should see 3 photos
+    # ADD HERE
+
 #  Scenario: Display a random suggested park if no common favorites are found
 #    Given I am on the Compare page
 #    And I have selected friends "Annie, Bob, Mary"
@@ -81,6 +103,7 @@ Feature: Suggest a Park to Visit Among a Group of Friends
 #    Then the details window of the park is displayed inline
 #    And three park photos, park name, and location should be displayed
 
+  # MADE A DUPE
 #  Scenario: Once display is clicked a park detail window should appear
 #    Given I am on the Compare page
 #    And I have selected friends "Annie, Bob, Mary"
