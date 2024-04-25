@@ -187,6 +187,7 @@ public class UserService {
             cr.setSortedIDs(sortedIDs);
             cr.setParksToUsers(parksToUsers);
             cr.setGroupSize(userGroup.size());
+            cr.setGroupMembers(userGroup);
             return ResponseEntity.ok(cr);
         }
         else { // Username does not exists within database

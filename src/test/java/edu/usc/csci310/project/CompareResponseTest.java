@@ -48,4 +48,16 @@ public class CompareResponseTest {
         assertEquals(1, cr.getParksToUsers().size());
         assertEquals(usernames, cr.getParksToUsers().get("CAT_TEST"));
     }
+
+    @Test
+    void testSetAndGroupMembers(){
+        CompareResponse cr = new CompareResponse();
+
+        assertNull(cr.getGroupMembers());
+        List<String> usernames = new ArrayList<>();
+        usernames.add("NickoOG_CR_TEST");
+        cr.setGroupMembers(usernames);
+        assertEquals(1, cr.getGroupMembers().size());
+        assertEquals(usernames, cr.getGroupMembers());
+    }
 }

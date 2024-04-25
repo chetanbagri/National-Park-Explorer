@@ -41,7 +41,7 @@ function Compare(/* {initexpanded= null} */){
             })
             if(response.ok) {
                 const groupMembersTmp = await response.json();
-                // console.log(groupMembersTmp);
+                // console.log("Add to Group groupMembersTmp: " + groupMembersTmp);
                 setGroupMembers(groupMembersTmp);
                 setError("");
                 setSuccess(`Successfully added ${usernameQuery} to your group of friends`);
@@ -86,8 +86,8 @@ function Compare(/* {initexpanded= null} */){
                 setParksToUsers(favorites.parksToUsers);
 
                 setNumberInGroup(favorites.groupSize + 1);
-                // console.log("groupMembers: " + groupMembers); // Will be NULL if user leaves page and comes back without
-                // adding anyone new. That's OKAY since it's not really used for this part
+                setGroupMembers(favorites.groupMembers);
+                // console.log("groupMembers: " + groupMembers);
 
                 setUserFavorites(parkIDs);
                 Promise.all(parkIDs.map(async (parkCode) => {
@@ -163,28 +163,49 @@ function Compare(/* {initexpanded= null} */){
         // setRatioUsers(parkObject);
     };
 
-    // const handleSuggest = async (e) => {
-    //         e.preventDefault();
-    //         try {
-    //             let commonFavorites = [];
-    //             for (const member of groupMembers) {
-    //                 const favorites = await fetchUserFavorites(member);
-    //                 if (commonFavorites.length === 0) {
-    //                     commonFavorites = favorites;
-    //                 } else {
-    //                     commonFavorites = commonFavorites.filter(park => favorites.includes(park));
-    //                 }
-    //             }
-    //             if (commonFavorites.length > 0) {
-    //                 const parkDetails = await fetchParkDetails(commonFavorites[0]);
-    //                 setSelectedPark(parkDetails);
-    //             } else {
-    //                 setError("No common favorites found among the group.");
-    //             }
-    //         } catch (error) {
-    //             setError(`Error fetching suggestions: ${error.message}`);
-    //         }
-    // };
+    const handleSuggest = async (e) => {
+            e.preventDefault();
+            try {
+                let commonFavorites = [];
+                if(groupMembers == null){
+                    setError("Error handling suggest: Need to compare parks first");
+                    return;
+                }
+                console.log("groupMembers: " + groupMembers);
+                for (const member of groupMembers) {
+                    const favorites = await fetchUserFavorites(member);
+                    console.log(favorites);
+                    if(favorites == null){
+                        continue;
+                    }
+
+                    if (commonFavorites.length === 0) {
+                        commonFavorites = favorites;
+                    } else {
+                        commonFavorites = commonFavorites.filter(park => favorites.includes(park));
+                    }
+                }
+                // Now do it again for the user themselves
+                // console.log("username: " + JSON.parse(sessionStorage.getItem('userInfo')).username);
+                const favorites = await fetchUserFavorites(JSON.parse(sessionStorage.getItem('userInfo')).username);
+                console.log(favorites);
+                if (commonFavorites.length === 0) {
+                    commonFavorites = favorites;
+                } else {
+                    commonFavorites = commonFavorites.filter(park => favorites.includes(park));
+                }
+                console.log(commonFavorites);
+                if (commonFavorites.length > 0) {
+                    const parkDetails = await fetchParkDetails(commonFavorites[0]);
+                    console.log(parkDetails);
+                    setSelectedPark(parkDetails);
+                } else {
+                    setError("No common favorites found among the group.");
+                }
+            } catch (error) {
+                setError(`Error fetching suggestions: ${error.message}`);
+            }
+    };
 
     const fetchGroupFavorites = async (username) => {
         try {
@@ -213,21 +234,21 @@ function Compare(/* {initexpanded= null} */){
 
 
     // Completely written by Anika
-    // const fetchUserFavorites = async (username) => {
-    //     try {
-    //         const response = await fetch(`/favorites?username=${username}`);
-    //         if (!response.ok) {
-    //             console.error('Failed to fetch user favorites');
-    //             throw new Error('Failed to fetch user favorites');
-    //         }
-    //         const data = await response.json();
-    //         return data.favorites;
-    //     } catch (error) {
-    //         console.error('Error fetching user favorites:', error);
-    //         setError(`Error fetching favorites for user ${username}: ${error.message}`);
-    //         return [];
-    //     }
-    // };
+    const fetchUserFavorites = async (username) => {
+        try {
+            const response = await fetch(`/favorites?username=${username}`);
+            if (!response.ok) {
+                console.error('Failed to fetch user favorites');
+                throw new Error('Failed to fetch user favorites');
+            }
+            const data = await response.json();
+            return data.favorites;
+        } catch (error) {
+            console.error('Error fetching user favorites:', error);
+            setError(`Error fetching favorites for user ${username}: ${error.message}`);
+            return [];
+        }
+    };
 
     const fetchParkDetails = async (parkCode) => {
         const response = await fetch(`${BASE_URL}?parkCode=${parkCode}`, {
