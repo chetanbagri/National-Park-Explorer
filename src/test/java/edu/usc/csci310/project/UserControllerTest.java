@@ -186,39 +186,39 @@ class UserControllerTest {
         verify(userService).toggleFavoritesPrivacy(username);
     }
 
-    @Test
-    void testSetRank() {
-        String username = "Alice";
-        String parkId = "park1";
-        int rank = 5;
+//    @Test
+//    void testSetRank() {
+//        String username = "Alice";
+//        String parkId = "park1";
+//        int rank = 5;
+//
+//        ResponseEntity mockResponse = ResponseEntity.ok("Favorite added with rank successfully");
+//        doNothing().when(userService).addFavoriteWithRank(username, parkId, rank);
+//
+//        ResponseEntity<?> response = userController.setRank(username, parkId, rank);
+//
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertEquals("Favorite added with rank successfully", response.getBody());
+//
+//        verify(userService).addFavoriteWithRank(username, parkId, rank);
+//    }
 
-        ResponseEntity mockResponse = ResponseEntity.ok("Favorite added with rank successfully");
-        doNothing().when(userService).addFavoriteWithRank(username, parkId, rank);
-
-        ResponseEntity<?> response = userController.setRank(username, parkId, rank);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Favorite added with rank successfully", response.getBody());
-
-        verify(userService).addFavoriteWithRank(username, parkId, rank);
-    }
-
-    @Test
-    void testUpdateRank() {
-        String username = "Alice";
-        String parkId = "park2";
-        int newRank = 3;
-
-        ResponseEntity mockResponse = ResponseEntity.ok("Rank updated successfully");
-        doNothing().when(userService).updateFavoriteRank(username, parkId, newRank);
-
-        ResponseEntity<?> response = userController.updateRank(username, parkId, newRank);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Rank updated successfully", response.getBody());
-
-        verify(userService).updateFavoriteRank(username, parkId, newRank);
-    }
+//    @Test
+//    void testUpdateRank() {
+//        String username = "Alice";
+//        String parkId = "park2";
+//        int newRank = 3;
+//
+//        ResponseEntity mockResponse = ResponseEntity.ok("Rank updated successfully");
+//        doNothing().when(userService).updateFavoriteRank(username, parkId, newRank);
+//
+//        ResponseEntity<?> response = userController.updateRank(username, parkId, newRank);
+//
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertEquals("Rank updated successfully", response.getBody());
+//
+//        verify(userService).updateFavoriteRank(username, parkId, newRank);
+//    }
 
     @Test
     void testReorderFavorites() {
@@ -236,41 +236,41 @@ class UserControllerTest {
         verify(userService).reorderFavorites(username, newOrder);
     }
 
-    @Test
-    void testSetRankWithException() {
-        String username = "Alice";
-        String parkId = "park1";
-        int rank = 5;
-
-        // Simulate a runtime exception
-        doThrow(new RuntimeException("Invalid rank")).when(userService).addFavoriteWithRank(anyString(), anyString(), anyInt());
-
-        // Call the method which is expected to handle the exception
-        ResponseEntity<?> response = userController.setRank(username, parkId, rank);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Invalid rank", response.getBody());
-
-        verify(userService).addFavoriteWithRank(username, parkId, rank);
-    }
-
-    @Test
-    void testUpdateRankWithException() {
-        String username = "Alice";
-        String parkId = "park2";
-        int newRank = 3;
-
-        // Simulate a runtime exception
-        doThrow(new RuntimeException("Invalid update operation")).when(userService).updateFavoriteRank(anyString(), anyString(), anyInt());
-
-        // Call the method which is expected to handle the exception
-        ResponseEntity<?> response = userController.updateRank(username, parkId, newRank);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Invalid update operation", response.getBody());
-
-        verify(userService).updateFavoriteRank(username, parkId, newRank);
-    }
+//    @Test
+//    void testSetRankWithException() {
+//        String username = "Alice";
+//        String parkId = "park1";
+//        int rank = 5;
+//
+//        // Simulate a runtime exception
+//        doThrow(new RuntimeException("Invalid rank")).when(userService).addFavoriteWithRank(anyString(), anyString(), anyInt());
+//
+//        // Call the method which is expected to handle the exception
+//        ResponseEntity<?> response = userController.setRank(username, parkId, rank);
+//
+//        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+//        assertEquals("Invalid rank", response.getBody());
+//
+//        verify(userService).addFavoriteWithRank(username, parkId, rank);
+//    }
+//
+//    @Test
+//    void testUpdateRankWithException() {
+//        String username = "Alice";
+//        String parkId = "park2";
+//        int newRank = 3;
+//
+//        // Simulate a runtime exception
+//        doThrow(new RuntimeException("Invalid update operation")).when(userService).updateFavoriteRank(anyString(), anyString(), anyInt());
+//
+//        // Call the method which is expected to handle the exception
+//        ResponseEntity<?> response = userController.updateRank(username, parkId, newRank);
+//
+//        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+//        assertEquals("Invalid update operation", response.getBody());
+//
+//        verify(userService).updateFavoriteRank(username, parkId, newRank);
+//    }
 
 
 

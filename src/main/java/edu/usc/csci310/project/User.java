@@ -20,18 +20,13 @@ public class User {
 
     private String password;
 
-
     //Favorites:
-    @ElementCollection
-    private List<String> favorites = new ArrayList<>();
+    private String favorites;
 
     private boolean favPrivate = true;
 
-    @ElementCollection
-    @CollectionTable(name = "favorite_ranks", joinColumns = @JoinColumn(name = "user_id"))
-    @MapKeyColumn(name = "park_id")
-    @Column(name = "rank")
-    private Map<String, Integer> favoriteRanks = new HashMap<>();
+//    @Column(name = "rank")
+//    private String favoriteRanks;
     // Constructors, Getters, and Setters
     protected User() {}
 
@@ -67,11 +62,11 @@ public class User {
         return lockoutTime;
     }
 
-    public List<String> getFavorites() {
+    public String getFavorites() {
         return favorites;
     }
 
-    public void setFavorites(List<String> favorites) {
+    public void setFavorites(String favorites) {
         this.favorites = favorites;
     }
 
@@ -84,20 +79,20 @@ public class User {
     }
 
 
-    public Map<String, Integer> getFavoriteRanks() {
-        return favoriteRanks;
-    }
-
-    public void setFavoriteRanks(Map<String, Integer> favoriteRanks) {
-        this.favoriteRanks = favoriteRanks;
-    }
-
-
-    public void updateFavoriteRank(String parkId, Integer rank) {
-        this.favoriteRanks.put(parkId, rank);
-    }
-
-    public void removeFavoriteRank(String parkId) {
-        this.favoriteRanks.remove(parkId);
-    }
+//    public String getFavoriteRanks() {
+//        return favoriteRanks;
+//    }
+//
+//    public void setFavoriteRanks(String favoriteRanks) {
+//        this.favoriteRanks = favoriteRanks;
+//    }
+//
+//
+//    public void updateFavoriteRank(String parkId, Integer rank) {
+//        this.favoriteRanks.put(parkId, rank);
+//    }
+//
+//    public void removeFavoriteRank(String parkId) {
+//        this.favoriteRanks.remove(parkId);
+//    }
 }

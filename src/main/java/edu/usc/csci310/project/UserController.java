@@ -60,25 +60,25 @@ public class UserController {
         return userService.toggleFavoritesPrivacy(username);
     }
 
-    @PostMapping("/users/{username}/favorites/{parkId}/rank")
-    public ResponseEntity<?> setRank(@PathVariable String username, @PathVariable String parkId, @RequestBody int rank) {
-        try {
-            userService.addFavoriteWithRank(username, parkId, rank);
-            return ResponseEntity.ok("Favorite added with rank successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PatchMapping("/users/{username}/favorites/{parkId}/rank")
-    public ResponseEntity<?> updateRank(@PathVariable String username, @PathVariable String parkId, @RequestBody int newRank) {
-        try {
-            userService.updateFavoriteRank(username, parkId, newRank);
-            return ResponseEntity.ok("Rank updated successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+//    @PostMapping("/users/{username}/favorites/{parkId}/rank")
+//    public ResponseEntity<?> setRank(@PathVariable String username, @PathVariable String parkId, @RequestBody int rank) {
+//        try {
+//            userService.addFavoriteWithRank(username, parkId, rank);
+//            return ResponseEntity.ok("Favorite added with rank successfully");
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
+//
+//    @PatchMapping("/users/{username}/favorites/{parkId}/rank")
+//    public ResponseEntity<?> updateRank(@PathVariable String username, @PathVariable String parkId, @RequestBody int newRank) {
+//        try {
+//            userService.updateFavoriteRank(username, parkId, newRank);
+//            return ResponseEntity.ok("Rank updated successfully");
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
 
     @PostMapping("/favorites/reorder")
     public ResponseEntity<?> reorderFavorites(@RequestParam String username, @RequestBody List<String> newOrder) {

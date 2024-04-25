@@ -1,10 +1,13 @@
 package edu.usc.csci310.project;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import java.util.*;
 
 import java.util.List;
@@ -14,6 +17,8 @@ import java.util.List;
 public class UserService {
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
+    private StandardPBEStringEncryptor textEncryptor;
+    private static final Gson gson = new Gson();
 
     @Autowired
     public void setMyRepository(UserRepository userRepository) {
@@ -25,7 +30,11 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Autowired
+    public void setTextEncryptor(StandardPBEStringEncryptor textEncryptor) {this.textEncryptor = textEncryptor;}
+
     public ResponseEntity<?> registerUser(String username, String password, String confirmPassword) {
+        String encryptedUsername = textEncryptor.encrypt(username);
         if (userRepository.findByUsername(username) == null) {
             if(password.isEmpty()) return ResponseEntity.badRequest().body("Password field cannot be empty");
             int checker= isValidPassword(password);
@@ -40,7 +49,7 @@ public class UserService {
             newUser.setTime1(0L);
             newUser.setTime2(0L);
             newUser.setLockoutTime(0L);
-            newUser.setUsername(username);
+            newUser.setUsername(encryptedUsername);
             newUser.setPassword(hashedPassword);
             return ResponseEntity.ok(userRepository.save(newUser));
         } else {
@@ -49,8 +58,8 @@ public class UserService {
     }
 
     public ResponseEntity<?> loginUser(String username, String password) {
-        if(userRepository.findByUsername(username) != null) {
-            User user = userRepository.findByUsername(username);
+        if(userRepository.findByUsername(textEncryptor.encrypt(username)) != null) {
+            User user = userRepository.findByUsername(textEncryptor.encrypt(username));
             if((System.currentTimeMillis()-user.getLockoutTime())<30000)
             {
                 user.setTime1(0L);
@@ -98,8 +107,8 @@ public class UserService {
     }
 
     public ResponseEntity<?> removeUser(String username) {
-        if(userRepository.findByUsername(username) != null){
-            userRepository.delete(userRepository.findByUsername(username));
+        if(userRepository.findByUsername(textEncryptor.encrypt(username)) != null){
+            userRepository.delete(userRepository.findByUsername(textEncryptor.encrypt(username)));
             return ResponseEntity.ok("User Deleted");
         }
         else{
@@ -120,7 +129,7 @@ public class UserService {
 
     public ResponseEntity<?> addUserToGroup(String username, String usernameQuery) {
         User user = userRepository.findByUsername(username);
-        User userB = userRepository.findByUsername(usernameQuery);
+        User userB = userRepository.findByUsername(textEncryptor.encrypt(usernameQuery));
         if(user != null && userB != null) { // Both usernames exists within database
             if(Objects.equals(username, usernameQuery)){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot add yourself to your own friend group");
@@ -189,9 +198,13 @@ public class UserService {
 
     public ResponseEntity<?> getFavorites(String username) {
         User user = userRepository.findByUsername(username);
-
-
-        List<String> favorites = user.getFavorites();
+        List<String> favorites = new ArrayList<>();
+        String favoritesString = user.getFavorites();
+        if(favoritesString != null && !(favoritesString.isEmpty())) {
+            favoritesString = textEncryptor.decrypt(favoritesString);
+            Type type = new TypeToken<ArrayList<String>>() {}.getType();
+            favorites = gson.fromJson(favoritesString, type);
+        }
         return ResponseEntity.ok(new FavoritesResponse(favorites));
     }
 
@@ -200,22 +213,38 @@ public class UserService {
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
+        List<String> favorites = null;
+        String favoritesString = user.getFavorites();
+        if(favoritesString != null && !(favoritesString.isEmpty())) {
+            favoritesString = textEncryptor.decrypt(favoritesString);
+            Type type = new TypeToken<ArrayList<String>>() {}.getType();
+            favorites = gson.fromJson(favoritesString, type);
+        }
+//        Map<String, Integer> favoriteRanks = null;
+//        String favoriteRanksString = user.getFavoriteRanks();
+//        if(favoriteRanksString != null) {
+//            favoriteRanksString = textEncryptor.decrypt(favoriteRanksString);
+//            Type type = new TypeToken<Map<String, Integer>>() {}.getType();
+//            favoriteRanks = gson.fromJson(favoriteRanksString, type);
+//        }
 
-        List<String> favorites = user.getFavorites();
-        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
 
         if (favorites == null) {
             favorites = new ArrayList<>();
-            user.setFavorites(favorites);
+           // user.setFavorites(favorites);
         }
-        if (favoriteRanks == null) {
-            favoriteRanks = new HashMap<>();
-            user.setFavoriteRanks(favoriteRanks);
-        }
+//        if (favoriteRanks == null) {
+//            favoriteRanks = new HashMap<>();
+//           // user.setFavoriteRanks(favoriteRanks);
+//        }
 
         if (!favorites.contains(parkId)) {
             favorites.add(parkId);
-            favoriteRanks.put(parkId, favorites.size());
+            String newfavoritesString = gson.toJson(favorites);
+            user.setFavorites(textEncryptor.encrypt(newfavoritesString));
+//            favoriteRanks.put(parkId, favorites.size());
+//            String newfavoriteRanksString = gson.toJson(favoriteRanks);
+//            user.setFavoriteRanks(textEncryptor.encrypt(newfavoriteRanksString));
             userRepository.save(user);
             return ResponseEntity.ok(new FavoritesResponse(favorites));
         } else {
@@ -230,20 +259,33 @@ public class UserService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        List<String> favorites = user.getFavorites();
-        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
+        List<String> favorites;
+        String favoritesString = user.getFavorites();
+        favoritesString = textEncryptor.decrypt(favoritesString);
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        favorites = gson.fromJson(favoritesString, type);
+//        Map<String, Integer> favoriteRanks = new HashMap<>();
+//        String favoriteRanksString = user.getFavoriteRanks();
+//        if(favoriteRanksString != null) {
+//            favoriteRanksString = textEncryptor.decrypt(favoriteRanksString);
+//            Type type = new TypeToken<Map<String, Integer>>() {}.getType();
+//            favoriteRanks = gson.fromJson(favoriteRanksString, type);
+//        }
 
-        if (favorites == null || !favorites.contains(parkId)) {
+        if (!favorites.contains(parkId)) {
             return ResponseEntity.badRequest().body("Park not in favorites");
         }
 
         favorites.remove(parkId);
-        favoriteRanks.remove(parkId);
-        int rank = 1;
-        for (String favId : favorites) {
-            favoriteRanks.put(favId, rank++);
-        }
-
+//        favoriteRanks.remove(parkId);
+//        int rank = 1;
+//        for (String favId : favorites) {
+//            favoriteRanks.put(favId, rank++);
+//        }
+        String newfavoritesString = gson.toJson(favorites);
+        user.setFavorites(textEncryptor.encrypt(newfavoritesString));
+//        String newfavoriteRanksString = gson.toJson(favoriteRanks);
+//        user.setFavoriteRanks(textEncryptor.encrypt(newfavoriteRanksString));
         userRepository.save(user);
         return ResponseEntity.ok("Park removed from favorites");
     }
@@ -255,8 +297,8 @@ public class UserService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        user.setFavorites(new ArrayList<>());
-        user.setFavoriteRanks(new HashMap<>());
+        user.setFavorites(null);
+//        user.setFavoriteRanks(new HashMap<>());
         userRepository.save(user);
         return ResponseEntity.ok("All favorites cleared");
     }
@@ -273,49 +315,44 @@ public class UserService {
         return ResponseEntity.ok("Favorites privacy status updated to " + !currentStatus);
     }
 
-    public void addFavoriteWithRank(String username, String parkId, int rank) {
-        User user = userRepository.findByUsername(username);
-
-        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
-        favoriteRanks.put(parkId, rank);
-        userRepository.save(user);
-    }
-
-    public void updateFavoriteRank(String username, String parkId, int newRank) {
-        User user = userRepository.findByUsername(username);
-        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
-        if (favoriteRanks.containsKey(parkId)) {
-            favoriteRanks.put(parkId, newRank);
-            userRepository.save(user);
-        } else {
-            throw new RuntimeException("Park not found in favorites");
-        }
-    }
+//    public void addFavoriteWithRank(String username, String parkId, int rank) {
+//        User user = userRepository.findByUsername(username);
+//
+//        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
+//        favoriteRanks.put(parkId, rank);
+//        userRepository.save(user);
+//    }
+//
+//    public void updateFavoriteRank(String username, String parkId, int newRank) {
+//        User user = userRepository.findByUsername(username);
+//        Map<String, Integer> favoriteRanks = user.getFavoriteRanks();
+//        if (favoriteRanks.containsKey(parkId)) {
+//            favoriteRanks.put(parkId, newRank);
+//            userRepository.save(user);
+//        } else {
+//            throw new RuntimeException("Park not found in favorites");
+//        }
+//    }
 
     public ResponseEntity<?> reorderFavorites(String username, List<String> newOrder) {
         User user = userRepository.findByUsername(username);
-
-
-        List<String> currentFavorites = user.getFavorites();
-        if (new HashSet<>(currentFavorites).equals(new HashSet<>(newOrder))) {
-            user.setFavorites(newOrder);
-            Map<String, Integer> updatedRanks = new HashMap<>();
-            int rank = 1;
-            for (String parkId : newOrder) {
-                updatedRanks.put(parkId, rank++);
-            }
-            user.setFavoriteRanks(updatedRanks);
-            userRepository.save(user);
-            return ResponseEntity.ok("Favorites reordered successfully");
-        } else {
-            return ResponseEntity.badRequest().body("Invalid park list submitted");
-        }
+//        List<String> currentFavorites = user.getFavorites();
+//        if (new HashSet<>(currentFavorites).equals(new HashSet<>(newOrder))) {
+//            user.setFavorites(newOrder);
+//            Map<String, Integer> updatedRanks = new HashMap<>();
+//            int rank = 1;
+//            for (String parkId : newOrder) {
+//                updatedRanks.put(parkId, rank++);
+//            }
+//            user.setFavoriteRanks(updatedRanks);
+//            userRepository.save(user);
+//            return ResponseEntity.ok("Favorites reordered successfully");
+//        } else {
+//            return ResponseEntity.badRequest().body("Invalid park list submitted");
+//        }
+        String newOrderString = gson.toJson(newOrder);
+        user.setFavorites(textEncryptor.encrypt(newOrderString));
+        userRepository.save(user);
+        return ResponseEntity.ok("Favorites reordered successfully");
     }
-
-
-
-
-
-
-
 }
