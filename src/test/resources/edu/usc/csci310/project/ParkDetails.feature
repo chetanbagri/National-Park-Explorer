@@ -112,3 +112,10 @@ Feature: test the search page details feature
     And I click on the park's location
     Then new park search triggered with clicked on location as search term
     And search type will be state
+
+  Scenario: Hover element for favorites always appears when opening details widget
+    Given I am on the search page
+    And I press the Search button
+    And I click on the first result
+    Then an inline window showing the details of the park is appended
+    And I should see a plus sign while hovering on details widget
