@@ -28,13 +28,13 @@ Feature: Compare favorite park list with friends (#5)
     Then I should see "Successfully added Nicko_CTMP1 to your group of friends"
 
 #  #Verified
-#  Scenario: User B cannot be added if they do not have a public list
-#    Given I am on the Compare page
-#    And I have "Nicko_CTMP1" registered
-#    And "Nicko_CTMP1" has a "private" park list
-#    When I enter "Nicko_CTMP1" into element with id "usernameQuery"
-#    And I click on the element with id "addUserBtn"
-#    Then I should see "___"
+  Scenario: User B cannot be added if they do not have a public list
+    Given I am on the Compare page
+    And I have "Nicko_CTMP1" registered
+    And "Nicko_CTMP1" has a "private" park list
+    When I enter "Nicko_CTMP1" into element with id "usernameQuery"
+    And I click on the element with id "addUserBtn"
+    Then I should see "Error: User cannot be added due to them having a private favorite park list"
 
   #Verified
   Scenario: Fail to add friend to group if their account does not exist

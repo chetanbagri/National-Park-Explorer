@@ -75,6 +75,7 @@ public class CompareStepdefs {
 
     @When("I enter {string} into element with id {string}")
     public void iEnterIntoElementWithId(String arg0, String arg1) {
+        driver.findElement(By.id(arg1)).clear();
         driver.findElement(By.id(arg1)).sendKeys(arg0);
     }
 
@@ -156,6 +157,67 @@ public class CompareStepdefs {
 
     @And("{string} has a {string} park list")
     public void hasAParkList(String arg0, String arg1) {
-        // set arg0's TRACKER to arg0, or a boolean
+//        if(Objects.equals(arg1, "private") && userService.isFavPrivate() == true) return;
+//        else if(Objects.equals(arg1, "private") && userService.isFavPrivate() == false) userService.toggleFavoritesPrivacy(arg0);
+//        else if(Objects.equals(arg1, "public") && userService.isFavPrivate() == true) return;
+//        else userService.toggleFavoritesPrivacy(arg0); // set arg0's TRACKER to arg0, or a boolean
+    }
+
+
+    // Suggest Step Defs
+    @Then("the best park based on common favorites should be displayed")
+    public void theBestParkBasedOnCommonFavoritesShouldBeDisplayed() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("suggestedPark")));
+        assertTrue(driver.findElement(By.id("suggestedPark")).isDisplayed());
+    }
+
+    @And("no common park is found in the favorite lists")
+    public void noCommonParkIsFoundInTheFavoriteLists() {
+    }
+
+    @Then("the most common park should be displayed")
+    public void theMostCommonParkShouldBeDisplayed() {
+    }
+
+    @Then("a randomly selected park should be displayed")
+    public void aRandomlySelectedParkShouldBeDisplayed() {
+    }
+
+    @Given("a park has been suggested")
+    public void aParkHasBeenSuggested() {
+    }
+
+    @When("I click on the park name")
+    public void iClickOnTheParkName() {
+        driver.findElement(By.className("park-name")).click();
+    }
+
+    @Then("the details window of the park is displayed inline")
+    public void theDetailsWindowOfTheParkIsDisplayedInline() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("parkDetails")));
+        assertTrue(driver.findElement(By.id("parkDetails")).isDisplayed());
+    }
+
+    @When("I click the display, a park detail window should appear")
+    public void iClickTheDisplayAParkDetailWindowShouldAppear() {
+        driver.findElement(By.id("suggestedPark")).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("parkDetails")));
+        assertTrue(driver.findElement(By.id("parkDetails")).isDisplayed());
+    }
+
+    @And("I should see {int} photos")
+    public void iShouldSeePhotos(int arg0) {
+        assertEquals(driver.findElements(By.className("suggestedImage")).size(), arg0);
+    }
+
+    @When("I click on the suggested park")
+    public void iClickOnTheSuggestedPark() {
+        List<WebElement> searchResults = driver.findElements(By.cssSelector(".suggestedParkBox"));
+        if (!searchResults.isEmpty()) {
+            searchResults.get(0).click(); // Clicks the first result
+        } else {
+            fail("No suggested result found to click.");
+        }
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".detailsBox"))); // Adjust the selector to the details box
     }
 }
