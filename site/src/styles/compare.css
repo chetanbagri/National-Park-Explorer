@@ -1,3 +1,80 @@
 #addUserBtn {
     margin-left: 1em;
 }
+
+.detailsBox {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin-top: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.clickable-text {
+    color: #0645AD;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-right: 5px;
+}
+
+.ratio-popup {
+    /*position: absolute;*/
+    /*top: 10px;*/
+    /*left: 10px;*/
+    width: min-content;
+    margin: 0 auto 0 20px;
+    /*height: 7%;*/
+    padding: 2%;
+    background-color: rgba(164, 164, 164, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.ratio-content {
+    /*background-color: white;*/
+    /*padding: 4px;*/
+    /*border-radius: 8px;*/
+    /*box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
+    text-align: center;
+}
+
+.ratio-names {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.suggestedParkBox {
+    background-color: #d3f3cf;
+    border-radius: 10px;
+    padding: 20px;
+    display: block; /* Center the div and prevent it from stretching */
+    margin: auto;
+    max-width: 80%;
+}
+
+.suggestedName {
+    text-align: center;
+}
+
+.suggestedLocation {
+    text-align: center;
+}
+
+.suggestedParkImgContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.suggestedParkImgContainer img {
+    width: 30%; /* Adjust image width as needed */
+    margin: 0 10px; /* Add space between images */
+}

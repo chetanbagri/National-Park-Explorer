@@ -1,7 +1,6 @@
 package edu.usc.csci310.project;
 
 import io.cucumber.java.After;
-import io.cucumber.java.AfterAll;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -435,11 +434,24 @@ public class SearchParksStepDefs {
     }
 
 
-    @Then("the details window displays and says the park is not on the user's fave list")
-    public void theDetailsWindowDisplaysAndSaysTheParkIsNotOnTheUsersFaveList() {
+    @Then("the details window displays, says the park isnt on user's fav list")
+    public void theDetailsWindowDisplaysSaysTheParkIsntOnUserSFavList() {
         WebElement detailsBox = driver.findElement(By.cssSelector(".detailsBox"));
         WebElement favoriteStatusMessage = detailsBox.findElement(By.cssSelector(".favorite-status"));
         assertTrue(favoriteStatusMessage.getText().contains("This park is not in your favorites list"));
     }
 
+    @And("I should see a plus sign while hovering on details widget")
+    public void iShouldSeeAPlusSignWhileHoveringOnDetailsWidget() {
+        WebElement firstSearchResult = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-result:first-child .park-button")));
+
+        Actions actions = new Actions(driver);
+        actions.moveToElement(firstSearchResult).perform();
+
+        WebElement favoriteIcon = new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".search-result:first-child .add-to-favorites")));
+
+        assertTrue(favoriteIcon.isDisplayed());
+    }
 }

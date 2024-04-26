@@ -36,7 +36,7 @@ public class loginStepdefs {
         passwordInput.click();
         passwordInput.clear();
         wait.until((WebDriver d) -> passwordInput.getAttribute("value").isEmpty());
-//        System.out.println("Password field value afterhand: " + passwordInput.getAttribute("value")); // Debugging output
+//        System.out.println("Password field value afterhand: " + passwordInput.getAttribute("value")); // Debugging
     }
 
     @And("I enter the password {string} on login page")
@@ -84,7 +84,7 @@ public class loginStepdefs {
 //        System.out.println("Password field value after wait: " + passwordInput.getAttribute("value")); // Debugging output
     }
 
-    @Then("I should get a login {string} message")
+    @Then("I should get a login {string}")
     public void iShouldGetAMessage(String expectedMessage) throws InterruptedException{
         Thread.sleep(100);
         WebElement messageElement = driver.findElement(By.id("error"));

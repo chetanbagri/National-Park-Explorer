@@ -5,12 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -104,6 +100,7 @@ public class UserService {
     public ResponseEntity<?> removeUser(String username) {
         if(userRepository.findByUsername(username) != null){
             userRepository.delete(userRepository.findByUsername(username));
+            Groups.removeUserEntry(username);
             return ResponseEntity.ok("User Deleted");
         }
         else{
@@ -132,6 +129,9 @@ public class UserService {
             if(Groups.getGroupOfFriends(username).contains(usernameQuery)){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is already in your friend group");
             }
+//            if(userB.isFavPrivate() == true){ // userB has private list
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User cannot be added due to them having a private favorite park list");
+//            }
             Groups.addToGroupOfFriends(username, usernameQuery);
             // userRepository.save(user); // Update the database
 
@@ -145,45 +145,53 @@ public class UserService {
     public ResponseEntity<?> compareParks(String username) {
         User user = userRepository.findByUsername(username);
         if(user != null){
-            // Get usernames of friends in group
+            // Get string usernames of friends in group
             List<String> userGroup = Groups.getGroupOfFriends(username);
             if(userGroup.isEmpty()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have no friends in your group to compare parks with");
             }
 
-            // Retrieve ALL parks of each username, including myself
-            userGroup.add(username);
-            /*
-            List<String> tmp1 = Arrays.asList("1", "2");
-            List<String> tmp2 = Arrays.asList("1", "3");
-            List<String> tmp3 = Arrays.asList("4", "5");
+            // Retrieve ALL favorite parks of each username, including myself
             HashMap<String, Integer> parkCounts = new HashMap<>();
-            for(String userI : userGroup){
+            HashMap<String, List<String>> parksToUsers = new HashMap<>(); // Map park ID to associated usernames
+            List<String> favs = user.getFavorites();
+            for(String parkID : favs) { // each parkID in userI favorites list
+                int count = parkCounts.getOrDefault(parkID, 0);
+                parkCounts.put(parkID, count + 1);
+//                if(!parksToUsers.containsKey(parkID)){ // IMPOSSIBLE to fail since I'm starting with fresh parksToUsers
+                    parksToUsers.put(parkID, new ArrayList<>());
+//                }
+                parksToUsers.get(parkID).add(user.getUsername());
+            }
+            for(String userI : userGroup){ // Now retrieve for the entire group
                 // do something with userI
-                for(each parkID in userI favorites list) {
-                    int count = parkCounts.getOrDefault("1", 0);
-                    parkCounts.put(key, count + 1);
+                favs = userRepository.findByUsername(userI).getFavorites();
+                for(String parkID : favs) { // each parkID in userI favorites list
+                    int count = parkCounts.getOrDefault(parkID, 0);
+                    parkCounts.put(parkID, count + 1);
+                    if(!parksToUsers.containsKey(parkID)){
+                        parksToUsers.put(parkID, new ArrayList<>());
+                    }
+                    parksToUsers.get(parkID).add(userI);
                 }
             }
 
+
             // Sort the HashMap based on their count values
             List<Map.Entry<String, Integer>> sortedIDs = new ArrayList<>(parkCounts.entrySet());
-            Collections.sort(sortedIDs, new Comparator<Map.Entry<String, Integer>>() {
+            sortedIDs.sort(new Comparator<Map.Entry<String, Integer>>() {
                 @Override
                 public int compare(Map.Entry<String, Integer> entry1, Map.Entry<String, Integer> entry2) {
                     return entry2.getValue().compareTo(entry1.getValue()); // Sort in descending order of count values
                 }
             });
-            */
 
-            // Sort parks based on amount of times I see a park ID
-            // IDEA: Use Map to store ID as key, count as value.
-            // Then sort based on the count (value)
-            // Can also use Max-Heap but seems like too much work.
-
-            // Return ID data (with counts) to frontend sorted with
-
-            return ResponseEntity.ok(Groups.getGroupOfFriends(username));
+            CompareResponse cr = new CompareResponse();
+            cr.setSortedIDs(sortedIDs);
+            cr.setParksToUsers(parksToUsers);
+            cr.setGroupSize(userGroup.size());
+            cr.setGroupMembers(userGroup);
+            return ResponseEntity.ok(cr);
         }
         else { // Username does not exists within database
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");
