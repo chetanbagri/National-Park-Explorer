@@ -1,13 +1,16 @@
 package edu.usc.csci310.project;
 
+import com.google.gson.Gson;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.junit.jupiter.api.Assertions;
 
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -42,7 +45,7 @@ public class FavoritesStepDefs {
         private UserService userService;
 
         @Autowired
-        private UserController userController;
+        private StandardPBEStringEncryptor testEncryptor;
 
 
     @After
@@ -66,8 +69,22 @@ public class FavoritesStepDefs {
         }
 
     @And("the user has {string} in their favorites")
-    public void the_user_has_in_their_favorites(String park) {
-        userService.addFavorite("NickoOG_TMP", park);
+    public void the_user_has_in_their_favorites(String park) throws InterruptedException {
+//        driver.get(ROOT_URL+"search");
+//        driver.findElement(By.id("searchQuery")).sendKeys(park);
+//        driver.findElement(By.id("search")).click();
+//        wait.until(webDriver -> driver.findElements(By.cssSelector(".search-result")).size() > 0);
+        String encryptedUsername = testEncryptor.encrypt("NickoOG_TMP");
+        String parkCode;
+        if(park.equals("Alcatraz Island")) parkCode =  "alca";
+        else parkCode  = "acad";
+        System.out.println("Has_in_favs"+parkCode);
+        ResponseEntity<?> response = userService.addFavorite(encryptedUsername, parkCode);
+        FavoritesResponse favoritesResponse = (FavoritesResponse) response.getBody();
+        List<String> favoriteList = favoritesResponse.getFavorites();
+        assertTrue(favoriteList.contains(parkCode));
+        driver.navigate().refresh();
+        Thread.sleep(200);
     }
     @Then("a minus sign should appear")
     public void a_minus_sign_should_appear() {
@@ -76,8 +93,9 @@ public class FavoritesStepDefs {
     }
 
     @When("the user clicks the minus sign")
-    public void the_user_clicks_the_minus_sign() {
+    public void the_user_clicks_the_minus_sign() throws InterruptedException {
         driver.findElement(By.cssSelector(".remove-from-favorites")).click();
+        Thread.sleep(100);
     }
 
     @Then("a confirmation popup should be displayed")
@@ -93,20 +111,24 @@ public class FavoritesStepDefs {
 
     @Then("{string} should not be in their Favorites list")
     public void should_not_be_in_their_favorites_list(String park) {
-        userService.removeFavorite("NickoOG_TMP", park); // Assume this directly modifies the state
+        String encryptedUsername = testEncryptor.encrypt("NickoOG_TMP");
+        String parkCode;
+        if(park.equals("Alcatraz Island")) parkCode =  "alca";
+        else parkCode  = "acad";
+        ResponseEntity<?> response= userService.removeFavorite(encryptedUsername, parkCode); // Assume this directly modifies the state
         // Perform a check to ensure the park is no longer in the favorites
-//        Assertions.assertFalse(userService.getFavorites("NickoOG_TMP").contains(park));
+        assertEquals("Park removed from favorites", response.getBody());
     }
 
 
     @When("the user clicks the Confirm button")
     public void theUserClicksTheConfirmButton() {
-        driver.findElement(By.id("confirm-remove-button")).click();
+        driver.findElement(By.xpath("//*[@id=\"confirm-remove-button\"]")).click();
     }
 
     @When("the user clicks the Cancel button")
     public void theUserClicksTheCancelButton() {
-        driver.findElement(By.id("confirm-cancel-button")).click();
+        driver.findElement(By.xpath("//*[@id=\"confirm-cancel-button\"]")).click();
     }
 
     @Then("the confirmation popup should disappear")
@@ -132,7 +154,8 @@ public class FavoritesStepDefs {
 
     @And("the user has Alcatraz Island in their favorites")
     public void theUserHasAlcatrazIslandInTheirFavorites() {
-        userService.addFavorite("NickoOG_TMP", "Alcatraz Island");
+        String encryptedUsername = testEncryptor.encrypt("NickoOG_TMP");
+        userService.addFavorite(encryptedUsername, "alca");
         Assertions.assertTrue(driver.findElement(By.xpath("//button[contains(text(), 'Alcatraz Island')]")).isDisplayed());
     }
 
@@ -198,4 +221,27 @@ public class FavoritesStepDefs {
             driver.quit();
         }
 
+    @When("the user hovers over the park button named {string}")
+    public void theUserHoversOverTheParkButtonNamed(String parkName) {
+//        String parkCode;
+//        if(parkName.equals("Alcatraz Island")) parkCode =  "alca";
+//        else parkCode  = "acad";
+//        System.out.println("Has_in_favs"+parkCode);
+        WebElement parkElement = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(), '" + parkName + "')]")));
+        Actions action = new Actions(driver);
+        action.moveToElement(parkElement).perform();
+    }
+
+    @And("the user still has {string} in their favorites")
+    public void theUserStillHasInTheirFavorites(String park) {
+        String encryptedUsername = testEncryptor.encrypt("NickoOG_TMP");
+        String parkCode;
+        if(park.equals("Alcatraz Island")) parkCode =  "alca";
+        else parkCode  = "acad";
+        ResponseEntity<?> response = userService.getFavorites(encryptedUsername);
+        FavoritesResponse favoritesResponse = (FavoritesResponse) response.getBody();
+        List<String> favoriteList = favoritesResponse.getFavorites();
+        assertTrue(favoriteList.contains(parkCode));
+    }
 }

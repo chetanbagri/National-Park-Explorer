@@ -267,12 +267,12 @@ const Favorites = () => {
                 <Header/>
                 <h2>My Favorite Parks</h2>
                 <div>
-                    <button onClick={handleTogglePrivacy} aria-label={"Change visibility of favorites"}>
+                    <button onClick={handleTogglePrivacy}>
                         {isPrivate ? 'Make Favorites Public' : 'Make Favorites Private'}
                     </button>
                 </div>
                 <div>
-                    <button onClick={() => setShowConfirmationPopup(true)} aria-label={"Delete all favorites"}>Delete All</button>
+                    <button onClick={() => setShowConfirmationPopup(true)}>Delete All</button>
                 </div>
                 {showSingleDeleteConfirmation && (
                     <div className="confirmation-popup">
@@ -280,8 +280,8 @@ const Favorites = () => {
                             <h3>Confirm Delete Favorite Park</h3>
                             <p>Are you sure you want to delete this park from your favorites?</p>
                             <div className="confirmation-buttons">
-                                <button onClick={handleConfirmSingleDelete} aria-label={"Confirm deleting park from favorites"}>Confirm</button>
-                                <button onClick={() => setShowSingleDeleteConfirmation(false)} aria-label={"Cancel deleting park from favorites"}>Cancel</button>
+                                <button id="confirm-remove-button" onClick={handleConfirmSingleDelete}>Confirm</button>
+                                <button id="confirm-cancel-button" onClick={() => setShowSingleDeleteConfirmation(false)}>Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -292,8 +292,8 @@ const Favorites = () => {
                             <h3>Confirm Delete All Favorites</h3>
                             <p>Are you sure you want to delete all your favorite parks?</p>
                             <div className="confirmation-buttons">
-                                <button className="confirm-remove-button" onClick={handleConfirmClearFavorites} aria-label={"Confirm delete all favorite parks"}>Confirm</button>
-                                <button className="confirm-cancel-button" onClick={() => setShowConfirmationPopup(false)} aria-label={"Cancel deleting all favorite parks"}>Cancel</button>
+                                <button id="confirm-removeAll-button" className="confirm-remove-button" onClick={handleConfirmClearFavorites}>Confirm</button>
+                                <button id="confirm-cancelAll-button" className="confirm-cancel-button" onClick={() => setShowConfirmationPopup(false)}>Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -312,18 +312,14 @@ const Favorites = () => {
                                                 onMouseEnter={() => setHoveredPark(parkCode)}
                                                 onMouseLeave={() => setHoveredPark(null)}>
                                                 <button data-testid={`park-button-${parkCode}`}
-                                                        onClick={() => handleParkSelection(parkCode)}
-                                                        aria-label={"View details for park: " + favoriteParks[index]}>
+                                                        onClick={() => handleParkSelection(parkCode)}>
                                                     {favoriteParks[index]}
                                                 </button>
                                                 {hoveredPark === parkCode && (
                                                     <>
 
                                                     <span className="remove-from-favorites"
-                                                          tabIndex="0"
-                                                          role="button"
-                                                          aria-label="Remove from favorites"
-                                                        onClick={() => handleRemoveFavorite(parkCode)}>
+                                                    onClick={() => handleRemoveFavorite(parkCode)}>
                                                 -
                                             </span>
 
@@ -336,7 +332,6 @@ const Favorites = () => {
                                                         <h3>{selectedPark.fullName}</h3>
                                                         <img src={selectedPark.images[0].url}
                                                              alt={`View of ${selectedPark.fullName}`}
-                                                             aria-label={`${selectedPark.fullName}`}
                                                              style={{width: '100%', maxHeight: '300px', objectFit: 'cover'}}/>
                                                         <p>Description: {selectedPark.description}</p>
                                                         <div>
