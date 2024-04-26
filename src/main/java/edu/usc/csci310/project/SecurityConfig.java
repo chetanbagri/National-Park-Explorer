@@ -16,10 +16,10 @@ import java.util.Objects;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final Dotenv dotenv;
+    //private final Dotenv dotenv;
 
     public SecurityConfig() {
-        this.dotenv = Dotenv.configure().directory("./site").filename(".env").load();
+        //this.dotenv = Dotenv.configure().directory("./site").filename(".env").load();
     }
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
