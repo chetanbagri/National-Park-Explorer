@@ -41,7 +41,7 @@ public class SecurityConfig {
     public StandardPBEStringEncryptor textEncryptor() {
         StandardPBEStringEncryptor textEncryptor = new StandardPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
-        textEncryptor.setPassword(Objects.requireNonNull(dotenv.get("ENCRYPTION_KEY")));
+        textEncryptor.setPassword("8NNks*WfI78mtJumUdvYt@hFuI@*5@at");
         textEncryptor.setAlgorithm("PBEWithMD5AndDES");
         config.setSaltGeneratorClassName("org.jasypt.salt.ZeroSaltGenerator");
         textEncryptor.setConfig(config);
