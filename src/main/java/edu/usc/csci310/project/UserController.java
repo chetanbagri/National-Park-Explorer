@@ -22,7 +22,9 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
-        return userService.loginUser(user.getUsername(), user.getPassword());
+        ResponseEntity<?> answer  =  userService.loginUser(user.getUsername(), user.getPassword());
+        System.out.println("Answer in controller: "+answer);
+        return answer;
     }
 
     @PostMapping("/adduser")
@@ -60,9 +62,11 @@ public class UserController {
         return userService.clearFavorites(username);
     }
 
-    @PutMapping("/favorites/privacy")
-    public ResponseEntity<?> toggleFavoritesPrivacy(@RequestParam String username) {
-        return userService.toggleFavoritesPrivacy(username);
+    @PostMapping("/favorites/privacy")
+    public ResponseEntity<?> toggleFavoritesPrivacy(@RequestBody String username) {
+        ResponseEntity<?> user =  userService.toggleFavoritesPrivacy(username);
+        System.out.println("User in controller: "+user);
+        return user;
     }
 
 //    @PostMapping("/users/{username}/favorites/{parkId}/rank")

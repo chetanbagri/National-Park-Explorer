@@ -25,17 +25,20 @@ public class NavigationStepdefs {
 
     private static final String ROOT_URL = "https://localhost:8080/"; // Adjust this to your search page URL
 
-    private WebDriver driver = null;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
+
+
+
+    @Autowired
+    private UserService userService;
+
     public NavigationStepdefs() {
         ChromeOptions options = new ChromeOptions();
         options.setAcceptInsecureCerts(true);
         this.driver = new ChromeDriver(options);
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
-
-    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
-    @Autowired
-    private UserService userService;
 
     @After
     public void afterScenario() {

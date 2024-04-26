@@ -23,6 +23,7 @@ function Login() {
             })
             if(response.ok) {
                 const createdUser = await response.json();
+                console.log(`LOGIN USER: ${JSON.stringify(createdUser)}`);
                 sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
                 navigate('/search');
             }

@@ -64,8 +64,8 @@ public class loginStepdefs {
     @Then("I should be redirected to the landing page")
     public void iShouldBeRedirectedToTheLandingPage() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.urlToBe("http://localhost:8080/search"));
-        assertEquals("http://localhost:8080/search", driver.getCurrentUrl());
+        wait.until(ExpectedConditions.urlToBe("https://localhost:8080/search"));
+        assertEquals("https://localhost:8080/search", driver.getCurrentUrl());
         userService.removeUser("Bob");
     }
 

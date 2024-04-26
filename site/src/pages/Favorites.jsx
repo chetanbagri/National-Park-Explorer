@@ -29,6 +29,7 @@ const Favorites = () => {
     const [hoveredPark, setHoveredPark] = useState(null);
     const [showSingleDeleteConfirmation, setShowSingleDeleteConfirmation] = useState(false);
     const [parkToDelete, setParkToDelete] = useState(null);
+    const [isPrivate, setIsPrivate] = useState(true); // Set to true by default (private)
 
     const API_KEY = process.env.REACT_APP_API_KEY;
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
@@ -36,6 +37,8 @@ const Favorites = () => {
     useEffect(() => {
         const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
         if(userInfo) {
+            const truther = userInfo.favPrivate
+            setIsPrivate(truther);
             const username = userInfo.username;
             fetchUserFavorites(username)
                 .then((favorites) => {
@@ -92,17 +95,19 @@ const Favorites = () => {
     };
 
 
-    const handleTogglePrivacy = async () => {
-
+    const handleTogglePrivacy = async (e) => {
+        e.preventDefault();
             const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
-            const response = await fetch(`/favorites/privacy?username=${username}`, {
-                method: 'PUT',
+            const response = await fetch("/favorites/privacy", {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "text/plain"
+                },
+                body: username
             });
-
-
-
-            setIsPrivate((prevStatus) => !prevStatus);
-
+            const updatedUser = await response.json();
+            sessionStorage.setItem('userInfo', JSON.stringify(updatedUser));
+            setIsPrivate(!isPrivate);
     };
 
     const fetchUserFavorites = async (username) => {
@@ -274,12 +279,12 @@ const Favorites = () => {
                 <Header/>
                 <h2>My Favorite Parks</h2>
                 <div>
-                    <button onClick={handleTogglePrivacy}>
+                    <button  id="privPub"  data-private={isPrivate ? isPrivate.toString() : 'true'} onClick={handleTogglePrivacy} aria-label={"Change visibility of favorites"}>
                         {isPrivate ? 'Make Favorites Public' : 'Make Favorites Private'}
                     </button>
                 </div>
                 <div>
-                    <button onClick={() => setShowConfirmationPopup(true)}>Delete All</button>
+                    <button onClick={() => setShowConfirmationPopup(true)} aria-label={"Delete all favorites"}>Delete All</button>
                 </div>
                 {showSingleDeleteConfirmation && (
                     <div className="confirmation-popup">
@@ -287,8 +292,8 @@ const Favorites = () => {
                             <h3>Confirm Delete Favorite Park</h3>
                             <p>Are you sure you want to delete this park from your favorites?</p>
                             <div className="confirmation-buttons">
-                                <button id="confirm-remove-button" onClick={handleConfirmSingleDelete}>Confirm</button>
-                                <button id="confirm-cancel-button" onClick={() => setShowSingleDeleteConfirmation(false)}>Cancel</button>
+                                <button id="confirm-remove-button" onClick={handleConfirmSingleDelete} aria-label={"Confirm deleting park from favorites"}>Confirm</button>
+                                <button id="confirm-cancel-button" onClick={() => setShowSingleDeleteConfirmation(false)} aria-label={"Cancel deleting park from favorites"}>Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -311,10 +316,12 @@ const Favorites = () => {
                             <li key={parkCode}
                                 onMouseEnter={() => setHoveredPark(parkCode)}
                                 onMouseLeave={() => setHoveredPark(null)}>
-                                <button onClick={() => handleParkSelection(parkCode)} aria-label={"View details for park: " + favoriteParks[index]}>
+                                <button onClick={() => handleParkSelection(parkCode)}
+                                        aria-label={"View details for park: " + favoriteParks[index]}>
                                     {favoriteParks[index]}
                                 </button>
                                 {hoveredPark === parkCode && (
+                                    <>
                                     <span className="remove-from-favorites"
                                           tabIndex="0"
                                           role="button"
@@ -322,11 +329,16 @@ const Favorites = () => {
                                           onClick={() => handleRemoveFavorite(parkCode)}>
                                         -
                                     </span>
-                                )}
 
-                                {selectedPark && selectedPark.parkCode === parkCode && (
-                                    <div className="detailsBox">
-                                        <h3>{selectedPark.fullName}</h3>
+                                    <span className="arrow-up" onClick={() => onArrowClick(index, 'up')}>↑</span>
+                                    <span className="arrow-down" onClick={() => onArrowClick(index, 'down')}>↓</span>
+                                    </>
+                                 )}
+
+
+                {selectedPark && selectedPark.parkCode === parkCode && (
+                    <div className="detailsBox" data-testid="detailsBox">
+                    <h3>{selectedPark.fullName}</h3>
                                         <img src={selectedPark.images[0].url}
                                              alt={`View of ${selectedPark.fullName}`}
                                              aria-label={`${selectedPark.fullName}`}

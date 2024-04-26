@@ -70,7 +70,7 @@ public class User {
         this.favorites = favorites;
     }
 
-    public boolean isFavPrivate(){
+    public boolean getFavPrivate(){
         return favPrivate;
     }
 

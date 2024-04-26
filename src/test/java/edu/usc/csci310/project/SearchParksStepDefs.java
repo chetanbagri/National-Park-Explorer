@@ -25,14 +25,17 @@ public class SearchParksStepDefs {
     private static final String ROOT_URL = "https://localhost:8080/search"; // Adjust this to your search page URL
     private static final String ROOT_URL2 = "https://localhost:8080/"; // Adjust this to your search page URL
 
-    private WebDriver driver = null;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
+
+
+
     public SearchParksStepDefs() {
         ChromeOptions options = new ChromeOptions();
         options.setAcceptInsecureCerts(true);
         this.driver = new ChromeDriver(options);
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
-
-    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
     @After
     public void afterScenario() {
@@ -119,10 +122,10 @@ public class SearchParksStepDefs {
         waitForTextToAppearInPageSource(driver, "Alcatraz Island", 5); // Adjust the timeout as needed
     }
 
-    @After
-    public void tearDown() {
-        driver.quit();
-    }
+//    @After
+//    public void tearDown() {
+//        driver.quit();
+//    }
 
     @Given("I'm on search and I enter some kind of search")
     public void iMOnSearchAndIEnterSomeKindOfSearch() {

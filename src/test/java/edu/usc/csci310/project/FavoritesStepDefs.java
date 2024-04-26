@@ -38,17 +38,20 @@ public class FavoritesStepDefs {
 
         private static final String ROOT_URL = "https://localhost:8080/"; // Adjust this to your search page URL
 
-    private WebDriver driver  =  null;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
+
+
+
+    @Autowired
+    private UserService userService;
+
     public FavoritesStepDefs() {
         ChromeOptions options = new ChromeOptions();
         options.setAcceptInsecureCerts(true);
         this.driver = new ChromeDriver(options);
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
-
-        private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
-        @Autowired
-        private UserService userService;
 
         @Autowired
         private StandardPBEStringEncryptor testEncryptor;
@@ -84,13 +87,11 @@ public class FavoritesStepDefs {
         String parkCode;
         if(park.equals("Alcatraz Island")) parkCode =  "alca";
         else parkCode  = "acad";
-        System.out.println("Has_in_favs"+parkCode);
         ResponseEntity<?> response = userService.addFavorite(encryptedUsername, parkCode);
         FavoritesResponse favoritesResponse = (FavoritesResponse) response.getBody();
         List<String> favoriteList = favoritesResponse.getFavorites();
         assertTrue(favoriteList.contains(parkCode));
         driver.navigate().refresh();
-        Thread.sleep(200);
     }
     @Then("a minus sign should appear")
     public void a_minus_sign_should_appear() {
@@ -149,8 +150,14 @@ public class FavoritesStepDefs {
     }
 
     @When("the user clicks on {string}")
-    public void theUserClicksOn(String parkName) {
-        driver.findElements(By.xpath("//button[contains(text(), '" + parkName + "')]")).get(0).click();
+    public void theUserClicksOn(String parkName) throws InterruptedException {
+        WebElement button = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//button[contains(text(), '" + parkName + "')]")
+        ));
+//        Thread.sleep(5000);
+//        System.out.println(button);
+        button.click();
+//        Thread.sleep(5000);
     }
 
     @When("the user clicks on {string} again")
@@ -171,9 +178,21 @@ public class FavoritesStepDefs {
     }
 
     @And("the user has {string} at rank {int} in their favorites")
-    public void theUserHasAtRankInTheirFavorites(String parkName, int rank) {
-        WebElement park = driver.findElements(By.cssSelector("ul > li > button")).get(rank - 1);
-        Assertions.assertTrue(park.getText().contains(parkName));
+    public void theUserHasAtRankInTheirFavorites(String parkName, int rank) throws InterruptedException {
+        String encryptedUsername = testEncryptor.encrypt("NickoOG_TMP");
+        String parkCode;
+        if(parkName.equals("Alcatraz Island")) parkCode =  "alca";
+        else parkCode  = "acad";
+        ResponseEntity<?> response = userService.addFavorite(encryptedUsername, parkCode);
+        FavoritesResponse favoritesResponse = (FavoritesResponse) response.getBody();
+        List<String> favoriteList = favoritesResponse.getFavorites();
+        assertTrue(favoriteList.contains(parkCode));
+        driver.navigate().refresh();
+        List<WebElement> parklist = wait.until(
+                ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("ul > li > button")));
+        WebElement park = parklist.get(rank-1);
+        Thread.sleep(2000);
+        assertEquals(parkName, park.getText());
     }
 
     @Then("an up arrow should appear")
@@ -181,15 +200,22 @@ public class FavoritesStepDefs {
         Assertions.assertTrue(driver.findElements(By.className("arrow-up")).size() > 0);
     }
 
-    @When("the user clicks the up arrow")
-    public void theUserClicksTheUpArrow() {
-        driver.findElement(By.className("arrow-up")).click();
+    @When("the user clicks the up arrow for rank {int}")
+    public void theUserClicksTheUpArrow(int rank) throws InterruptedException {
+        WebElement button = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//*[@id=\"root\"]/div/div/ul/li["+rank+"]/span[2]")
+        ));
+        button.click();
+        Thread.sleep(1000);
     }
 
     @Then("{string} should be rank {int}")
-    public void shouldBeRank(String parkName, int rank) {
-        WebElement park = driver.findElements(By.cssSelector("ul > li > button")).get(rank - 1);
-        Assertions.assertTrue(park.getText().contains(parkName));
+    public void shouldBeRank(String parkName, int rank) throws InterruptedException {
+        List<WebElement> parklist = wait.until(
+                ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("ul > li > button")));
+        WebElement park = parklist.get(rank-1);
+        wait.until(ExpectedConditions.textToBePresentInElement(park, ""));
+        assertEquals(parkName, park.getText());
     }
 
     @Then("a down arrow should appear")
@@ -197,29 +223,34 @@ public class FavoritesStepDefs {
         Assertions.assertTrue(driver.findElements(By.className("arrow-down")).size() > 0);
     }
 
-    @When("the user clicks the down arrow")
-    public void theUserClicksTheDownArrow() {
-        driver.findElement(By.className("arrow-down")).click();
+    @When("the user clicks the down arrow for rank {int}")
+    public void theUserClicksTheDownArrow(int rank) throws InterruptedException {
+        WebElement button = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//*[@id=\"root\"]/div/div/ul/li["+rank+"]/span[3]")
+        ));
+        button.click();
+        Thread.sleep(1000);
     }
 
-    @Then("the favorites list should be set to private by default")
+    @Then("the favorites list is set to private by default")
     public void theFavoritesListShouldBeSetToPrivateByDefault() {
-        Assertions.assertTrue(Boolean.parseBoolean(driver.findElement(By.xpath("//button[contains(text(), 'Make Favorites Public')]")).getAttribute("data-private")));
+        WebElement button = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("privPub")));
+        String privPubBool = button.getAttribute("data-private");
+        assertEquals("true", privPubBool);
     }
 
-    @And("the favorites list is set to private")
-    public void theFavoritesListIsSetToPrivate() {
-        Assertions.assertTrue(Boolean.parseBoolean(driver.findElement(By.xpath("//button[contains(text(), 'Make Favorites Public')]")).getAttribute("data-private")));
-    }
 
-    @When("I click {string}")
-    public void iClick(String buttonText) {
-        driver.findElement(By.xpath("//button[contains(text(), '" + buttonText + "')]")).click();
+    @When("I click Make Favorites Public")
+    public void iClick() {
+        WebElement button = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("privPub")));
+        button.click();
     }
 
     @Then("the favorites list should be public")
     public void theFavoritesListShouldBePublic() {
-        Assertions.assertTrue(Boolean.parseBoolean(driver.findElement(By.xpath("//button[contains(text(), 'Make Favorites Private')]")).getAttribute("data-public")));
+        WebElement button = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("privPub")));
+        String privPubBool = button.getAttribute("data-private");
+        assertEquals("false", privPubBool);
     }
 
         @After
@@ -232,7 +263,6 @@ public class FavoritesStepDefs {
 //        String parkCode;
 //        if(parkName.equals("Alcatraz Island")) parkCode =  "alca";
 //        else parkCode  = "acad";
-//        System.out.println("Has_in_favs"+parkCode);
         WebElement parkElement = new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(), '" + parkName + "')]")));
         Actions action = new Actions(driver);
@@ -249,5 +279,37 @@ public class FavoritesStepDefs {
         FavoritesResponse favoritesResponse = (FavoritesResponse) response.getBody();
         List<String> favoriteList = favoritesResponse.getFavorites();
         assertTrue(favoriteList.contains(parkCode));
+    }
+
+    @Then("an inline window of park details appears")
+    public void anInlineWindowOfParkDetailsAppears() throws InterruptedException {
+        List<WebElement> detailsBox = wait.until(
+                ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".detailsBox"))
+        );
+        assertFalse(detailsBox.isEmpty(), "The details of the park were not displayed inline.");
+        WebElement detailElement = wait.until(ExpectedConditions.visibilityOf(detailsBox.get(0).findElement(By.tagName("h3"))));
+        assertNotNull(detailElement, "Park details content is missing.");
+    }
+
+    @When("the user hovers over the park button {string}")
+    public void theUserHoversOverTheParkButton(String parkName) {
+        WebElement parkElement = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(), '" + parkName + "')]")));
+        Actions action = new Actions(driver);
+        action.moveToElement(parkElement).perform();
+    }
+    @When("I click the nav button with id {string}")
+    public void iClickTheNavButtonWithId(String arg0) throws InterruptedException {
+        driver.findElement(By.id(arg0)).click();
+        Thread.sleep(1000);
+    }
+    @And("see the page title is {string}")
+    public void seeThatThePageTitleIs(String arg0) {
+        assertTrue(driver.getPageSource().contains(arg0));
+    }
+
+    @And("I remove the user")
+    public void iRemoveTheUser() {
+        userService.removeUser("NickoOG_TMP");
     }
 }

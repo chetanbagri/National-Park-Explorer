@@ -28,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CompareStepdefs {
     private static final String ROOT_URL = "https://localhost:8080/"; // Adjust this to your search page URL
 
-    private  WebDriver driver = null;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
 
 
@@ -39,8 +40,8 @@ public class CompareStepdefs {
         ChromeOptions options = new ChromeOptions();
         options.setAcceptInsecureCerts(true);
         this.driver = new ChromeDriver(options);
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
     }
-    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
     private StandardPBEStringEncryptor textEncryptor = new StandardPBEStringEncryptor();
 
@@ -73,7 +74,7 @@ public class CompareStepdefs {
         driver.findElement(By.id("password")).click();
         driver.findElement(By.id("password")).sendKeys(password);
         driver.findElement(By.id("loginBtn")).click();
-        wait.until(ExpectedConditions.urlToBe("https://localhost:8080/search"));
+        wait.until(ExpectedConditions.urlToBe("http://localhost:8080/search"));
         driver.findElement(By.id("nav-compare")).click();
     }
 

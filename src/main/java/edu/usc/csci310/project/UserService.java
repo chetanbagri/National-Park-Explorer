@@ -342,6 +342,7 @@ public class UserService {
 
 
     public ResponseEntity<?> clearFavorites(String username) {
+        System.out.println("Username in service1: "+username);
         User user = userRepository.findByUsername(username);
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found");
@@ -355,14 +356,14 @@ public class UserService {
 
 
     public ResponseEntity<?> toggleFavoritesPrivacy(String username) {
+        System.out.println("Username in service: "+username);
         User user = userRepository.findByUsername(username);
 
-
-        boolean currentStatus = user.isFavPrivate();
+        boolean currentStatus = user.getFavPrivate();
         user.setFavPrivate(!currentStatus);
         userRepository.save(user);
-
-        return ResponseEntity.ok("Favorites privacy status updated to " + !currentStatus);
+        System.out.println("User in Service: "+user.getUsername());
+        return ResponseEntity.ok(user);
     }
 
 //    public void addFavoriteWithRank(String username, String parkId, int rank) {
