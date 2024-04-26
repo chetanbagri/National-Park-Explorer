@@ -48,7 +48,9 @@ function Login() {
             <div className="logo-image-div">
                 <img className="logo-image"
                      src={logo}
-                     alt="Campfire logo and Let's Go Camping! message in bright green"/>
+                     alt="Campfire logo and Let's Go Camping! message in bright green"
+                     aria-label="Campfire logo and Let's Go Camping! message in bright green"
+                />
             </div>
             <div className="login-form">
                 <h2>Login</h2>
@@ -61,6 +63,8 @@ function Login() {
                         data-testid="test-username"
                         value={username}
                         title={"Username Field"}
+                        aria-label={"Enter username"}
+                        alt={"Enter username"}
                         onChange={(e) => setUsername(e.target.value)}
                     />
                 </div>
@@ -72,15 +76,17 @@ function Login() {
                         data-testid="test-password"
                         value={password}
                         title={"Password Field"}
+                        aria-label={"Enter password"}
+                        alt={"Enter password"}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
                 <div>
-                    <button id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login
+                    <button aria-label={"login"} id="loginBtn" data-testid="test-loginBtn" title={"submit"} onClick={handleLogin}>Login
                     </button>
                 </div>
                 <div>
-                    <a  id="create-account" href="/create-account" title={"Go to Create Account"}>Create Account</a>
+                    <a id="create-account" href="/create-account" title={"Go to Create Account"}>Create Account</a>
                 </div>
             </div>
             <Footer/>

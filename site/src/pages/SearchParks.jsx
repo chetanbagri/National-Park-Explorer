@@ -378,7 +378,9 @@ const SearchParks = () => {
                                     {park.fullName}
                                 </button>
                                 {hoveredPark === park.parkCode && (
-                                    <span className="add-to-favorites"
+                                    <span className="add-to-favorites" tabIndex="0"
+                                          role="button"
+                                          aria-label="Add to favorites"
                                           onClick={() => handleAddToFavorites(park.parkCode)}>
                                             +
                                     </span>
@@ -393,8 +395,15 @@ const SearchParks = () => {
                                     <p className={"park-description"}>Description: {selectedPark.description}</p>
                                     <div>
                                         <h4>Location:</h4>
-                                        <p onClick={() => handleLocationClick(selectedPark.addresses[0].stateCode)}
-                                           className="clickable-text park-location">
+                                        <p tabIndex={0} onClick={() => handleLocationClick(selectedPark.addresses[0].stateCode)}
+                                           className="clickable-text park-location"
+                                           onKeyDown={(event) => {
+                                               // Trigger the click event when the Enter key is pressed
+                                               if (event.key === 'Enter') {
+                                                   handleLocationClick(selectedPark.addresses[0].stateCode);
+                                               }
+                                           }}
+                                        >
                                             {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}
                                         </p>
                                     </div>
@@ -415,7 +424,15 @@ const SearchParks = () => {
                                         {selectedPark.activities.map((activity, index) => (
                                             <React.Fragment key={activity.id}>
                                             <span className="clickable-text"
-                                                  onClick={() => handleActivitiesClick(activity.name)}>
+                                                  tabIndex="0"
+                                                  onClick={() => handleActivitiesClick(activity.name)}
+                                                  onKeyDown={(event) => {
+                                                      // Trigger the click event when the Enter key is pressed
+                                                      if (event.key === 'Enter') {
+                                                          handleActivitiesClick(activity.name);
+                                                      }
+                                                  }}
+                                            >
                                                 {activity.name}
                                             </span>{index < selectedPark.activities.length - 1 ? ', ' : ''}
                                             </React.Fragment>
@@ -427,7 +444,15 @@ const SearchParks = () => {
                                         {parkAmenities.map((amenity, index) => (
                                             <React.Fragment key={amenity.id}>
                                             <span className="amenities-clickable-text clickable-text"
-                                                  onClick={() => handleAmenitiesClick(amenity.name)}>
+                                                  tabIndex="0"
+                                                  onClick={() => handleAmenitiesClick(amenity.name)}
+                                                  onKeyDown={(event) => {
+                                                      // Trigger the click event when the Enter key is pressed
+                                                      if (event.key === 'Enter') {
+                                                          handleAmenitiesClick(amenity.name);
+                                                      }
+                                                  }}
+                                            >
                                                 {amenity.name}
                                             </span>
                                                 {index < parkAmenities.length - 1 ? ', ' : ''}
