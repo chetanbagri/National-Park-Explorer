@@ -323,6 +323,8 @@ function Compare(/* {initexpanded= null} */){
                     onChange={(e) => setUsernameQuery(e.target.value)}
                     title={"Username Box for adding to group"}
                     tabIndex={0}
+                    aria-label={"Username Box for adding to group"}
+                    alt={"Username Box for adding to group"}
                     autoFocus
                 />
                 <input
@@ -330,6 +332,8 @@ function Compare(/* {initexpanded= null} */){
                     value="Add To Group"
                     title={"Submit Username"}
                     id={"addUserBtn"}
+                    aria-label={"Submit username"}
+                    alt={"Submit username"}
                     tabIndex={0}
                 />
             </form>
@@ -337,8 +341,8 @@ function Compare(/* {initexpanded= null} */){
             {error && <p>{error}</p>}
 
             <h2>Compare Parks and Give Suggestions</h2>
-            <button title={"Submit Compare"} id={"compareBtn"} tabIndex={0} onClick={handleCompare}>Compare</button>
-            <button title={"Submit Suggestion"} id={"suggestBtn"} tabIndex={0} onClick={handleSuggest}>Suggest the Best Park</button>
+            <button title={"Submit Compare"} id={"compareBtn"} tabIndex={0} onClick={handleCompare} aria-label={"Submit Compare"}>Compare</button>
+            <button title={"Submit Suggestion"} id={"suggestBtn"} tabIndex={0} onClick={handleSuggest} aria-label={"Suggest the Best Park"}>Suggest the Best Park</button>
             {userFavorites && userFavorites.length > 0 && (
                 <ul>
                     {userFavorites.map((parkCode, index) => (
