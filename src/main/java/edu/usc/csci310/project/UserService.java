@@ -151,7 +151,6 @@ public class UserService {
     }
 
     public ResponseEntity<?> compareParks(String username) {
-        /*
         User user = userRepository.findByUsername(username);
         if(user != null){
             // Get string usernames of friends in group
@@ -163,7 +162,16 @@ public class UserService {
             // Retrieve ALL favorite parks of each username, including myself
             HashMap<String, Integer> parkCounts = new HashMap<>();
             HashMap<String, List<String>> parksToUsers = new HashMap<>(); // Map park ID to associated usernames
-            List<String> favs = user.getFavorites();
+
+            List<String> favs = new ArrayList<>();
+            String favoritesString = user.getFavorites();
+            if(favoritesString != null && !(favoritesString.isEmpty())) {
+                favoritesString = textEncryptor.decrypt(favoritesString);
+                Type type = new TypeToken<ArrayList<String>>() {}.getType();
+                favs = gson.fromJson(favoritesString, type);
+            }
+            // List<String> favs = user.getFavorites(); OUTDATED
+
             for(String parkID : favs) { // each parkID in userI favorites list
                 int count = parkCounts.getOrDefault(parkID, 0);
                 parkCounts.put(parkID, count + 1);
@@ -174,7 +182,16 @@ public class UserService {
             }
             for(String userI : userGroup){ // Now retrieve for the entire group
                 // do something with userI
-                favs = userRepository.findByUsername(userI).getFavorites();
+                // favs = new ArrayList<>();
+                favs.clear();
+                favoritesString = user.getFavorites();
+                if(favoritesString != null && !(favoritesString.isEmpty())) {
+                    favoritesString = textEncryptor.decrypt(favoritesString);
+                    Type type = new TypeToken<ArrayList<String>>() {}.getType();
+                    favs = gson.fromJson(favoritesString, type);
+                }
+                // favs = userRepository.findByUsername(userI).getFavorites();
+
                 for(String parkID : favs) { // each parkID in userI favorites list
                     int count = parkCounts.getOrDefault(parkID, 0);
                     parkCounts.put(parkID, count + 1);
@@ -205,8 +222,6 @@ public class UserService {
         else { // Username does not exists within database
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username does not exist");
         }
-        */
-        return null; // tmp
     }
 
 
