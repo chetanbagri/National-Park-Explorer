@@ -6,6 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import jakarta.transaction.Transactional;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -32,6 +33,8 @@ public class CompareStepdefs {
 
     @Autowired
     private UserService userService;
+
+    private StandardPBEStringEncryptor textEncryptor = new StandardPBEStringEncryptor();
 
     public void waitForTextToAppearInPageSource(WebDriver driver, String textToAppear, int timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
@@ -93,13 +96,13 @@ public class CompareStepdefs {
     @Transactional // Note: Transactional is necessary to avoid org.hibernate.LazyInitializationException
     @And("I have park with id {string} favorited")
     public void iHaveParkWithIdFavorited(String arg0) {
-        userService.addFavorite("NickoOG_CTMP", arg0);
+        userService.addFavorite(textEncryptor.encrypt("NickoOG_CTMP"), arg0);
     }
 
     @Transactional // Note: Transactional is necessary to avoid org.hibernate.LazyInitializationException
     @And("{string} has park with id {string} favorited")
     public void hasParkWithIdFavorited(String arg0, String arg1) {
-        userService.addFavorite(arg0, arg1);
+        userService.addFavorite(textEncryptor.encrypt(arg0), arg1);
     }
 
     @And("I click on text {string} with id {string}")

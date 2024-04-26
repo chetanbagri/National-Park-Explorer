@@ -125,6 +125,25 @@ class UserControllerTest {
     }
 
     @Test
+    void testGetFavoritesSuggest() {
+        String username = "Alice";
+        String[] expectedFavorites = {"park1", "park2", "park3"};
+
+        ResponseEntity mockResponse = ResponseEntity.ok(Map.of("favorites", expectedFavorites));
+        when(userService.getFavoritesSuggest(username)).thenReturn(mockResponse);
+
+        ResponseEntity<?> response = userController.getFavoritesSuggest(username);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody() instanceof Map);
+        @SuppressWarnings("unchecked")
+        Map<String, String[]> body = (Map<String, String[]>) response.getBody();
+        assertArrayEquals(expectedFavorites, body.get("favorites"));
+
+        verify(userService).getFavoritesSuggest(username);
+    }
+
+    @Test
     void testAddFavorite() {
         String username = "Alice";
         String parkId = "park1";

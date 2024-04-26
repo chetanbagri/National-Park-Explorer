@@ -40,6 +40,11 @@ public class UserController {
         return userService.getFavorites(username);
     }
 
+    @GetMapping("/favorites/suggest")
+    public ResponseEntity<?> getFavoritesSuggest(@RequestParam String username) {
+        return userService.getFavoritesSuggest(username);
+    }
+
     @PostMapping("/favorites/add")
     public ResponseEntity<?> addFavorite(@RequestParam String username, @RequestParam String parkId) {
         return userService.addFavorite(username, parkId);
@@ -86,6 +91,10 @@ public class UserController {
     }
 
 
-
+    @PostMapping("/decryptusername")
+    public ResponseEntity<?> getDecryptedUsername(@RequestParam String username) {
+//        System.out.println("Received " + username);
+        return userService.decryptUsername(username);
+    }
 
 }

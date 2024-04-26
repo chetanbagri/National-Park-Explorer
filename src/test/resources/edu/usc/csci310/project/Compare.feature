@@ -30,31 +30,31 @@ Feature: Compare favorite park list with friends (#5)
 #  #Verified
   Scenario: User B cannot be added if they do not have a public list
     Given I am on the Compare page
-    And I have "Nicko_CTMP1" registered
-    And "Nicko_CTMP1" has a "private" park list
-    When I enter "Nicko_CTMP1" into element with id "usernameQuery"
+    And I have "Nicko_CTMP2" registered
+    And "Nicko_CTMP2" has a "private" park list
+    When I enter "Nicko_CTMP2" into element with id "usernameQuery"
     And I click on the element with id "addUserBtn"
     Then I should see "Error: User cannot be added due to them having a private favorite park list"
 
   #Verified
   Scenario: Fail to add friend to group if their account does not exist
     Given I am on the Compare page
-    When I enter "Nicko_CTMP1" into element with id "usernameQuery"
+    When I enter "Nicko_CTMP3" into element with id "usernameQuery"
     And I click on the element with id "addUserBtn"
     Then I should see "Error: Username does not exist"
 
   #Verified
   Scenario: Clicking on compare button will display compared parks in ranked order
     Given I am on the Compare page
-    And I have "Nicko_CTMP1" registered
-    And "Nicko_CTMP1" has a "public" park list
+    And I have "Nicko_CTMP4" registered
+    And "Nicko_CTMP4" has a "public" park list
     And I have park with id "grte" favorited
     And I have park with id "wrst" favorited
     And I have park with id "yell" favorited
-    And "Nicko_CTMP1" has park with id "grte" favorited
-    When I enter "Nicko_CTMP1" into element with id "usernameQuery"
+    And "Nicko_CTMP4" has park with id "grte" favorited
+    When I enter "Nicko_CTMP4" into element with id "usernameQuery"
     And I click on the element with id "addUserBtn"
-    Then I should see "Successfully added Nicko_CTMP1 to your group of friends"
+    Then I should see "Successfully added Nicko_CTMP4 to your group of friends"
     And I click on the element with id "compareBtn"
     Then I should see "Grand Teton National Park"
     And I should see "Yellowstone National Park"
@@ -63,14 +63,14 @@ Feature: Compare favorite park list with friends (#5)
   # Verified
   Scenario: Each compared park shows a ratio
     Given I am on the Compare page
-    And I have "Nicko_CTMP1" registered
-    And "Nicko_CTMP1" has a "public" park list
+    And I have "Nicko_CTMP5" registered
+    And "Nicko_CTMP5" has a "public" park list
     And I have park with id "grte" favorited
     And I have park with id "yell" favorited
-    And "Nicko_CTMP1" has park with id "grte" favorited
-    When I enter "Nicko_CTMP1" into element with id "usernameQuery"
+    And "Nicko_CTMP5" has park with id "grte" favorited
+    When I enter "Nicko_CTMP5" into element with id "usernameQuery"
     And I click on the element with id "addUserBtn"
-    Then I should see "Successfully added Nicko_CTMP1 to your group of friends"
+    Then I should see "Successfully added Nicko_CTMP5 to your group of friends"
     And I click on the element with id "compareBtn"
     Then I should see "Grand Teton National Park"
     And I should see "2 / 2"
@@ -80,20 +80,20 @@ Feature: Compare favorite park list with friends (#5)
   #Verified
   Scenario: Clicking on park ratio displays accounts that favorited the park
     Given I am on the Compare page
-    And I have "Nicko_CTMP1" registered
-    And "Nicko_CTMP1" has a "public" park list
+    And I have "Nicko_CTMP6" registered
+    And "Nicko_CTMP6" has a "public" park list
     And I have park with id "grte" favorited
     And I have park with id "yell" favorited
-    And "Nicko_CTMP1" has park with id "grte" favorited
-    When I enter "Nicko_CTMP1" into element with id "usernameQuery"
+    And "Nicko_CTMP6" has park with id "grte" favorited
+    When I enter "Nicko_CTMP6" into element with id "usernameQuery"
     And I click on the element with id "addUserBtn"
-    Then I should see "Successfully added Nicko_CTMP1 to your group of friends"
+    Then I should see "Successfully added Nicko_CTMP6 to your group of friends"
     And I click on the element with id "compareBtn"
     Then I should see "Grand Teton National Park"
     And I should see "Yellowstone National Park"
     And I click on text "2 / 2" with id "pid-0"
     Then I should see "NickoOG_CTMP"
-    Then I should see "Nicko_CTMP1"
+    Then I should see "Nicko_CTMP6"
     And I click on text "2 / 2" with id "pid-0"
     And I click on text "1 / 2" with id "pid-1"
     Then I should see "NickoOG_CTMP"
@@ -101,15 +101,15 @@ Feature: Compare favorite park list with friends (#5)
   # Verified
   Scenario: Clicking on compared park within the list displays detail window
     Given I am on the Compare page
-    And I have "Nicko_CTMP1" registered
-    And "Nicko_CTMP1" has a "public" park list
+    And I have "Nicko_CTMP7" registered
+    And "Nicko_CTMP7" has a "public" park list
     And I have park with id "grte" favorited
     And I have park with id "wrst" favorited
     And I have park with id "yell" favorited
-    And "Nicko_CTMP1" has park with id "grte" favorited
-    When I enter "Nicko_CTMP1" into element with id "usernameQuery"
+    And "Nicko_CTMP7" has park with id "grte" favorited
+    When I enter "Nicko_CTMP7" into element with id "usernameQuery"
     And I click on the element with id "addUserBtn"
-    Then I should see "Successfully added Nicko_CTMP1 to your group of friends"
+    Then I should see "Successfully added Nicko_CTMP7 to your group of friends"
     And I click on the element with id "compareBtn"
     Then I should see "Grand Teton National Park"
     And I should see "Yellowstone National Park"

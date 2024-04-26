@@ -40,11 +40,15 @@ test('add a user to group', async () => {
         username: "NickoOG"
     };
     sessionStorage.setItem('userInfo', JSON.stringify(createdUser));
-    fetch.mockResponseOnce(JSON.stringify({
-        data: [
-            "NickoOG1"
-        ]
-    }));
+    fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
+        [JSON.stringify({ data: "NickoOG1" }), { status: 200 }]
+    );
+    // fetch.mockResponseOnce(JSON.stringify({
+    //     data: [
+    //         "NickoOG1"
+    //     ]
+    // }));
 
     renderWithRouter(<Compare />);
 
@@ -99,6 +103,7 @@ test('compare parks', async () => {
     // handleCompare() -> fetchGroupFavorites(username)
     // handleCompare() -> fetchParkDetails(parkCode)
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({
@@ -135,6 +140,7 @@ test('compare parks and view details', async () => {
     // handleParkSelection() -> fetchParkDetails(parkCode)
     // handleParkSelection() -> fetchAmenitiesOfPark(parkCode)
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({
@@ -200,6 +206,7 @@ test('hovering on compared park', async () => {
     // handleCompare() -> fetchGroupFavorites(username)
     // handleCompare() -> fetchParkDetails(parkCode)
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({
@@ -257,6 +264,7 @@ test('no ratio to display', async () => {
     // handleCompare() -> fetchGroupFavorites(username)
     // handleCompare() -> fetchParkDetails(parkCode)
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({
@@ -295,6 +303,7 @@ test('fetchAmenitiesOfPark NOT OK', async () => {
     // handleParkSelection() -> fetchParkDetails(parkCode)
     // handleParkSelection() -> fetchAmenitiesOfPark(parkCode)
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({
@@ -356,6 +365,7 @@ test('fetchParkDetails NOT OK', async () => {
     // handleCompare() -> fetchParkDetails(parkCode) // Just need to display names for initial list
     // handleParkSelection() -> fetchParkDetails(parkCode)
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({
@@ -398,6 +408,7 @@ test('fetchGroupFavorites NOT OK', async () => {
     // 1 fetch from handleAddToGroup()
     // handleCompare() -> fetchGroupFavorites(username)
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [null, { status: 404 }]
     );
@@ -428,6 +439,7 @@ test('fetchAmenitiesOfPark EXCEPTION', async () => {
     // handleParkSelection() -> fetchParkDetails(parkCode)
     // handleParkSelection() -> fetchAmenitiesOfPark(parkCode) -> EXCEPTION
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({
@@ -493,6 +505,7 @@ test('handleCompare EXCEPTION', async () => {
     // 1 fetch from handleAddToGroup()
     // handleCompare() -> fetchGroupFavorites(username) -> EXCEPTION
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}]
     );
     fetch.mockReject(new Error(''));
@@ -526,6 +539,7 @@ test('with no fee info, open and close details widget', async () => {
     // handleParkSelection() -> fetchParkDetails(parkCode)
     // handleParkSelection() -> fetchAmenitiesOfPark(parkCode)
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({
@@ -601,6 +615,7 @@ test('successfully suggests a common favorite park', async () => {
     // handleSuggest() -> fetchUserFavorites(member)
     // handleSuggest() -> fetchParkDetails(commonFavorites[0])
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({
@@ -670,6 +685,7 @@ test('successfully see details of a suggested park', async () => {
     // handleSuggest() -> fetchParkDetails(commonFavorites[0])
     // handleSuggestedParkSelection() --> fetchAmenitiesOfPark(`${parkCode}`)
     fetch.mockResponses(
+        [JSON.stringify({ data: "NickoOG" }), { status: 200 }],
         [JSON.stringify({data: ["NickoOG1"]}), {status: 200}],
         [
             JSON.stringify({

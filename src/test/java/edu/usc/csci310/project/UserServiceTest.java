@@ -830,7 +830,17 @@ class UserServiceTest {
 //    }
 
 
+    @Test
+    void testDecrypt() {
+        User user = new User();
+        user.setUsername("NickoOG");
 
+        when(mockRepository.findByUsername("testUser")).thenReturn(user);
+
+        ResponseEntity<?> response = userService.decryptUsername("f4UMs6XdhD4=");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 
 
 

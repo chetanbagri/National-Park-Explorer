@@ -1,6 +1,6 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import '../styles/compare.css'
 
 function Compare(/* {initexpanded= null} */){
@@ -24,9 +24,44 @@ function Compare(/* {initexpanded= null} */){
     const [ratioUsers, setRatioUsers] = useState("");
     const [suggestedPark, setSuggestedPark] = useState([]);
     // const [suggestedParkSelected, setSuggestedParkSelected] = useState([]);
+    const [Dusername, setDusername] = useState("");
 
     const API_KEY = process.env.REACT_APP_API_KEY;
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+            if(userInfo == null){
+                return;
+            }
+            const usernameTmp = userInfo.username;
+            console.log(userInfo);
+            console.log(usernameTmp);
+            try {
+                const response = await fetch(`/decryptusername?username=${usernameTmp}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                // const response = await fetch(`/decryptusername?username=${usernameTmp}`);
+                console.log(response);
+                if(response.ok){
+                    // console.log(response.text);
+                    const data = await response.text();
+                    console.log(data);
+                    setDusername(data);
+                }
+            } catch(error){
+                setError(error.message);
+            }
+        };
+
+        fetchData(); // Call the async function inside useEffect
+
+    }, []);
 
     const handleAddToGroup = async (e) => {
         e.preventDefault();
@@ -91,7 +126,7 @@ function Compare(/* {initexpanded= null} */){
 
                 setNumberInGroup(favorites.groupSize + 1);
                 setGroupMembers(favorites.groupMembers);
-                // console.log("groupMembers: " + groupMembers);
+                console.log("groupMembers: " + groupMembers);
 
                 setUserFavorites(parkIDs);
                 Promise.all(parkIDs.map(async (parkCode) => {
@@ -216,7 +251,7 @@ function Compare(/* {initexpanded= null} */){
         }
         // Now do it again for the user themselves
         // console.log("username: " + JSON.parse(sessionStorage.getItem('userInfo')).username);
-        const favorites = await fetchUserFavorites(JSON.parse(sessionStorage.getItem('userInfo')).username);
+        const favorites = await fetchUserFavorites(Dusername);
         for(const favorite of favorites){ // Iterate over favorite park codes array
             favoriteCounts[favorite] = (favoriteCounts[favorite] || 0) + 1;
         }
@@ -283,7 +318,7 @@ function Compare(/* {initexpanded= null} */){
     // Completely written by Anika
     const fetchUserFavorites = async (username) => {
         try {
-            const response = await fetch(`/favorites?username=${username}`);
+            const response = await fetch(`/favorites/suggest?username=${username}`);
             if (!response.ok) {
                 console.error('Failed to fetch user favorites');
                 throw new Error('Failed to fetch user favorites');

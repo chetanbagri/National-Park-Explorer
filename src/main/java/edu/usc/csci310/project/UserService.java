@@ -170,30 +170,39 @@ public class UserService {
                 Type type = new TypeToken<ArrayList<String>>() {}.getType();
                 favs = gson.fromJson(favoritesString, type);
             }
+            System.out.println(favoritesString);
+            System.out.println(favs);
             // List<String> favs = user.getFavorites(); OUTDATED
 
             for(String parkID : favs) { // each parkID in userI favorites list
                 int count = parkCounts.getOrDefault(parkID, 0);
+                System.out.println(parkID);
+                System.out.println(count);
                 parkCounts.put(parkID, count + 1);
 //                if(!parksToUsers.containsKey(parkID)){ // IMPOSSIBLE to fail since I'm starting with fresh parksToUsers
                 parksToUsers.put(parkID, new ArrayList<>());
 //                }
-                parksToUsers.get(parkID).add(user.getUsername());
+                parksToUsers.get(parkID).add(textEncryptor.decrypt(user.getUsername()));
             }
             for(String userI : userGroup){ // Now retrieve for the entire group
                 // do something with userI
                 // favs = new ArrayList<>();
-                favs.clear();
-                favoritesString = user.getFavorites();
+                System.out.println("userI: " + userI);
+                List<String> favs2 = new ArrayList<>();
+                favoritesString = userRepository.findByUsername(textEncryptor.encrypt(userI)).getFavorites();
                 if(favoritesString != null && !(favoritesString.isEmpty())) {
                     favoritesString = textEncryptor.decrypt(favoritesString);
                     Type type = new TypeToken<ArrayList<String>>() {}.getType();
-                    favs = gson.fromJson(favoritesString, type);
+                    favs2 = gson.fromJson(favoritesString, type);
                 }
                 // favs = userRepository.findByUsername(userI).getFavorites();
 
-                for(String parkID : favs) { // each parkID in userI favorites list
+                System.out.println(favoritesString);
+                System.out.println("favs2: " + favs2);
+                for(String parkID : favs2) { // each parkID in userI favorites list
                     int count = parkCounts.getOrDefault(parkID, 0);
+                    System.out.println(parkID);
+                    System.out.println(count);
                     parkCounts.put(parkID, count + 1);
                     if(!parksToUsers.containsKey(parkID)){
                         parksToUsers.put(parkID, new ArrayList<>());
@@ -227,6 +236,18 @@ public class UserService {
 
     public ResponseEntity<?> getFavorites(String username) {
         User user = userRepository.findByUsername(username);
+        List<String> favorites = new ArrayList<>();
+        String favoritesString = user.getFavorites();
+        if(favoritesString != null && !(favoritesString.isEmpty())) {
+            favoritesString = textEncryptor.decrypt(favoritesString);
+            Type type = new TypeToken<ArrayList<String>>() {}.getType();
+            favorites = gson.fromJson(favoritesString, type);
+        }
+        return ResponseEntity.ok(new FavoritesResponse(favorites));
+    }
+
+    public ResponseEntity<?> getFavoritesSuggest(String username) {
+        User user = userRepository.findByUsername(textEncryptor.encrypt(username));
         List<String> favorites = new ArrayList<>();
         String favoritesString = user.getFavorites();
         if(favoritesString != null && !(favoritesString.isEmpty())) {
@@ -383,5 +404,20 @@ public class UserService {
         user.setFavorites(textEncryptor.encrypt(newOrderString));
         userRepository.save(user);
         return ResponseEntity.ok("Favorites reordered successfully");
+    }
+
+    public ResponseEntity<?> decryptUsername(String username) {
+//        CompareResponse cr = new CompareResponse();
+//        List<String> tmpList = new ArrayList<>();
+//        tmpList.add(textEncryptor.decrypt(username));
+//        cr.setSortedIDs(null);
+//        cr.setParksToUsers(null);
+//        cr.setGroupSize(0);
+//        cr.setGroupMembers(tmpList);
+//        System.out.println(tmpList.get(0));
+        String tmp = textEncryptor.decrypt(username);
+        return ResponseEntity.ok(tmp);
+//        return ResponseEntity.ok(cr);
+
     }
 }
