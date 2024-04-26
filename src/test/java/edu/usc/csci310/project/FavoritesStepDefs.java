@@ -11,6 +11,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -26,9 +27,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class FavoritesStepDefs {
 
-        private static final String ROOT_URL = "http://localhost:8080/"; // Adjust this to your search page URL
+        private static final String ROOT_URL = "https://localhost:8080/"; // Adjust this to your search page URL
 
-        private final WebDriver driver = new ChromeDriver();
+    private WebDriver driver  =  null;
+    public FavoritesStepDefs() {
+        ChromeOptions options = new ChromeOptions();
+        options.setAcceptInsecureCerts(true);
+        this.driver = new ChromeDriver(options);
+    }
 
         private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
@@ -50,9 +56,9 @@ public class FavoritesStepDefs {
             driver.findElement(By.id("password")).click();
             driver.findElement(By.id("password")).sendKeys("Happy1");
             driver.findElement(By.id("loginBtn")).click();
-            wait.until(ExpectedConditions.urlToBe("http://localhost:8080/search"));
+            wait.until(ExpectedConditions.urlToBe("https://localhost:8080/search"));
             driver.findElement(By.id("nav-favorites")).click();
-            wait.until(ExpectedConditions.urlToBe("http://localhost:8080/Favorites"));
+            wait.until(ExpectedConditions.urlToBe("https://localhost:8080/Favorites"));
         }
         @And("the user has Alcatraz Island in their favorites")
         public void the_user_has_alcatraz_island_in_their_favorites() {

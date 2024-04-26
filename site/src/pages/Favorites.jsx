@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import IdleLogout from "../components/Security";
 
 const Favorites = () => {
     const [userFavorites, setUserFavorites] = useState([]);
@@ -200,6 +201,7 @@ const Favorites = () => {
                
                 `}</style>
             <div>
+                <IdleLogout/>
                 <Header/>
                 <h2>My Favorite Parks</h2>
                 <div>
