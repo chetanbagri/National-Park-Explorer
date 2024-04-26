@@ -72,7 +72,9 @@ const CreateAccount = () => {
                 <div className="logo-general-image-div">
                     <img className="logo-general-image"
                          src={logo}
-                         alt="Campfire logo and Let's Go Camping! message in bright green"/>
+                         alt="Campfire logo and Let's Go Camping! message in bright green"
+                         aria-label={"Campfire logo and Let's Go Camping! message in bright green"}
+                    />
                 </div>
                 <div className="header-text-div">
                     <p className="header-text-p">Team 20</p>
@@ -90,6 +92,8 @@ const CreateAccount = () => {
                             type="text"
                             value={username}
                             title={"Username Field"}
+                            aria-label={"Enter username"}
+                            alt={"Enter username"}
                             onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
@@ -100,6 +104,8 @@ const CreateAccount = () => {
                             type="password"
                             value={password}
                             title={"Password Field"}
+                            aria-label={"Enter password"}
+                            alt={"Enter password"}
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
@@ -110,11 +116,13 @@ const CreateAccount = () => {
                             type="password"
                             value={confirmPassword}
                             title={"Confirm Password Field"}
+                            aria-label={"Confirm password"}
+                            alt={"Confirm password"}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     </div>
-                    <button id="submission" type="submit" name={"submit"} role={"button"} title={"submitcreateaccount"}>Create Account</button>
-                    <button id= "cancel" type="button" onClick={handleCancel}>Cancel</button>
+                    <button id="submission" type="submit" name={"submit"} role={"button"} title={"submitcreateaccount"} aria-label={"create account"}>Create Account</button>
+                    <button id= "cancel" type="button" onClick={handleCancel} aria-label={"cancel"}>Cancel</button>
                 </form>
             </div>
             {showCancelDiv && (
@@ -122,8 +130,8 @@ const CreateAccount = () => {
                     <div className="modal-content">
                         <p>Are you sure you want to cancel your account creation?</p>
                         <div>
-                            <button id="yes" onClick={handleYes}>Yes</button>
-                            <button id="no" onClick={handleNo}>No</button>
+                            <button id="yes" onClick={handleYes} aria-label={"Yes, cancel account creation."}>Yes</button>
+                            <button id="no" onClick={handleNo} aria-label={"No, do not cancel account creation."}>No</button>
                         </div>
                     </div>
                 </div>
