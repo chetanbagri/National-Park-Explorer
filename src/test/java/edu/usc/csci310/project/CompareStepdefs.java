@@ -11,6 +11,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +26,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class CompareStepdefs {
-    private static final String ROOT_URL = "http://localhost:8080/"; // Adjust this to your search page URL
+    private static final String ROOT_URL = "https://localhost:8080/"; // Adjust this to your search page URL
 
-    private final WebDriver driver = new ChromeDriver();
+    private  WebDriver driver = null;
 
-    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
 
     @Autowired
     private UserService userService;
+
+    public CompareStepdefs() {
+        ChromeOptions options = new ChromeOptions();
+        options.setAcceptInsecureCerts(true);
+        this.driver = new ChromeDriver(options);
+    }
+    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
     private StandardPBEStringEncryptor textEncryptor = new StandardPBEStringEncryptor();
 
@@ -65,7 +73,7 @@ public class CompareStepdefs {
         driver.findElement(By.id("password")).click();
         driver.findElement(By.id("password")).sendKeys(password);
         driver.findElement(By.id("loginBtn")).click();
-        wait.until(ExpectedConditions.urlToBe("http://localhost:8080/search"));
+        wait.until(ExpectedConditions.urlToBe("https://localhost:8080/search"));
         driver.findElement(By.id("nav-compare")).click();
     }
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import IdleLogout from "../components/Security";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 export const reorder = (list, startIndex, endIndex) => {
@@ -28,7 +29,6 @@ const Favorites = () => {
     const [hoveredPark, setHoveredPark] = useState(null);
     const [showSingleDeleteConfirmation, setShowSingleDeleteConfirmation] = useState(false);
     const [parkToDelete, setParkToDelete] = useState(null);
-    const [isPrivate, setIsPrivate] = useState(true); // Set to true by default (private)
 
     const API_KEY = process.env.REACT_APP_API_KEY;
     const BASE_URL = "https://developer.nps.gov/api/v1/parks";
@@ -155,7 +155,7 @@ const Favorites = () => {
 
     const fetchAmenitiesOfPark = async (parkCode) => {
         const url = `https://developer.nps.gov/api/v1/amenities?q=${parkCode}`;
-
+        try {
             const response = await fetch(url, {
                 method: 'GET',
                 headers: { 'X-Api-Key': API_KEY }
@@ -163,10 +163,14 @@ const Favorites = () => {
             if (response.ok) {
                 const data = await response.json();
                 return data.data;
+            } else {
+                console.error("Failed to fetch amenities.");
+                return [];
             }
-
-            // return [];
-
+        } catch (error) {
+            console.error("Error fetching amenities data.");
+            return [];
+        }
     };
 
     const handleParkSelection = async (parkCode) => {
@@ -187,7 +191,7 @@ const Favorites = () => {
     };
 
     const handleConfirmSingleDelete = async () => {
-
+        try {
             const username = JSON.parse(sessionStorage.getItem('userInfo')).username;
             const response = await fetch(`/favorites/remove?username=${username}&parkId=${parkToDelete}`, {
                 method: 'DELETE',
@@ -200,7 +204,9 @@ const Favorites = () => {
             setUserFavorites((prevFavorites) => prevFavorites.filter((code) => code !== parkToDelete));
             setFavoriteParks((prevFavorites) => prevFavorites.filter((_, index) => userFavorites[index] !== parkToDelete));
             setShowSingleDeleteConfirmation(false);
-
+        } catch (error) {
+            console.error('Error removing park from favorites:', error);
+        }
     };
 
     return (
@@ -264,6 +270,7 @@ const Favorites = () => {
                
                 `}</style>
             <div>
+                <IdleLogout/>
                 <Header/>
                 <h2>My Favorite Parks</h2>
                 <div>
@@ -298,115 +305,84 @@ const Favorites = () => {
                         </div>
                     </div>
                 )}
+                {userFavorites && userFavorites.length > 0 && (
+                    <ul>
+                        {userFavorites.map((parkCode, index) => (
+                            <li key={parkCode}
+                                onMouseEnter={() => setHoveredPark(parkCode)}
+                                onMouseLeave={() => setHoveredPark(null)}>
+                                <button onClick={() => handleParkSelection(parkCode)} aria-label={"View details for park: " + favoriteParks[index]}>
+                                    {favoriteParks[index]}
+                                </button>
+                                {hoveredPark === parkCode && (
+                                    <span className="remove-from-favorites"
+                                          tabIndex="0"
+                                          role="button"
+                                          aria-label="Remove from favorites"
+                                          onClick={() => handleRemoveFavorite(parkCode)}>
+                                        -
+                                    </span>
+                                )}
 
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="favorites">
-                        {(provided) => (
-                            <ul {...provided.droppableProps} ref={provided.innerRef}>
-                                {userFavorites?.map((parkCode, index) => (
-                                    <Draggable key={parkCode} draggableId={parkCode} index={index}>
-                                        {(provided) => (
-                                            <li ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                onMouseEnter={() => setHoveredPark(parkCode)}
-                                                onMouseLeave={() => setHoveredPark(null)}>
-                                                <button data-testid={`park-button-${parkCode}`}
-                                                        onClick={() => handleParkSelection(parkCode)}>
-                                                    {favoriteParks[index]}
-                                                </button>
-                                                {hoveredPark === parkCode && (
-                                                    <>
+                                {selectedPark && selectedPark.parkCode === parkCode && (
+                                    <div className="detailsBox">
+                                        <h3>{selectedPark.fullName}</h3>
+                                        <img src={selectedPark.images[0].url}
+                                             alt={`View of ${selectedPark.fullName}`}
+                                             aria-label={`${selectedPark.fullName}`}
+                                             style={{width: '100%', maxHeight: '300px', objectFit: 'cover'}}/>
+                                        <p>Description: {selectedPark.description}</p>
+                                        <div>
+                                            <h4>Location:</h4>
+                                            <p>
+                                                {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}
+                                            </p>
+                                        </div>
+                                        <a href={selectedPark.url} target="_blank" rel="noopener noreferrer">Visit
+                                            Park
+                                            Website</a>
+                                        <p>Entrance
+                                            Fees: {selectedPark.entranceFees.length > 0 ? `$${selectedPark.entranceFees[0].cost}` : 'No fees information available'}</p>
 
-                                                    <span className="remove-from-favorites"
-                                                    onClick={() => handleRemoveFavorite(parkCode)}>
-                                                -
-                                            </span>
-
-                                                    <span className="arrow-up" onClick={() => onArrowClick(index, 'up')}>↑</span>
-                                            <span className="arrow-down" onClick={() => onArrowClick(index, 'down')}>↓</span>
-                                    </>
-                                        )}
-                                        {selectedPark && selectedPark.parkCode === parkCode && (
-                                                    <div className="detailsBox">
-                                                        <h3>{selectedPark.fullName}</h3>
-                                                        <img src={selectedPark.images[0].url}
-                                                             alt={`View of ${selectedPark.fullName}`}
-                                                             style={{width: '100%', maxHeight: '300px', objectFit: 'cover'}}/>
-                                                        <p>Description: {selectedPark.description}</p>
-                                                        <div>
-                                                            <h4>Location:</h4>
-                                                            <p>
-                                                                {selectedPark.addresses[0].city}, {selectedPark.addresses[0].stateCode}
-                                                            </p>
-                                                        </div>
-                                                        <a href={selectedPark.url} target="_blank" rel="noopener noreferrer">Visit
-                                                            Park
-                                                            Website</a>
-                                                        <p>Entrance
-                                                            Fees: {selectedPark.entranceFees.length > 0 ? `$${selectedPark.entranceFees[0].cost}` : 'No fees information available'}</p>
-
-                                                        <h4>Activities:</h4>
-                                                        <p>
-                                                            {selectedPark.activities.map((activity, index) => (
-                                                                <React.Fragment key={activity.id}>
+                                        <h4>Activities:</h4>
+                                        <p>
+                                            {selectedPark.activities.map((activity, index) => (
+                                                <React.Fragment key={activity.id}>
                                                     <span>
                                                         {activity.name}
                                                     </span>
-                                                                    {index < selectedPark.activities.length - 1 ? ', ' : ''}
-                                                                </React.Fragment>
-                                                            ))}
-                                                        </p>
+                                                    {index < selectedPark.activities.length - 1 ? ', ' : ''}
+                                                </React.Fragment>
+                                            ))}
+                                        </p>
 
-                                                        <h4>Amenities:</h4>
-                                                        <p>
-                                                            {parkAmenities.map((amenity, index) => (
-                                                                <React.Fragment key={amenity.id}>
+                                        <h4>Amenities:</h4>
+                                        <p>
+                                            {parkAmenities.map((amenity, index) => (
+                                                <React.Fragment key={amenity.id}>
                                                     <span>
                                                         {amenity.name}
                                                     </span>
-                                                                    {index < parkAmenities.length - 1 ? ', ' : ''}
-                                                                </React.Fragment>
-                                                            ))}</p>
+                                                    {index < parkAmenities.length - 1 ? ', ' : ''}
+                                                </React.Fragment>
+                                            ))}</p>
 
-                                                        <div>
-                                                            <h4>
-                                                                Operating Hours:
-                                                            </h4>
-                                                            <p>
-                                                                {selectedPark.operatingHours[0].description}
-                                                            </p>
-                                                        </div>
-
-
-                                                    </div>
-                                                )}                                            </li>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </ul>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                                        <div>
+                                            <h4>
+                                                Operating Hours:
+                                            </h4>
+                                            <p>
+                                                {selectedPark.operatingHours[0].description}
+                                            </p>
+                                        </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                )}
                 <Footer/>
             </div>
         </>

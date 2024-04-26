@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import React, {useEffect, useState} from "react";
 import '../styles/compare.css'
+import IdleLogout from "../components/Security";
 
 function Compare(/* {initexpanded= null} */){
     const [error, setError] = useState("");
@@ -347,6 +348,7 @@ function Compare(/* {initexpanded= null} */){
 
     return (
         <div>
+            <IdleLogout/>
             <Header/>
             <h2>Add A Friend to Your Group</h2>
             <form onSubmit={handleAddToGroup}>

@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +17,21 @@ import java.time.Duration;
 
 @SpringBootTest
 public class loginStepdefs {
-    private final WebDriver driver = new ChromeDriver();
+    private final WebDriver driver;
 
    @Autowired
     private UserService userService;
 
+    public loginStepdefs() {
+        ChromeOptions options = new ChromeOptions();
+        options.setAcceptInsecureCerts(true);
+        this.driver = new ChromeDriver(options);
+    }
+
     @Given("I am on the login page")
     public void iAmOnTheLoginPage() {
         userService.registerUser("Bob", "Happy1", "Happy1");
-        driver.get("http://localhost:8080/login");
+        driver.get("https://localhost:8080/login");
     }
 
     @When("I enter the username {string} on login page")

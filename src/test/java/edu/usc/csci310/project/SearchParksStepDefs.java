@@ -7,6 +7,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -21,10 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 
 public class SearchParksStepDefs {
-    private static final String ROOT_URL = "http://localhost:8080/search"; // Adjust this to your search page URL
-    private static final String ROOT_URL2 = "http://localhost:8080/"; // Adjust this to your search page URL
+    private static final String ROOT_URL = "https://localhost:8080/search"; // Adjust this to your search page URL
+    private static final String ROOT_URL2 = "https://localhost:8080/"; // Adjust this to your search page URL
 
-    private final WebDriver driver = new ChromeDriver();
+    private WebDriver driver = null;
+    public SearchParksStepDefs() {
+        ChromeOptions options = new ChromeOptions();
+        options.setAcceptInsecureCerts(true);
+        this.driver = new ChromeDriver(options);
+    }
 
     private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
@@ -185,8 +191,8 @@ public class SearchParksStepDefs {
         loginButton.click();
 
         WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait2.until(ExpectedConditions.urlToBe("http://localhost:8080/search"));
-        assertEquals("http://localhost:8080/search", driver.getCurrentUrl());
+        wait2.until(ExpectedConditions.urlToBe("https://localhost:8080/search"));
+        assertEquals("https://localhost:8080/search", driver.getCurrentUrl());
     }
 
     @And("I click on the first result")

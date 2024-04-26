@@ -12,12 +12,14 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 import java.util.Objects;
 
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final Dotenv dotenv;
+    //private final Dotenv dotenv;
+
     public SecurityConfig() {
-        this.dotenv = Dotenv.configure().directory("./site").filename(".env").load();
+        //this.dotenv = Dotenv.configure().directory("./site").filename(".env").load();
     }
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -39,7 +41,7 @@ public class SecurityConfig {
     public StandardPBEStringEncryptor textEncryptor() {
         StandardPBEStringEncryptor textEncryptor = new StandardPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
-        textEncryptor.setPassword(Objects.requireNonNull(dotenv.get("ENCRYPTION_KEY")));
+        textEncryptor.setPassword("8NNks*WfI78mtJumUdvYt@hFuI@*5@at");
         textEncryptor.setAlgorithm("PBEWithMD5AndDES");
         config.setSaltGeneratorClassName("org.jasypt.salt.ZeroSaltGenerator");
         textEncryptor.setConfig(config);
