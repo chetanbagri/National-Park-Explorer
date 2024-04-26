@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +19,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class createAccountMyStepdefs {
-    private final WebDriver driver = new ChromeDriver();
+
+    private final WebDriver driver ;
+    public createAccountMyStepdefs() {
+        ChromeOptions options = new ChromeOptions();
+        options.setAcceptInsecureCerts(true);
+        this.driver = new ChromeDriver(options);
+    }
 
     @Autowired
     private UserService userService;
 
     @Given("I am on the create account page")
     public void iAmOnTheCreateAccountPage() {
-        driver.get("http://localhost:8080/create-account");
+        driver.get("https://localhost:8080/create-account");
     }
 
     @Given("I start at the login page")
     public void iStartAtTheLoginPage() {
-        driver.get("http://localhost:8080/login");
+        driver.get("https://localhost:8080/login");
     }
 
     @When("I enter the username {string}")
@@ -67,7 +74,8 @@ public class createAccountMyStepdefs {
 
     @Then("I should be redirected to the Login Page")
     public void iShouldBeRedirectedToTheLoginPage() {
-        driver.get("http://localhost:8080/login");
+        String currentUrl = driver.getCurrentUrl();
+        assertEquals(currentUrl, "https://localhost:8080/login");
     }
 
 

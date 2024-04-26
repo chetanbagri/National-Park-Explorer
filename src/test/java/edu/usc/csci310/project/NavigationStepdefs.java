@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class NavigationStepdefs {
 
-    private static final String ROOT_URL = "http://localhost:8080/"; // Adjust this to your search page URL
+    private static final String ROOT_URL = "https://localhost:8080/"; // Adjust this to your search page URL
 
-    private final WebDriver driver = new ChromeDriver();
+    private WebDriver driver = null;
+    public NavigationStepdefs() {
+        ChromeOptions options = new ChromeOptions();
+        options.setAcceptInsecureCerts(true);
+        this.driver = new ChromeDriver(options);
+    }
 
     private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
@@ -46,7 +52,7 @@ public class NavigationStepdefs {
         driver.findElement(By.id("password")).click();
         driver.findElement(By.id("password")).sendKeys("Happy1");
         driver.findElement(By.id("loginBtn")).click();
-        wait.until(ExpectedConditions.urlToBe("http://localhost:8080/search"));
+        wait.until(ExpectedConditions.urlToBe("https://localhost:8080/search"));
         driver.findElement(By.id("nav-" + arg0)).click();
     }
 
@@ -57,8 +63,8 @@ public class NavigationStepdefs {
 
     @Then("I should be redirected to the {string} page")
     public void iShouldBeRedirectedToThePage(String arg0) {
-        wait.until(ExpectedConditions.urlToBe("http://localhost:8080/" + arg0));
-        assertEquals("http://localhost:8080/" + arg0, driver.getCurrentUrl());
+        wait.until(ExpectedConditions.urlToBe("https://localhost:8080/" + arg0));
+        assertEquals("https://localhost:8080/" + arg0, driver.getCurrentUrl());
     }
 
     @And("see that the page title is {string}")
