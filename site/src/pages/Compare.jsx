@@ -85,6 +85,8 @@ function Compare(/* {initexpanded= null} */){
                 // console.log("counts: " + counts);
                 setNumberFavorited(counts);
 
+                console.log(favorites);
+                console.log(userInfo);
                 setParksToUsers(favorites.parksToUsers);
 
                 setNumberInGroup(favorites.groupSize + 1);
