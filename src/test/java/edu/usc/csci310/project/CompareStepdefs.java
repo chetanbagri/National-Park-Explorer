@@ -157,7 +157,10 @@ public class CompareStepdefs {
 
     @And("{string} has a {string} park list")
     public void hasAParkList(String arg0, String arg1) {
-        // set arg0's TRACKER to arg0, or a boolean
+//        if(Objects.equals(arg1, "private") && userService.isFavPrivate() == true) return;
+//        else if(Objects.equals(arg1, "private") && userService.isFavPrivate() == false) userService.toggleFavoritesPrivacy(arg0);
+//        else if(Objects.equals(arg1, "public") && userService.isFavPrivate() == true) return;
+//        else userService.toggleFavoritesPrivacy(arg0); // set arg0's TRACKER to arg0, or a boolean
     }
 
 
@@ -205,5 +208,16 @@ public class CompareStepdefs {
     @And("I should see {int} photos")
     public void iShouldSeePhotos(int arg0) {
         assertEquals(driver.findElements(By.className("suggestedImage")).size(), arg0);
+    }
+
+    @When("I click on the suggested park")
+    public void iClickOnTheSuggestedPark() {
+        List<WebElement> searchResults = driver.findElements(By.cssSelector(".suggestedParkBox"));
+        if (!searchResults.isEmpty()) {
+            searchResults.get(0).click(); // Clicks the first result
+        } else {
+            fail("No suggested result found to click.");
+        }
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".detailsBox"))); // Adjust the selector to the details box
     }
 }

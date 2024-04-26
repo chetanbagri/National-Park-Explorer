@@ -224,11 +224,17 @@ function Compare(/* {initexpanded= null} */){
         // } else {
         //     commonFavorites = commonFavorites.filter(park => favorites.includes(park));
         // }
-        favoriteCounts.sort((a, b) => b.count - a.count); // Sort the counts I retrieved
+        favoriteCounts.sort((a, b) => b.count - a.count); // Sort the counts I retrieved (keys are still the park code)
         console.log(groupMembers);
         console.log(favoriteCounts);
         commonFavorites = Object.keys(favoriteCounts)[0];
         console.log(commonFavorites);
+
+        // DEAL WITH TIEBREAKERS HERE
+        if(Object.values(favoriteCounts)[0] === Object.values(favoriteCounts)[1]){
+            handleTieBreaker();
+        }
+
         if (commonFavorites.length > 0) {
             const parkDetails = await fetchParkDetails(commonFavorites);
             console.log(parkDetails);
@@ -240,6 +246,10 @@ function Compare(/* {initexpanded= null} */){
         } else {
             setError("No common favorites found among the group.");
         }
+    }
+
+    const handleTieBreaker = async () => {
+
     }
 
     const fetchGroupFavorites = async (username) => {
