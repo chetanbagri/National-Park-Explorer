@@ -280,8 +280,8 @@ const Favorites = () => {
                             <h3>Confirm Delete Favorite Park</h3>
                             <p>Are you sure you want to delete this park from your favorites?</p>
                             <div className="confirmation-buttons">
-                                <button onClick={handleConfirmSingleDelete}>Confirm</button>
-                                <button onClick={() => setShowSingleDeleteConfirmation(false)}>Cancel</button>
+                                <button id="confirm-remove-button" onClick={handleConfirmSingleDelete}>Confirm</button>
+                                <button id="confirm-cancel-button" onClick={() => setShowSingleDeleteConfirmation(false)}>Cancel</button>
                             </div>
                         </div>
                     </div>
@@ -292,8 +292,8 @@ const Favorites = () => {
                             <h3>Confirm Delete All Favorites</h3>
                             <p>Are you sure you want to delete all your favorite parks?</p>
                             <div className="confirmation-buttons">
-                                <button className="confirm-remove-button" onClick={handleConfirmClearFavorites}>Confirm</button>
-                                <button className="confirm-cancel-button" onClick={() => setShowConfirmationPopup(false)}>Cancel</button>
+                                <button id="confirm-removeAll-button" className="confirm-remove-button" onClick={handleConfirmClearFavorites}>Confirm</button>
+                                <button id="confirm-cancelAll-button" className="confirm-cancel-button" onClick={() => setShowConfirmationPopup(false)}>Cancel</button>
                             </div>
                         </div>
                     </div>

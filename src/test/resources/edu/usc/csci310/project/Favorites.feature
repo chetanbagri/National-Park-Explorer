@@ -23,7 +23,7 @@ Feature: Update and Review a Favorite Park List
   Scenario: User deletes a single park from their Favorites
     Given I am on the favorites page
     And the user has "Alcatraz Island" in their favorites
-    When the user hovers over the name of the park "Alcatraz Island"
+    When the user hovers over the park button named "Alcatraz Island"
     Then a minus sign should appear
     When the user clicks the minus sign
     Then a confirmation popup should be displayed
@@ -33,13 +33,13 @@ Feature: Update and Review a Favorite Park List
   Scenario: User cancels delete a single park from their Favorites
     Given I am on the favorites page
     And the user has "Alcatraz Island" in their favorites
-    When the user hovers over the name of the park "Alcatraz Island"
+    When the user hovers over the park button named "Alcatraz Island"
     Then a minus sign should appear
     When the user clicks the minus sign
     Then a confirmation popup should be displayed
     When the user clicks the Cancel button
     Then the confirmation popup should disappear
-    And the user has "Alcatraz Island" in their favorites
+    And the user still has "Alcatraz Island" in their favorites
 
   Scenario: User deletes all parks from Favorites
     Given I am on the favorites page
@@ -57,8 +57,8 @@ Feature: Update and Review a Favorite Park List
     When the user clicks "Delete All"
     Then a confirmation popup should be displayed
     When the user clicks "Cancel"
-    Then the user has "Alcatraz Island" in their favorites
-    And the user has "Acadia National Park" in their favorites
+    Then the user still has "Alcatraz Island" in their favorites
+    And the user still has "Acadia National Park" in their favorites
 
   Scenario: User can view details of their Favorite parks
     Given I am on the favorites page
@@ -68,12 +68,10 @@ Feature: Update and Review a Favorite Park List
     When the user clicks on "Alcatraz Island" again
     Then the inline window is closed
 
-
   Scenario: Favorites show up in a list-like format
     Given I am on the favorites page
     And the user has Alcatraz Island in their favorites
     Then the user should see Alcatraz Island in a list like format
-
 
   Scenario: Rank a park higher using the up arrow
     Given I am on the favorites page
