@@ -11,6 +11,8 @@ public class CompareResponse {
 
     private Integer groupSize = 0;
 
+    private List<String> groupMembers;
+
     public List<Map.Entry<String, Integer>> getSortedIDs() {
         return sortedIDs;
     }
@@ -33,5 +35,13 @@ public class CompareResponse {
 
     public void setParksToUsers(HashMap<String, List<String>> parksToUsers) {
         this.parksToUsers = parksToUsers;
+    }
+
+    public List<String> getGroupMembers() {
+        return groupMembers;
+    }
+
+    public void setGroupMembers(List<String> groupMembers) {
+        this.groupMembers = groupMembers;
     }
 }

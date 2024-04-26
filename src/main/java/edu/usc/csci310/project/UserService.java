@@ -129,6 +129,9 @@ public class UserService {
             if(Groups.getGroupOfFriends(username).contains(usernameQuery)){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is already in your friend group");
             }
+//            if(userB.isFavPrivate() == true){ // userB has private list
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User cannot be added due to them having a private favorite park list");
+//            }
             Groups.addToGroupOfFriends(username, usernameQuery);
             // userRepository.save(user); // Update the database
 
@@ -187,6 +190,7 @@ public class UserService {
             cr.setSortedIDs(sortedIDs);
             cr.setParksToUsers(parksToUsers);
             cr.setGroupSize(userGroup.size());
+            cr.setGroupMembers(userGroup);
             return ResponseEntity.ok(cr);
         }
         else { // Username does not exists within database

@@ -49,3 +49,32 @@
     align-items: center;
     flex-wrap: nowrap;
 }
+
+.suggestedParkBox {
+    background-color: #d3f3cf;
+    border-radius: 10px;
+    padding: 20px;
+    display: block; /* Center the div and prevent it from stretching */
+    margin: auto;
+    max-width: 80%;
+}
+
+.suggestedName {
+    text-align: center;
+}
+
+.suggestedLocation {
+    text-align: center;
+}
+
+.suggestedParkImgContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.suggestedParkImgContainer img {
+    width: 30%; /* Adjust image width as needed */
+    margin: 0 10px; /* Add space between images */
+}
