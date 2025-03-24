@@ -1,7 +1,7 @@
 # Best Practice ContinuousIntegration Report
 
 - Sprint: 1
-- Team: team 20 (20)
+- Team: team-20 (20)
 - Repository: project-team-20
 - Commit: N/A
 - Grade: 12.0/12
@@ -10,8 +10,8 @@
 
 
 ### Summary:
-Found a total of 6 CI checks on branches {'main', 'develop'}
-- Total successful merges: 6
+Found a total of 8 CI checks on branches {'main', 'develop'}
+- Total successful merges: 8
 - Total failing merges: 0
 
 
