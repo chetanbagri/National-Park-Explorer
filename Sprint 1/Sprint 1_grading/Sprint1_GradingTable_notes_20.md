@@ -1,4 +1,4 @@
-## Grading Notes - Team 20
+## Grading Notes - Team-20
 
 Sprint Planning
 ---------------
@@ -8,7 +8,7 @@ Sprint Planning
 Scrum 1
 -------
 
-    No comment
+    Each question is answered very bluntly and no details are provided. 
 
 Scrum 2
 -------
@@ -18,16 +18,10 @@ Scrum 2
 Scrum 3
 -------
 
-    Meeting times between Scrum 2 and Scrum 3 were nearly 24 hours, just a reminder to be mindful of that 
+    No comment
 
 Scrum 4
 -------
-
-    No comment
-
-
-Sprint Retrospective
---------------------
 
     No comment
 
