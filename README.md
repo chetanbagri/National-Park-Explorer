@@ -14,9 +14,9 @@ Frontend - React
 
 Backend - Java Spring Boot
 
-Testing - Gherkin, Cucumber, Mockito (Acceptance Tests)
-          JUnit (Backend Unit Tests)
-          Jest (Frontend Unit Tests)
+Testing - Gherkin, Cucumber, Mockito (Acceptance Tests)\
+          JUnit (Backend Unit Tests)\
+          Jest (Frontend Unit Tests)\
 
 Database - H2
 
