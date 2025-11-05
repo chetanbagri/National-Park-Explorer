@@ -2,14 +2,14 @@
 
 The detailed documentation and progress reports for this project can be found in the documentation branch.
 
-##Contributors:
+## Contributors:
 Chetan Bagri - cbagri@usc.edu
 Nicholas Schumacher - naschuma@usc.edu
 Jainee Shah - jaineesh@usc.edu
 Anika Patel - anikapat@usc.edu
 Mahum Syed - mahumsye@usc.edu
 
-##Technologies:
+## Technologies:
 Frontend - React
 
 Backend - Java Spring Boot
